@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2002-2020, Manorrock.com. All Rights Reserved.
+ *  Copyright (c) 2002-2021, Manorrock.com. All Rights Reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are met:
@@ -27,51 +27,41 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.common.kvs.api;
+package com.manorrock.eagle.filesystem;
+
+import com.manorrock.eagle.api.KeyValueMapper;
+import java.io.File;
 
 /**
- * The KeyValueStore API.
+ * The filename to file mapper.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
- * @param <K> the type of the key.
- * @param <V> the type of the value.
  */
-public interface KeyValueStore<K, V> {
-    
-    /**
-     * Delete the value.
-     * 
-     * @param key the key.
-     */
-    void delete(K key);
-    
-    /**
-     * Get the value.
-     * 
-     * @param key the key.
-     * @return the value.
-     */
-    V get(K key);
+class FilenameToFileMapper implements KeyValueMapper<String, File> {
 
     /**
-     * Put the value.
-     *
-     * @param key the key.
-     * @param value the value.
+     * Stores the base directory.
      */
-    void put(K key, V value);
+    private final File baseDirectory;
     
     /**
-     * Set the key mapper.
+     * Constructor.
      * 
-     * @param keyMapper the key mapper.
+     * @param baseDirectory the base directory.
      */
-    void setKeyMapper(KeyValueMapper keyMapper);
+    public FilenameToFileMapper(File baseDirectory) {
+        this.baseDirectory = baseDirectory;
+    }
     
-    /**
-     * Set the value mapper.
-     * 
-     * @param valueMapper the value mapper.
-     */
-    void setValueMapper(KeyValueMapper valueMapper);
+    @Override
+    public File to(String filename) {
+        return new File(baseDirectory, filename);
+    }
+
+    @Override
+    public String from(File file) {
+        String filename = file.getAbsolutePath();
+        filename = filename.substring(baseDirectory.getAbsolutePath().length());
+        return filename;
+    }
 }

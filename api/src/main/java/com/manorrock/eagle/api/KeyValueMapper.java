@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2002-2020, Manorrock.com. All Rights Reserved.
+ *  Copyright (c) 2002-2021, Manorrock.com. All Rights Reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are met:
@@ -27,38 +27,30 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.common.kvs.common;
-
-import com.manorrock.common.kvs.api.KeyValueMapper;
-import com.manorrock.common.kvs.api.KeyValueStore;
-import java.util.logging.Logger;
+package com.manorrock.eagle.api;
 
 /**
- * The identity mapper.
- *
+ * The KeyValueMapper API.
+ * 
  * @author Manfred Riem (mriem@manorrock.com)
+ * @param <F> the type of the from.
+ * @param <T> the type of the to.
  */
-public class IdentityMapper implements KeyValueMapper<Object, Object> {
-
+public interface KeyValueMapper<F,T> {
+    
     /**
-     * Stores the logger.
+     * Map the from to the to.
+     * 
+     * @param from the from.
+     * @return the to.
      */
-    private static final Logger LOGGER
-            = Logger.getLogger(KeyValueStore.class.getPackage().getName());
-
+    T to(F from);
+    
     /**
-     * @see KeyValueMapper#to(java.lang.Object)
+     * Map the to the from.
+     * 
+     * @param to the to.
+     * @return the from.
      */
-    @Override
-    public Object to(Object from) {
-        return from;
-    }
-
-    /**
-     * @see KeyValueMapper#from(java.lang.Object)
-     */
-    @Override
-    public Object from(Object to) {
-        return to;
-    }
+    F from(T to);
 }

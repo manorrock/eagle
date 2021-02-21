@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2002-2020, Manorrock.com. All Rights Reserved.
+ *  Copyright (c) 2002-2021, Manorrock.com. All Rights Reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are met:
@@ -27,53 +27,24 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.common.kvs.filesystem;
+package com.manorrock.eagle.common;
 
-import com.manorrock.common.kvs.api.KeyValueMapper;
-import java.io.File;
+import com.manorrock.eagle.api.KeyValueMapper;
 
 /**
- * The filename to file mapper.
- * 
+ * The identity mapper.
+ *
  * @author Manfred Riem (mriem@manorrock.com)
  */
-class FilenameToFileMapper implements KeyValueMapper<String, File> {
+public class IdentityMapper implements KeyValueMapper<Object, Object> {
 
-    /**
-     * Stores the base directory.
-     */
-    private final File baseDirectory;
-    
-    /**
-     * Constructor.
-     * 
-     * @param baseDirectory the base directory.
-     */
-    public FilenameToFileMapper(File baseDirectory) {
-        this.baseDirectory = baseDirectory;
-    }
-    
-    /**
-     * Map the filename to a file.
-     * 
-     * @param filename the filename.
-     * @return the file.
-     */
     @Override
-    public File to(String filename) {
-        return new File(baseDirectory, filename);
+    public Object to(Object from) {
+        return from;
     }
 
-    /**
-     * Map the file to a filename.
-     * 
-     * @param file the file.
-     * @return the filename.
-     */
     @Override
-    public String from(File file) {
-        String filename = file.getAbsolutePath();
-        filename = filename.substring(baseDirectory.getAbsolutePath().length());
-        return filename;
+    public Object from(Object to) {
+        return to;
     }
 }

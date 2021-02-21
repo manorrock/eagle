@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2002-2020, Manorrock.com. All Rights Reserved.
+ *  Copyright (c) 2002-2021, Manorrock.com. All Rights Reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are met:
@@ -27,30 +27,51 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.common.kvs.api;
+package com.manorrock.eagle.api;
 
 /**
- * The KeyValueMapper API.
+ * The KeyValueStore API.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
- * @param <F> the type of the from.
- * @param <T> the type of the to.
+ * @param <K> the type of the key.
+ * @param <V> the type of the value.
  */
-public interface KeyValueMapper<F,T> {
+public interface KeyValueStore<K, V> {
     
     /**
-     * Map the from to the to.
+     * Delete the value.
      * 
-     * @param from the from.
-     * @return the to.
+     * @param key the key.
      */
-    T to(F from);
+    void delete(K key);
     
     /**
-     * Map the to the from.
+     * Get the value.
      * 
-     * @param to the to.
-     * @return the from.
+     * @param key the key.
+     * @return the value.
      */
-    F from(T to);
+    V get(K key);
+
+    /**
+     * Put the value.
+     *
+     * @param key the key.
+     * @param value the value.
+     */
+    void put(K key, V value);
+    
+    /**
+     * Set the key mapper.
+     * 
+     * @param keyMapper the key mapper.
+     */
+    void setKeyMapper(KeyValueMapper keyMapper);
+    
+    /**
+     * Set the value mapper.
+     * 
+     * @param valueMapper the value mapper.
+     */
+    void setValueMapper(KeyValueMapper valueMapper);
 }

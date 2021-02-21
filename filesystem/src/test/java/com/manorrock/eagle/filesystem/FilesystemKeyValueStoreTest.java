@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2002-2020, Manorrock.com. All Rights Reserved.
+ *  Copyright (c) 2002-2021, Manorrock.com. All Rights Reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are met:
@@ -27,9 +27,9 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.common.kvs.filesystem;
+package com.manorrock.eagle.filesystem;
 
-import com.manorrock.common.kvs.common.StringToByteArrayMapper;
+import com.manorrock.eagle.common.StringToByteArrayMapper;
 import java.io.File;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -92,7 +92,7 @@ public class FilesystemKeyValueStoreTest {
         kvs.setValueMapper(new StringToByteArrayMapper());
         kvs.put("get", "getme");
         assertTrue(new File("target/get").exists());
-        assertEquals("getme", new String(kvs.get("get")));
+        assertEquals("getme", kvs.get("get"));
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2002-2020, Manorrock.com. All Rights Reserved.
+ *  Copyright (c) 2002-2021, Manorrock.com. All Rights Reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are met:
@@ -29,6 +29,7 @@
  */
 package com.manorrock.common.kvs.redis;
 
+import com.manorrock.eagle.redis.RedisKeyValueStore;
 import io.lettuce.core.RedisURI;
 import java.io.FileInputStream;
 import java.io.IOException;

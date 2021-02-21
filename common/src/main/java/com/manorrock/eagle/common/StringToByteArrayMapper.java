@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2002-2020, Manorrock.com. All Rights Reserved.
+ *  Copyright (c) 2002-2021, Manorrock.com. All Rights Reserved.
  *
  *  Redistribution and use in source and binary forms, with or without
  *  modification, are permitted provided that the following conditions are met:
@@ -27,10 +27,10 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.common.kvs.common;
+package com.manorrock.eagle.common;
 
-import com.manorrock.common.kvs.api.KeyValueMapper;
-import com.manorrock.common.kvs.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueMapper;
+import com.manorrock.eagle.api.KeyValueStore;
 import java.io.UnsupportedEncodingException;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
@@ -48,9 +48,6 @@ public class StringToByteArrayMapper implements KeyValueMapper<String, byte[]> {
     private static final Logger LOGGER
             = Logger.getLogger(KeyValueStore.class.getPackage().getName());
 
-    /**
-     * @see KeyValueMapper#to(java.lang.Object)
-     */
     @Override
     public byte[] to(String from) {
         byte[] result = null;
@@ -62,9 +59,6 @@ public class StringToByteArrayMapper implements KeyValueMapper<String, byte[]> {
         return result;
     }
 
-    /**
-     * @see KeyValueMapper#from(java.lang.Object)
-     */
     @Override
     public String from(byte[] from) {
         String result = null;
