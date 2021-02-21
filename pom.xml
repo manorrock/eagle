@@ -9,9 +9,10 @@
     <modules>
         <module>api</module>
         <module>common</module>
+        <module>cosmosdb</module>
         <module>filesystem</module>
-        <module>redis</module>
         <module>path</module>
+        <module>redis</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
