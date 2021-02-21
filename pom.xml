@@ -11,6 +11,7 @@
         <module>common</module>
         <module>filesystem</module>
         <module>redis</module>
+        <module>path</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
