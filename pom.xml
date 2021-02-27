@@ -60,6 +60,7 @@
         <module>filesystem</module>
         <module>path</module>
         <module>redis</module>
+        <module>factory</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
