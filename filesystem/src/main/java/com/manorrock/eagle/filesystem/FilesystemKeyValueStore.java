@@ -29,9 +29,10 @@
  */
 package com.manorrock.eagle.filesystem;
 
-import com.manorrock.eagle.common.IdentityMapper;
-import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
+import com.manorrock.eagle.common.FilenameToFileMapper;
+import com.manorrock.eagle.common.IdentityMapper;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -58,12 +59,12 @@ public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V> {
     /**
      * Stores the key mapper.
      */
-    private KeyValueMapper keyMapper;
+    private KeyValueStoreMapper keyMapper;
 
     /**
      * Stores the value mapper.
      */
-    private KeyValueMapper valueMapper;
+    private KeyValueStoreMapper valueMapper;
 
     /**
      * Constructor.
@@ -112,12 +113,12 @@ public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V> {
     }
 
     @Override
-    public void setKeyMapper(KeyValueMapper keyMapper) {
+    public void setKeyMapper(KeyValueStoreMapper keyMapper) {
         this.keyMapper = keyMapper;
     }
 
     @Override
-    public void setValueMapper(KeyValueMapper valueMapper) {
+    public void setValueMapper(KeyValueStoreMapper valueMapper) {
         this.valueMapper = valueMapper;
     }
 }

@@ -27,41 +27,36 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.eagle.filesystem;
-
-import com.manorrock.eagle.api.KeyValueMapper;
-import java.io.File;
+package com.manorrock.eagle.api;
 
 /**
- * The filename to file mapper.
+ * The KeyValueStoreMapper API.
+ * 
+ * <p>
+ *  This API is used to convert from one format to another. E.g if your 
+ *  KeyValueStore uses a text format to store its values you can use a 
+ *  KeyValueStoreMapper to convert to/from its value.
+ * </p>
  * 
  * @author Manfred Riem (mriem@manorrock.com)
+ * @param <F> the type of the from.
+ * @param <T> the type of the to.
  */
-class FilenameToFileMapper implements KeyValueMapper<String, File> {
-
-    /**
-     * Stores the base directory.
-     */
-    private final File baseDirectory;
+public interface KeyValueStoreMapper<F,T> {
     
     /**
-     * Constructor.
+     * Map the from to the to.
      * 
-     * @param baseDirectory the base directory.
+     * @param from the from.
+     * @return the to.
      */
-    public FilenameToFileMapper(File baseDirectory) {
-        this.baseDirectory = baseDirectory;
-    }
+    T to(F from);
     
-    @Override
-    public File to(String filename) {
-        return new File(baseDirectory, filename);
-    }
-
-    @Override
-    public String from(File file) {
-        String filename = file.getAbsolutePath();
-        filename = filename.substring(baseDirectory.getAbsolutePath().length());
-        return filename;
-    }
+    /**
+     * Map the to the from.
+     * 
+     * @param to the to.
+     * @return the from.
+     */
+    F from(T to);
 }

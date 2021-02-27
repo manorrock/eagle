@@ -27,30 +27,44 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.eagle.api;
+package com.manorrock.eagle.common;
+
+import com.manorrock.eagle.api.KeyValueStoreMapper;
+import java.nio.file.Path;
 
 /**
- * The KeyValueMapper API.
- * 
+ * The filename to path mapper.
+ *
+ * <p>
+ * This mapper will convert a string into a Path object (using a base path) and
+ * vice versa.
+ * </p>
+ *
  * @author Manfred Riem (mriem@manorrock.com)
- * @param <F> the type of the from.
- * @param <T> the type of the to.
  */
-public interface KeyValueMapper<F,T> {
-    
+public class FilenameToPathMapper implements KeyValueStoreMapper<String, Path> {
+
     /**
-     * Map the from to the to.
-     * 
-     * @param from the from.
-     * @return the to.
+     * Stores the base directory.
      */
-    T to(F from);
-    
+    private final Path basePath;
+
     /**
-     * Map the to the from.
-     * 
-     * @param to the to.
-     * @return the from.
+     * Constructor.
+     *
+     * @param basePath the base path.
      */
-    F from(T to);
+    public FilenameToPathMapper(Path basePath) {
+        this.basePath = basePath;
+    }
+
+    @Override
+    public Path to(String filename) {
+        return basePath.resolve(filename);
+    }
+
+    @Override
+    public String from(Path path) {
+        return path.toString();
+    }
 }

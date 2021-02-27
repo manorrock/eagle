@@ -29,8 +29,8 @@
  */
 package com.manorrock.eagle.redis;
 
-import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 import com.manorrock.eagle.common.IdentityMapper;
 import com.manorrock.eagle.common.StringToByteArrayMapper;
 import io.lettuce.core.RedisClient;
@@ -49,24 +49,19 @@ import java.nio.ByteBuffer;
 public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V> {
     
     /**
-     * Stores the Redis client.
-     */
-    private RedisClient client;
-    
-    /**
      * Stores the Redis connection.
      */
-    private StatefulRedisConnection<K, V> connection;
+    private final StatefulRedisConnection<K, V> connection;
 
     /**
      * Stores the key mapper.
      */
-    private KeyValueMapper keyMapper;
+    private KeyValueStoreMapper keyMapper;
 
     /**
      * Stores the value mapper.
      */
-    private KeyValueMapper valueMapper;
+    private KeyValueStoreMapper valueMapper;
 
     /**
      * Constructor.
@@ -76,7 +71,7 @@ public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V> {
     public RedisKeyValueStore(URI uri) {
         this.keyMapper = new StringToByteArrayMapper();
         this.valueMapper = new IdentityMapper();
-        client = RedisClient.create(uri.toString());
+        RedisClient client = RedisClient.create(uri.toString());
         connection = client.connect(new RedisCodec<K, V>() {
             @Override
             public K decodeKey(ByteBuffer bb) {
@@ -120,12 +115,12 @@ public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V> {
     }
 
     @Override
-    public void setKeyMapper(KeyValueMapper keyMapper) {
+    public void setKeyMapper(KeyValueStoreMapper keyMapper) {
         this.keyMapper = keyMapper;
     }
 
     @Override
-    public void setValueMapper(KeyValueMapper valueMapper) {
+    public void setValueMapper(KeyValueStoreMapper valueMapper) {
         this.valueMapper = valueMapper;
     }
 }

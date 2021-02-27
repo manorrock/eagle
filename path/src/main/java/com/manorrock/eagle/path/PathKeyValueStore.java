@@ -29,9 +29,10 @@
  */
 package com.manorrock.eagle.path;
 
-import com.manorrock.eagle.common.IdentityMapper;
-import com.manorrock.eagle.api.KeyValueMapper;
+import com.manorrock.eagle.common.FilenameToPathMapper;
 import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
+import com.manorrock.eagle.common.IdentityMapper;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -57,12 +58,12 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V> {
     /**
      * Stores the key mapper.
      */
-    private KeyValueMapper keyMapper;
+    private KeyValueStoreMapper keyMapper;
 
     /**
      * Stores the value mapper.
      */
-    private KeyValueMapper valueMapper;
+    private KeyValueStoreMapper valueMapper;
 
     /**
      * Constructor.
@@ -119,12 +120,12 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V> {
     }
 
     @Override
-    public void setKeyMapper(KeyValueMapper keyMapper) {
+    public void setKeyMapper(KeyValueStoreMapper keyMapper) {
         this.keyMapper = keyMapper;
     }
 
     @Override
-    public void setValueMapper(KeyValueMapper valueMapper) {
+    public void setValueMapper(KeyValueStoreMapper valueMapper) {
         this.valueMapper = valueMapper;
     }
 }

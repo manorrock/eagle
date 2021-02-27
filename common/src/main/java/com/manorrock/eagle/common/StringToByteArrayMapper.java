@@ -29,18 +29,22 @@
  */
 package com.manorrock.eagle.common;
 
-import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 import java.io.UnsupportedEncodingException;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
 
 /**
  * The string to byte-array mapper.
+ * 
+ * <p>
+ *  This mapper will convert from string to byte-array and back.
+ * </p>
  *
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class StringToByteArrayMapper implements KeyValueMapper<String, byte[]> {
+public class StringToByteArrayMapper implements KeyValueStoreMapper<String, byte[]> {
 
     /**
      * Stores the logger.

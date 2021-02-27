@@ -29,14 +29,20 @@
  */
 package com.manorrock.eagle.common;
 
-import com.manorrock.eagle.api.KeyValueMapper;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
  * The identity mapper.
+ * 
+ * <p>
+ *  This mapper does not do any mapping and can be used for your keys or values
+ *  if your KeyValueStore supports the type of KeyValuStore you instantiated 
+ *  directly.
+ * </p>
  *
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class IdentityMapper implements KeyValueMapper<Object, Object> {
+public class IdentityMapper implements KeyValueStoreMapper<Object, Object> {
 
     @Override
     public Object to(Object from) {

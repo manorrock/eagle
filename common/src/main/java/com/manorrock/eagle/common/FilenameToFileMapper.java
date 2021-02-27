@@ -27,39 +27,46 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.eagle.path;
+package com.manorrock.eagle.common;
 
-import com.manorrock.eagle.api.KeyValueMapper;
-import java.nio.file.Path;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
+import java.io.File;
 
 /**
- * The filename to path mapper.
- * 
+ * The filename to file mapper.
+ *
+ * <p>
+ * This mapper will convert a string into a File object (using a base directory)
+ * and vice versa.
+ * </p>
+ *
  * @author Manfred Riem (mriem@manorrock.com)
  */
-class FilenameToPathMapper implements KeyValueMapper<String, Path> {
+public class FilenameToFileMapper implements KeyValueStoreMapper<String, File> {
 
     /**
      * Stores the base directory.
      */
-    private final Path basePath;
-    
+    private final File baseDirectory;
+
     /**
      * Constructor.
-     * 
-     * @param basePath the base path.
+     *
+     * @param baseDirectory the base directory.
      */
-    public FilenameToPathMapper(Path basePath) {
-        this.basePath = basePath;
-    }
-    
-    @Override
-    public Path to(String filename) {
-        return basePath.resolve(filename);
+    public FilenameToFileMapper(File baseDirectory) {
+        this.baseDirectory = baseDirectory;
     }
 
     @Override
-    public String from(Path path) {
-        return path.toString();
+    public File to(String filename) {
+        return new File(baseDirectory, filename);
+    }
+
+    @Override
+    public String from(File file) {
+        String to = file.getAbsolutePath();
+        to = to.substring(baseDirectory.getAbsolutePath().length());
+        return to;
     }
 }
