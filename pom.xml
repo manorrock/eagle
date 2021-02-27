@@ -55,8 +55,8 @@
     </build>
     <modules>
         <module>api</module>
+        <module>azure</module>
         <module>common</module>
-        <module>cosmosdb</module>
         <module>filesystem</module>
         <module>path</module>
         <module>redis</module>
