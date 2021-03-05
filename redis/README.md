@@ -4,24 +4,22 @@
 
 If you want to use Redis as a Key-Value store you will need to do the following.
 
-1. Add the Lettuce dependency.
+1. Add the dependency.
 2. Create the RedisKeyValueStore.
 
-### Add the Lettuce dependency
+### Add the depedency
 
-As we do not want to interfere with any dependencies your project might rely on
-we have marked our Lettuce dependency as `optional` which means that if you want
-to use the Redis KeyValueStore you will need to add the Lettuce dependency to
-your project. Replace `PICK_YOUR_VERSION` with the version you want to use (for
-the version we tested with see the project pom.xml).
+To start add the following dependency.
 
 ```xml
-<dependency>
-    <groupId>io.lettuce</groupId>
-    <artifactId>lettuce-core</artifactId>
-    <version>PICK_YOUR_VERSION</version>
-</dependency>
+    <dependency>
+        <groupId>com.manorrock.eagle</groupId>
+        <artifactId>eagle-redis</artifactId>
+        <version>MY_VERSION</version>
+    </dependency>
 ```
+
+Where MY_VERSION should be replaced wit the version you want to use.
 
 ### Create the RedisKeyValueStore
 
@@ -40,3 +38,9 @@ The following code snippet will get your started.
 ```
 
 Then the rest is using the KeyValueStore APIs.
+
+### Overriding the Lettuce dependency
+
+Beneath the covers the Redis implementation uses Lettuce. If your own project
+uses Lettuce you should be aware of this. Note the version of the Lettuce dependency
+that this implementation use can be found in the pom.xml file.
