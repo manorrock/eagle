@@ -28,7 +28,16 @@ snippet will get you started.
 ```java
 
     File baseDirectory = new File("mybasedir");
-    FilesystemKeyValueStore kvs = new FilesystemKeyValueStore(baseDirectory);
+    FilesystemKeyValueStore store = new FilesystemKeyValueStore(baseDirectory);
 ```
 
 Then the rest is using the KeyValueStore APIs.
+
+## Factory properties
+
+If you want to create the FilesystemKeyValueStore using the KeyValueStoreFactory use the following
+
+| Key | Value 
+| --- | -----
+| className | com.manorrock.eagle.filesystem.FilesystemKeyValueStore
+| baseDirectory | the base directory
