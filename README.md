@@ -5,7 +5,7 @@ This project delivers you with a convenient Key-Value store API.
 Our current list of features/implementations available:
 
 1. Factory functionality
-1. [Filesystem implementation](fileystem/README.md)
+1. [Filesystem implementation](filesystem/README.md)
 1. Path implementation
 1. [Redis implementation](redis/README.md)
 
