@@ -66,12 +66,12 @@ public interface KeyValueStore<K, V> {
      * 
      * @param keyMapper the key mapper.
      */
-    void setKeyMapper(KeyValueStoreMapper keyMapper);
+    void setKeyMapper(KeyValueStoreMapper<K,?> keyMapper);
     
     /**
      * Set the value mapper.
      * 
      * @param valueMapper the value mapper.
      */
-    void setValueMapper(KeyValueStoreMapper valueMapper);
+    void setValueMapper(KeyValueStoreMapper<V,?> valueMapper);
 }

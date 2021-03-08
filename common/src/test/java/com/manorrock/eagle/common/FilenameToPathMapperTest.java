@@ -29,42 +29,26 @@
  */
 package com.manorrock.eagle.common;
 
-import com.manorrock.eagle.api.KeyValueStoreMapper;
+import java.io.File;
 import java.nio.file.Path;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
 /**
- * The filename to path mapper.
- *
- * <p>
- * This mapper will convert a string into a Path object (using a base path) and
- * vice versa.
- * </p>
- *
+ * The JUnit tests for the FilenameToPathMapper class.
+ * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class FilenameToPathMapper implements KeyValueStoreMapper<String, Path> {
-
+public class FilenameToPathMapperTest {
+    
     /**
-     * Stores the base directory.
+     * Test from method.
      */
-    private final Path basePath;
-
-    /**
-     * Constructor.
-     *
-     * @param basePath the base path.
-     */
-    public FilenameToPathMapper(Path basePath) {
-        this.basePath = basePath;
-    }
-
-    @Override
-    public Path to(String filename) {
-        return basePath.resolve(filename);
-    }
-
-    @Override
-    public String from(Path path) {
-        return path.toString().substring(basePath.toString().length());
+    @Test
+    public void testFrom() {
+        Path basePath = new File("").toPath();
+        Path path = new File("target").toPath();
+        FilenameToPathMapper mapper = new FilenameToPathMapper(basePath);
+        assertEquals("target", mapper.from(path));
     }
 }

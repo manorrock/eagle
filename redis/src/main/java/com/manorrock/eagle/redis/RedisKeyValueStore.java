@@ -31,7 +31,6 @@ package com.manorrock.eagle.redis;
 
 import com.manorrock.eagle.api.KeyValueStore;
 import com.manorrock.eagle.api.KeyValueStoreMapper;
-import com.manorrock.eagle.common.IdentityMapper;
 import com.manorrock.eagle.common.StringToByteArrayMapper;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
@@ -70,7 +69,7 @@ public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V> {
      */
     public RedisKeyValueStore(URI uri) {
         this.keyMapper = new StringToByteArrayMapper();
-        this.valueMapper = new IdentityMapper();
+        this.valueMapper = new StringToByteArrayMapper();
         RedisClient client = RedisClient.create(uri.toString());
         connection = client.connect(new RedisCodec<K, V>() {
             @Override
@@ -115,12 +114,12 @@ public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V> {
     }
 
     @Override
-    public void setKeyMapper(KeyValueStoreMapper keyMapper) {
+    public void setKeyMapper(KeyValueStoreMapper<K,?> keyMapper) {
         this.keyMapper = keyMapper;
     }
 
     @Override
-    public void setValueMapper(KeyValueStoreMapper valueMapper) {
+    public void setValueMapper(KeyValueStoreMapper<V,?> valueMapper) {
         this.valueMapper = valueMapper;
     }
 }
