@@ -56,6 +56,7 @@
     <modules>
         <module>api</module>
         <module>azure</module>
+        <module>chroniclemap</module>
         <module>common</module>
         <module>filesystem</module>
         <module>path</module>
