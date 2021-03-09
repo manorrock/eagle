@@ -27,17 +27,26 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
+package com.manorrock.eagle.azure.cosmosdb;
+
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
- * The Cosmos DB implementation of the K/V API.
+ * The default Cosmos DB Key KeyValueStoreMapper.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
+public class CosmosDBKeyMapper implements KeyValueStoreMapper<String, CosmosDBKey> {
 
-module com.manorrock.eagle.azure.cosmosdb {
-    
-    exports com.manorrock.eagle.azure.cosmosdb;
-    opens com.manorrock.eagle.azure.cosmosdb;
-    requires com.azure.cosmos;
-    requires com.manorrock.eagle.common;
+    @Override
+    public CosmosDBKey to(String from) {
+        CosmosDBKey key = new CosmosDBKey();
+        key.setItemId(from);
+        return key;
+    }
+
+    @Override
+    public String from(CosmosDBKey to) {
+        return to.getItemId();
+    }
 }

@@ -10,4 +10,17 @@
     <artifactId>eagle-azure-cosmosdb</artifactId>
     <packaging>jar</packaging>
     <name>Manorrock Eagle - Azure - CosmosDB implementation</name>
+    <dependencies>
+        <dependency>
+            <groupId>com.azure</groupId>
+            <artifactId>azure-cosmos</artifactId>
+            <version>4.12.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.manorrock.eagle</groupId>
+            <artifactId>eagle-common</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 </project>

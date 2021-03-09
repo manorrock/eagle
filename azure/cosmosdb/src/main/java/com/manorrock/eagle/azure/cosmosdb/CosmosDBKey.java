@@ -27,17 +27,84 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
+package com.manorrock.eagle.azure.cosmosdb;
+
+import com.azure.cosmos.models.CosmosItemRequestOptions;
+import com.azure.cosmos.models.PartitionKey;
 
 /**
- * The Cosmos DB implementation of the K/V API.
+ * The Cosmos DB key.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-
-module com.manorrock.eagle.azure.cosmosdb {
+public class CosmosDBKey {
     
-    exports com.manorrock.eagle.azure.cosmosdb;
-    opens com.manorrock.eagle.azure.cosmosdb;
-    requires com.azure.cosmos;
-    requires com.manorrock.eagle.common;
+    /**
+     * Stores the item id.
+     */
+    private String itemId;
+    
+    /**
+     * Stores the (request) options.
+     */
+    private CosmosItemRequestOptions options = new CosmosItemRequestOptions();
+    
+    /**
+     * Stores the partition key.
+     */
+    private PartitionKey partitionKey = PartitionKey.NONE;
+
+    /**
+     * Get the item id.
+     * 
+     * @return the item id.
+     */
+    public String getItemId() {
+        return itemId;
+    }
+
+    /**
+     * Get the request options.
+     * 
+     * @return the request options.
+     */
+    public CosmosItemRequestOptions getOptions() {
+        return options;
+    }
+
+    /**
+     * Get the partition key.
+     * 
+     * @return the partition key.
+     */
+    public PartitionKey getPartitionKey() {
+        return partitionKey;
+    }
+    
+    /**
+     * Set the item id.
+     * 
+     * @param itemId the item id.
+     */
+    public void setItemId(String itemId) {
+        this.itemId = itemId;
+    }
+
+    /**
+     * Set the (request) options.
+     * 
+     * @param options the (request) options.
+     */
+    public void setOptions(CosmosItemRequestOptions options) {
+        this.options = options;
+    }
+
+    /**
+     * Set the partition key.
+     * 
+     * @param partitionKey the partition key.
+     */
+    public void setPartitionKey(PartitionKey partitionKey) {
+        this.partitionKey = partitionKey;
+    }
 }
