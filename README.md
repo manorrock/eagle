@@ -4,15 +4,15 @@ This project delivers you with a convenient Key-Value store API.
 
 Our current list of features/implementations available:
 
+1. Azure Cosmos DB implementation
+1. Azure Storage Blob implementation
 1. [Factory functionality](factory/README.md)
 1. [Filesystem implementation](filesystem/README.md)
-1. Path implementation
+1. [Path implementation](path/README.md)
 1. [Redis implementation](redis/README.md)
 
 Our list of things under consideration:
 
-1. Azure Cosmos DB implementation
-1. Azure Storage Blob implementation
 1. Azure Files implementation
 1. CDI integration
 1. Hazelcast implementation

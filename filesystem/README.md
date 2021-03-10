@@ -7,7 +7,7 @@ If you want to use the filesystem as a Key-Value store you will need to do the f
 1. Add the dependency.
 2. Create the FilesystemKeyValueStore.
 
-### Add the depedency
+### Add the dependency
 
 To start add the following dependency.
 
@@ -21,9 +21,9 @@ To start add the following dependency.
 
 Where MY_VERSION should be replaced wit the version you want to use.
 
+### Create the FilesystemKeyValueStore
 
-If you want to use your file system as a Key-Value store then the following 
-snippet will get you started.
+The following snippet shows you how to create the FilesystemKeyValueStore
 
 ```java
 
