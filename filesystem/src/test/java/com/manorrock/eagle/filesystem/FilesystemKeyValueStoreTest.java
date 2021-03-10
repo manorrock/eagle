@@ -29,7 +29,6 @@
  */
 package com.manorrock.eagle.filesystem;
 
-import com.manorrock.eagle.common.StringToByteArrayMapper;
 import java.io.File;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -48,22 +47,8 @@ public class FilesystemKeyValueStoreTest {
      */
     @Test
     public void testDelete() {
-        FilesystemKeyValueStore<String, byte[]> kvs
-                = new FilesystemKeyValueStore<>(new File("target"));
-        kvs.put("delete", "deleteme".getBytes());
-        assertTrue(new File("target/delete").exists());
-        kvs.delete("delete");
-        assertFalse(new File("target/delete").exists());
-    }
-    
-    /**
-     * Test delete method.
-     */
-    @Test
-    public void testDelete2() {
         FilesystemKeyValueStore<String, String> kvs
                 = new FilesystemKeyValueStore<>(new File("target"));
-        kvs.setValueMapper(new StringToByteArrayMapper());
         kvs.put("delete", "deleteme");
         assertTrue(new File("target/delete").exists());
         kvs.delete("delete");
@@ -75,21 +60,8 @@ public class FilesystemKeyValueStoreTest {
      */
     @Test
     public void testGet() {
-        FilesystemKeyValueStore<String, byte[]> kvs
-                = new FilesystemKeyValueStore<>(new File("target"));
-        kvs.put("get", "getme".getBytes());
-        assertTrue(new File("target/get").exists());
-        assertEquals("getme", new String(kvs.get("get")));
-    }
-    
-    /**
-     * Test get method.
-     */
-    @Test
-    public void testGet2() {
         FilesystemKeyValueStore<String, String> kvs
                 = new FilesystemKeyValueStore<>(new File("target"));
-        kvs.setValueMapper(new StringToByteArrayMapper());
         kvs.put("get", "getme");
         assertTrue(new File("target/get").exists());
         assertEquals("getme", kvs.get("get"));
@@ -100,10 +72,10 @@ public class FilesystemKeyValueStoreTest {
      */
     @Test
     public void testPut() {
-        FilesystemKeyValueStore<String, byte[]> kvs
+        FilesystemKeyValueStore<String, String> kvs
                 = new FilesystemKeyValueStore<>(new File("target"));
-        kvs.put("put", "putme".getBytes());
+        kvs.put("put", "putme");
         assertTrue(new File("target/put").exists());
-        assertEquals("putme", new String(kvs.get("put")));
+        assertEquals("putme", kvs.get("put"));
     }
 }

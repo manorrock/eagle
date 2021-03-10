@@ -32,7 +32,7 @@ package com.manorrock.eagle.filesystem;
 import com.manorrock.eagle.api.KeyValueStore;
 import com.manorrock.eagle.api.KeyValueStoreMapper;
 import com.manorrock.eagle.common.FilenameToFileMapper;
-import com.manorrock.eagle.common.IdentityMapper;
+import com.manorrock.eagle.common.StringToByteArrayMapper;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -43,6 +43,12 @@ import java.util.logging.Logger;
 
 /**
  * A file-system based KeyValueStore.
+ * 
+ * <p>
+ *  Note the default keyMapper is setup assuming the K type is String, the 
+ *  default valueMapper is setup assuming the V type is String. If that is not
+ *  the case make sure to deliver the appropriate mapper.
+ * </p>
  *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
@@ -73,7 +79,7 @@ public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V> {
      */
     public FilesystemKeyValueStore(File baseDirectory) {
         this.keyMapper = new FilenameToFileMapper(baseDirectory);
-        this.valueMapper = new IdentityMapper();
+        this.valueMapper = new StringToByteArrayMapper();
     }
 
     @Override

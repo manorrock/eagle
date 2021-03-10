@@ -38,6 +38,7 @@ import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.manorrock.eagle.api.KeyValueStore;
 import com.manorrock.eagle.api.KeyValueStoreMapper;
 import com.manorrock.eagle.common.IdentityMapper;
+import com.manorrock.eagle.common.StringToByteArrayMapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -46,6 +47,12 @@ import java.util.logging.Logger;
 
 /**
  * An Azure Blob Storage based KeyValueStore.
+ *
+ * <p>
+ *  Note the default keyMapper is setup assuming the K type is String, the 
+ *  default valueMapper is setup assuming the V type is String. If that is not
+ *  the case make sure to deliver the appropriate mapper.
+ * </p>
  *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
@@ -102,7 +109,7 @@ public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V> {
                 .buildClient();
         container = client.getBlobContainerClient(containerName);
         keyMapper = new IdentityMapper();
-        valueMapper = new IdentityMapper();
+        valueMapper = new StringToByteArrayMapper();
     }
 
     @Override

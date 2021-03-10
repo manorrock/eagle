@@ -40,6 +40,12 @@ import java.nio.ByteBuffer;
 
 /**
  * A Redis based KeyValueStore.
+ * 
+ * <p>
+ *  Note the default keyMapper is setup assuming the K type is String, the 
+ *  default valueMapper is setup assuming the V type is String. If that is not
+ *  the case make sure to deliver the appropriate mapper.
+ * </p>
  *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.

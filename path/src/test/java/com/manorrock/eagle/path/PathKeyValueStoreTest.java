@@ -29,7 +29,6 @@
  */
 package com.manorrock.eagle.path;
 
-import com.manorrock.eagle.common.StringToByteArrayMapper;
 import java.io.File;
 import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,22 +48,8 @@ public class PathKeyValueStoreTest {
      */
     @Test
     public void testDelete() {
-        PathKeyValueStore<String, byte[]> kvs
-                = new PathKeyValueStore<>(Path.of("target"));
-        kvs.put("delete", "deleteme".getBytes());
-        assertTrue(new File("target/delete").exists());
-        kvs.delete("delete");
-        assertFalse(new File("target/delete").exists());
-    }
-    
-    /**
-     * Test delete method.
-     */
-    @Test
-    public void testDelete2() {
         PathKeyValueStore<String, String> kvs
                 = new PathKeyValueStore<>(Path.of("target"));
-        kvs.setValueMapper(new StringToByteArrayMapper());
         kvs.put("delete", "deleteme");
         assertTrue(new File("target/delete").exists());
         kvs.delete("delete");
@@ -76,21 +61,8 @@ public class PathKeyValueStoreTest {
      */
     @Test
     public void testGet() {
-        PathKeyValueStore<String, byte[]> kvs
-                = new PathKeyValueStore<>(Path.of("target"));
-        kvs.put("get", "getme".getBytes());
-        assertTrue(new File("target/get").exists());
-        assertEquals("getme", new String(kvs.get("get")));
-    }
-    
-    /**
-     * Test get method.
-     */
-    @Test
-    public void testGet2() {
         PathKeyValueStore<String, String> kvs
                 = new PathKeyValueStore<>(Path.of("target"));
-        kvs.setValueMapper(new StringToByteArrayMapper());
         kvs.put("get", "getme");
         assertTrue(new File("target/get").exists());
         assertEquals("getme", kvs.get("get"));
@@ -101,10 +73,10 @@ public class PathKeyValueStoreTest {
      */
     @Test
     public void testPut() {
-        PathKeyValueStore<String, byte[]> kvs
+        PathKeyValueStore<String, String> kvs
                 = new PathKeyValueStore<>(Path.of("target"));
-        kvs.put("put", "putme".getBytes());
+        kvs.put("put", "putme");
         assertTrue(new File("target/put").exists());
-        assertEquals("putme", new String(kvs.get("put")));
+        assertEquals("putme", kvs.get("put"));
     }
 }

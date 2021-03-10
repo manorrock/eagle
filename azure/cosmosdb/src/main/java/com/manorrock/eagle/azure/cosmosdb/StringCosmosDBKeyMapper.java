@@ -36,7 +36,7 @@ import com.manorrock.eagle.api.KeyValueStoreMapper;
  * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class CosmosDBKeyMapper implements KeyValueStoreMapper<String, CosmosDBKey> {
+public class StringCosmosDBKeyMapper implements KeyValueStoreMapper<String, CosmosDBKey> {
 
     @Override
     public CosmosDBKey to(String from) {

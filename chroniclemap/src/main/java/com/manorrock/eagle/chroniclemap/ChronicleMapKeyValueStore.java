@@ -31,12 +31,18 @@ package com.manorrock.eagle.chroniclemap;
 
 import com.manorrock.eagle.api.KeyValueStore;
 import com.manorrock.eagle.api.KeyValueStoreMapper;
-import com.manorrock.eagle.common.IdentityMapper;
+import com.manorrock.eagle.common.StringToByteArrayMapper;
 import net.openhft.chronicle.map.ChronicleMap;
 import net.openhft.chronicle.map.ChronicleMapBuilder;
 
 /**
  * A ChronicleMap based KeyValueStore.
+ * 
+ *<p>
+ *  Note the default keyMapper is setup assuming the K type is String, the 
+ *  default valueMapper is setup assuming the V type is String. If that is not
+ *  the case make sure to deliver the appropriate mapper.
+ * </p>
  *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
@@ -68,8 +74,8 @@ public class ChronicleMapKeyValueStore<K, V> implements KeyValueStore<K, V> {
         chronicleMap = ChronicleMapBuilder
                 .of(byte[].class, byte[].class)
                 .create();
-        keyMapper = new IdentityMapper();
-        valueMapper = new IdentityMapper();
+        keyMapper = new StringToByteArrayMapper();
+        valueMapper = new StringToByteArrayMapper();
     }
 
     @Override

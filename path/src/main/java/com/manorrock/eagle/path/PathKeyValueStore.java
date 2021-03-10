@@ -32,7 +32,7 @@ package com.manorrock.eagle.path;
 import com.manorrock.eagle.common.FilenameToPathMapper;
 import com.manorrock.eagle.api.KeyValueStore;
 import com.manorrock.eagle.api.KeyValueStoreMapper;
-import com.manorrock.eagle.common.IdentityMapper;
+import com.manorrock.eagle.common.StringToByteArrayMapper;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -42,6 +42,12 @@ import java.util.logging.Logger;
 
 /**
  * A path based KeyValueStore.
+ * 
+ * <p>
+ *  Note the default keyMapper is setup assuming the K type is String, the 
+ *  default valueMapper is setup assuming the V type is String. If that is not
+ *  the case make sure to deliver the appropriate mapper.
+ * </p>
  *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
@@ -72,7 +78,7 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V> {
      */
     public PathKeyValueStore(Path basePath) {
         this.keyMapper = new FilenameToPathMapper(basePath);
-        this.valueMapper = new IdentityMapper();
+        this.valueMapper = new StringToByteArrayMapper();
     }
 
     @Override
