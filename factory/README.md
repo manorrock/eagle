@@ -7,7 +7,7 @@ If you want to use a factory to create your KeyValueStore you can use the follow
 1. Add the dependencies.
 2. Create your KeyValueStore using the KeyValueStoreFactory.
 
-### Add the depedencies
+### Add the dependencies
 
 To start add the following dependencies.
 

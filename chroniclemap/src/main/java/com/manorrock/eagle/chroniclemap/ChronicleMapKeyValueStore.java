@@ -69,10 +69,14 @@ public class ChronicleMapKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * Constructor.
      *
      * @param name the name.
+     * @param maxSize the max size
      */
-    public ChronicleMapKeyValueStore(String name) {
+    public ChronicleMapKeyValueStore(String name, long maxSize) {
         chronicleMap = ChronicleMapBuilder
                 .of(byte[].class, byte[].class)
+                .averageKey(name.getBytes())
+                .averageValue(name.getBytes())
+                .entries(maxSize)
                 .create();
         keyMapper = new StringToByteArrayMapper();
         valueMapper = new StringToByteArrayMapper();
@@ -85,7 +89,12 @@ public class ChronicleMapKeyValueStore<K, V> implements KeyValueStore<K, V> {
 
     @Override
     public V get(K key) {
-        return (V) valueMapper.from((byte[]) chronicleMap.get((byte[]) keyMapper.to(key)));
+        V result = null;
+        byte[] keyBytes = chronicleMap.get((byte[]) keyMapper.to(key));
+        if (keyBytes != null) {
+            result = (V) valueMapper.from(keyBytes);
+        }
+        return result;
     }
 
     @Override
