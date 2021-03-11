@@ -77,12 +77,12 @@ The example below illustrates how to deliver a Long based key mapper.
 
   public class LongToStringMapper implements KeyValueStoreMapper<Long, String> {
 
-      public String to(Long to) {
-        return to.toString();
+      public String to(Long from) {
+        return from.toString();
       }
 
-      public Long from(String from) {
-        return Long.valueOf(from);
+      public Long from(String to) {
+        return Long.valueOf(to);
       }
   }
 
