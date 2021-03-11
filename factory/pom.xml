@@ -19,6 +19,13 @@
         </dependency>
         <dependency>
             <groupId>com.manorrock.eagle.azure</groupId>
+            <artifactId>eagle-azure-blob</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.manorrock.eagle.azure</groupId>
             <artifactId>eagle-azure-cosmosdb</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>

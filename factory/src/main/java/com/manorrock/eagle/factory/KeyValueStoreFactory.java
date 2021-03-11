@@ -30,6 +30,7 @@
 package com.manorrock.eagle.factory;
 
 import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.azure.blob.BlobKeyValueStore;
 import com.manorrock.eagle.azure.cosmosdb.CosmosDBKeyValueStore;
 import com.manorrock.eagle.chroniclemap.ChronicleMapKeyValueStore;
 import com.manorrock.eagle.redis.RedisKeyValueStore;
@@ -53,6 +54,18 @@ public final class KeyValueStoreFactory {
      * Constructor.
      */
     private KeyValueStoreFactory() {
+    }
+
+    /**
+     * Create the BlobKeyValueStore.
+     *
+     * @param configuration the configuration.
+     * @return the KeyValueStore or null if it could not be created.
+     */
+    private static KeyValueStore getBlobKeyValueStore(Map configuration) {
+        return new BlobKeyValueStore(
+                (String) configuration.get("endpoint"),
+                (String) configuration.get("containerName"));
     }
 
     /**
@@ -93,6 +106,9 @@ public final class KeyValueStoreFactory {
         String className = (String) configuration.get("className");
         if (className != null) {
             switch (className) {
+                case "com.manorrock.eagle.azure.blob.BlobKeyValueStore":
+                    result = getBlobKeyValueStore(configuration);
+                    break;
                 case "com.manorrock.eagle.chroniclemap.ChronicleMapKeyValueStore":
                     result = getChronicleMapKeyValueStore(configuration);
                     break;
