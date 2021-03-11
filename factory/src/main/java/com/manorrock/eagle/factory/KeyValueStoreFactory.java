@@ -30,6 +30,8 @@
 package com.manorrock.eagle.factory;
 
 import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.azure.cosmosdb.CosmosDBKey;
+import com.manorrock.eagle.azure.cosmosdb.CosmosDBKeyValueStore;
 import com.manorrock.eagle.redis.RedisKeyValueStore;
 import io.lettuce.core.RedisURI;
 import java.net.URI;
@@ -67,6 +69,9 @@ public final class KeyValueStoreFactory {
                 case "com.manorrock.eagle.redis.RedisKeyValueStore":
                     result = getRedisKeyValueStore(configuration);
                     break;
+                case "com.manorrock.eagle.azure.cosmosdb.CosmosDBKeyValueStore":
+                    result = getCosmosDBKeyValueStore(configuration);
+                    break;
             }
         }
         return result;
@@ -89,5 +94,20 @@ public final class KeyValueStoreFactory {
                 .build()
                 .toURI();
         return new RedisKeyValueStore(uri);
+    }
+
+    /**
+     * Create the CosmosDBKeyValueStore.
+     *
+     * @param configuration the configuration.
+     * @return the KeyValueStore or null if it could not be created.
+     */
+    private static KeyValueStore getCosmosDBKeyValueStore(Map configuration) {
+        return new CosmosDBKeyValueStore(
+            (String) configuration.get("endpoint"),
+            (String) configuration.get("masterKey"),
+            (String) configuration.get("consistencyLevel"),
+            (String) configuration.get("databaseName"),
+            (String) configuration.get("containerName"));
     }
 }

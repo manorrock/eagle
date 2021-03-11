@@ -18,6 +18,13 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.manorrock.eagle.azure</groupId>
+            <artifactId>eagle-azure-cosmosdb</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
             <groupId>com.manorrock.eagle</groupId>
             <artifactId>eagle-redis</artifactId>
             <version>${project.version}</version>

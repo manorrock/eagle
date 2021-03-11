@@ -4,7 +4,7 @@ This project delivers you with a convenient Key-Value store API.
 
 Our current list of features/implementations available:
 
-1. Azure Cosmos DB implementation
+1. [Azure Cosmos DB implementation](azure/cosmosdb/README.md)
 1. Azure Storage Blob implementation
 1. ChronicleMap implementation
 1. [Factory functionality](factory/README.md)
