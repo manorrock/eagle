@@ -27,33 +27,40 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.eagle.chroniclemap;
+package com.manorrock.eagle.hazelcast;
 
+import com.hazelcast.config.Config;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import com.manorrock.eagle.api.KeyValueStore;
 import com.manorrock.eagle.api.KeyValueStoreMapper;
 import com.manorrock.eagle.common.StringToByteArrayMapper;
-import net.openhft.chronicle.map.ChronicleMap;
-import net.openhft.chronicle.map.ChronicleMapBuilder;
+import java.util.Map;
 
 /**
- * A ChronicleMap based KeyValueStore.
- * 
- *<p>
- *  Note the default keyMapper is setup assuming the K type is String, the 
- *  default valueMapper is setup assuming the V type is String. If that is not
- *  the case make sure to deliver the appropriate mapper.
+ * A Hazelcast based KeyValueStore.
+ *
+ * <p>
+ * Note the default keyMapper is setup assuming the K type is String, the
+ * default valueMapper is setup assuming the V type is String. If that is not
+ * the case make sure to deliver the appropriate mapper.
  * </p>
  *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class ChronicleMapKeyValueStore<K, V> implements KeyValueStore<K, V> {
-    
+public class HazelcastKeyValueStore<K, V> implements KeyValueStore<K, V> {
+
     /**
-     * Stores the ChronicleMap.
+     * Stores the Hazelcast instance.
      */
-    private final ChronicleMap chronicleMap;
+    private HazelcastInstance hazelcast;
+
+    /**
+     * Stores the Hazelcast map.
+     */
+    private Map hazelcastMap;
 
     /**
      * Stores the key mapper.
@@ -69,49 +76,34 @@ public class ChronicleMapKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * Constructor.
      *
      * @param name the name.
-     * @param maxSize the max size
      */
-    public ChronicleMapKeyValueStore(String name, long maxSize) {
-        this(name, maxSize, byte[].class, byte[].class);
-    }
-    
-    /**
-     * Constructor.
-     *
-     * @param name the name.
-     * @param maxSize the max size.
-     * @param keyClass the key class.
-     * @param valueClass the value class.
-     */
-    public ChronicleMapKeyValueStore(String name, long maxSize, Class keyClass, Class valueClass) {
-        chronicleMap = ChronicleMapBuilder
-                .of(keyClass, valueClass)
-                .averageKey(name.getBytes())
-                .averageValue(name.getBytes())
-                .entries(maxSize)
-                .create();
-        keyMapper = new StringToByteArrayMapper();
-        valueMapper = new StringToByteArrayMapper();
+    public HazelcastKeyValueStore(String name) {
+        this.keyMapper = new StringToByteArrayMapper();
+        this.valueMapper = new StringToByteArrayMapper();
+        Config config = new Config();
+        config.setInstanceName(name);
+        hazelcast = Hazelcast.newHazelcastInstance(config);
+        hazelcastMap = hazelcast.getMap(name);
     }
 
     @Override
     public void delete(K key) {
-        chronicleMap.remove(keyMapper.to(key));
+        hazelcastMap.remove(keyMapper.to(key));
     }
 
     @Override
     public V get(K key) {
         V result = null;
-        Object keyBytes = chronicleMap.get(keyMapper.to(key));
-        if (keyBytes != null) {
-            result = (V) valueMapper.from(keyBytes);
+        Object value = hazelcastMap.get(keyMapper.to(key));
+        if (value != null) {
+            result = (V) valueMapper.from(value);
         }
         return result;
     }
 
     @Override
     public void put(K key, V value) {
-        chronicleMap.put(keyMapper.to(key), valueMapper.to(value));
+        hazelcastMap.put(keyMapper.to(key), valueMapper.to(value));
     }
 
     @Override

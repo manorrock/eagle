@@ -58,10 +58,11 @@
         <module>azure</module>
         <module>chroniclemap</module>
         <module>common</module>
+        <module>factory</module>
         <module>filesystem</module>
+        <module>hazelcast</module>
         <module>path</module>
         <module>redis</module>
-        <module>factory</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
