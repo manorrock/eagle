@@ -30,8 +30,8 @@
 package com.manorrock.eagle.factory;
 
 import com.manorrock.eagle.api.KeyValueStore;
-import com.manorrock.eagle.azure.cosmosdb.CosmosDBKey;
 import com.manorrock.eagle.azure.cosmosdb.CosmosDBKeyValueStore;
+import com.manorrock.eagle.chroniclemap.ChronicleMapKeyValueStore;
 import com.manorrock.eagle.redis.RedisKeyValueStore;
 import io.lettuce.core.RedisURI;
 import java.net.URI;
@@ -42,17 +42,44 @@ import java.util.Map;
  *
  * <p>
  * This class delivers you with a KeyValueStore factory that takes a
- * configuration map anb produces a KeyValueStore instance.
+ * configuration map and produces a KeyValueStore instance.
  * </p>
  *
  * @author Manfred Riem (mriem@manorrock.com)
  */
 public final class KeyValueStoreFactory {
-    
+
     /**
      * Constructor.
      */
     private KeyValueStoreFactory() {
+    }
+
+    /**
+     * Create the ChronicleMapKeyValueStore.
+     * 
+     * @param configuration the configuration.
+     * @return the KeyValueStore or null if it could not be created.
+     */
+    private static KeyValueStore getChronicleMapKeyValueStore(Map configuration) {
+        return new ChronicleMapKeyValueStore(
+                (String) configuration.get("name"),
+                Long.valueOf((String) configuration.get("maxSize")));
+    }
+
+    /**
+     * Create the CosmosDBKeyValueStore.
+     *
+     * @param configuration the configuration.
+     * @return the KeyValueStore or null if it could not be created.
+     */
+    private static KeyValueStore getCosmosDBKeyValueStore(Map configuration) {
+        return new CosmosDBKeyValueStore(
+                (String) configuration.get("endpoint"),
+                (String) configuration.get("masterKey"),
+                (String) configuration.get("consistencyLevel"),
+                (String) configuration.get("databaseName"),
+                (String) configuration.get("containerName"));
     }
 
     /**
@@ -66,11 +93,14 @@ public final class KeyValueStoreFactory {
         String className = (String) configuration.get("className");
         if (className != null) {
             switch (className) {
-                case "com.manorrock.eagle.redis.RedisKeyValueStore":
-                    result = getRedisKeyValueStore(configuration);
+                case "com.manorrock.eagle.chroniclemap.ChronicleMapKeyValueStore":
+                    result = getChronicleMapKeyValueStore(configuration);
                     break;
                 case "com.manorrock.eagle.azure.cosmosdb.CosmosDBKeyValueStore":
                     result = getCosmosDBKeyValueStore(configuration);
+                    break;
+                case "com.manorrock.eagle.redis.RedisKeyValueStore":
+                    result = getRedisKeyValueStore(configuration);
                     break;
             }
         }
@@ -94,20 +124,5 @@ public final class KeyValueStoreFactory {
                 .build()
                 .toURI();
         return new RedisKeyValueStore(uri);
-    }
-
-    /**
-     * Create the CosmosDBKeyValueStore.
-     *
-     * @param configuration the configuration.
-     * @return the KeyValueStore or null if it could not be created.
-     */
-    private static KeyValueStore getCosmosDBKeyValueStore(Map configuration) {
-        return new CosmosDBKeyValueStore(
-            (String) configuration.get("endpoint"),
-            (String) configuration.get("masterKey"),
-            (String) configuration.get("consistencyLevel"),
-            (String) configuration.get("databaseName"),
-            (String) configuration.get("containerName"));
     }
 }
