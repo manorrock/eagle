@@ -9,7 +9,7 @@
     </parent>
     <artifactId>eagle-azure-cosmosdb</artifactId>
     <packaging>jar</packaging>
-    <name>Manorrock Eagle - Azure - CosmosDB implementation</name>
+    <name>Manorrock Eagle - Azure - CosmosDB</name>
     <dependencies>
         <dependency>
             <groupId>com.azure</groupId>

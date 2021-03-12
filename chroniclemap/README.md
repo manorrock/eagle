@@ -48,6 +48,6 @@ KeyValueStoreFactory use the following properties.
 
 | Key | Value 
 | --- | -----
-| className | com.manorrock.eagle.azure.chroniclemap.ChronicleMapKeyValueStore
+| className | com.manorrock.eagle.chroniclemap.ChronicleMapKeyValueStore
 | name | the name of the map
 | maxSize | the maximum size of the map

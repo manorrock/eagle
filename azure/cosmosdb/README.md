@@ -2,7 +2,8 @@
 
 ## CosmosDB implementation
 
-If you want to use CosmosDB as a Key-Value store you will need to do the following.
+If you want to use CosmosDB as a Key-Value store you will need to do the
+following.
 
 1. Add the dependency.
 2. Create the CosmosDBKeyValueStore.
@@ -37,12 +38,12 @@ The following code snippet will get your started.
 
 Then the rest is using the KeyValueStore APIs.
 
-## Overriding the Azure Cosmos client dependency
+## Overriding the Azure Cosmos library dependency
 
-Beneath the covers the CosmosDB implementation uses Azure Cosmos client. If your
-own project uses the Azure Cosmos client, or any of its dependencies you should
-be aware of this. Note the version of the Azure Cosmos client dependency that 
-this implementation uses can be found in the pom.xml file of this module.
+Beneath the covers the CosmosDB implementation uses Azure Cosmos library. If
+your own project uses the Azure Cosmos library, or any of its dependencies you
+should be aware of this. Note the version of the Azure Cosmos library dependency 
+that this implementation uses can be found in the pom.xml file of this module.
 
 ## Factory properties
 

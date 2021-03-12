@@ -33,11 +33,11 @@ import com.manorrock.eagle.api.KeyValueStore;
 import com.manorrock.eagle.azure.blob.BlobKeyValueStore;
 import com.manorrock.eagle.azure.cosmosdb.CosmosDBKeyValueStore;
 import com.manorrock.eagle.chroniclemap.ChronicleMapKeyValueStore;
+import com.manorrock.eagle.coherence.CoherenceKeyValueStore;
 import com.manorrock.eagle.hazelcast.HazelcastKeyValueStore;
 import com.manorrock.eagle.redis.RedisKeyValueStore;
 import io.lettuce.core.RedisURI;
 import java.net.URI;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -83,6 +83,16 @@ public final class KeyValueStoreFactory {
     }
 
     /**
+     * Create the Coherence KeyValueStore.
+     * 
+     * @param properties the configuration properties.
+     * @return the KeyValueStore or null if it could not be created.
+     */
+    private static KeyValueStore getCoherenceMapKeyValueStore(Properties properties) {
+        return new CoherenceKeyValueStore(properties.getProperty("name"));
+    }
+
+    /**
      * Create the CosmosDB KeyValueStore.
      *
      * @param properties the configuration properties
@@ -123,6 +133,9 @@ public final class KeyValueStoreFactory {
                     break;
                 case "com.manorrock.eagle.chroniclemap.ChronicleMapKeyValueStore":
                     result = getChronicleMapKeyValueStore(properties);
+                    break;
+                case "com.manorrock.eagle.coherence.CoherenceKeyValueStore":
+                    result = getCoherenceMapKeyValueStore(properties);
                     break;
                 case "com.manorrock.eagle.azure.cosmosdb.CosmosDBKeyValueStore":
                     result = getCosmosDBKeyValueStore(properties);

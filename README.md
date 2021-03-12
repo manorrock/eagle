@@ -9,6 +9,8 @@ Our current list of features/implementations available:
 1. [ChronicleMap implementation](chroniclemap/README.md)
 1. [Factory functionality](factory/README.md)
 1. [Filesystem implementation](filesystem/README.md)
+1. [Hazelcast implementation](hazelcast/README.md)
+1. [Oracle Coherence implementation](coherence/README.md)
 1. [Path implementation](path/README.md)
 1. [Redis implementation](redis/README.md)
 
@@ -16,9 +18,7 @@ Our list of things under consideration:
 
 1. Azure Files implementation
 1. CDI integration
-1. Hazelcast implementation
 1. JDBC implementation
-1. Oracle Coherence implementation
 1. Spring Boot starter
 
 ## Getting started

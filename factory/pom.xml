@@ -40,6 +40,13 @@
         </dependency>
         <dependency>
             <groupId>com.manorrock.eagle</groupId>
+            <artifactId>eagle-coherence</artifactId>
+            <version>${project.version}</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.manorrock.eagle</groupId>
             <artifactId>eagle-hazelcast</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
@@ -49,13 +56,6 @@
             <groupId>com.manorrock.eagle</groupId>
             <artifactId>eagle-redis</artifactId>
             <version>${project.version}</version>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>io.lettuce</groupId>
-            <artifactId>lettuce-core</artifactId>
-            <version>5.3.1.RELEASE</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>

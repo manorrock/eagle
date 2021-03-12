@@ -35,12 +35,12 @@ The following code snippet will get your started.
 
 Then the rest is using the KeyValueStore APIs.
 
-## Overriding the Azure Cosmos client dependency
+## Overriding the Azure Blob Storage library dependency
 
 Beneath the covers the Azure Blob Storage implementation uses Azure Blob Storage
-client. If your own project uses the Azure Blob Storage client, or any of its 
+library. If your own project uses the Azure Blob Storage library, or any of its 
 dependencies you should be aware of this. Note the version of the Azure Blob 
-Storage client dependency that this implementation uses can be found in the
+Storage library dependency that this implementation uses can be found in the
 pom.xml file of this module.
 
 ## Factory properties
