@@ -57,6 +57,7 @@
         <module>api</module>
         <module>azure</module>
         <module>chroniclemap</module>
+        <module>coherence</module>
         <module>common</module>
         <module>factory</module>
         <module>filesystem</module>
