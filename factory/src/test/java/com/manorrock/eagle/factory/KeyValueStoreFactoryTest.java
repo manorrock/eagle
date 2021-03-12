@@ -31,7 +31,7 @@ package com.manorrock.eagle.factory;
 
 import com.manorrock.eagle.redis.RedisKeyValueStore;
 import java.io.File;
-import java.util.HashMap;
+import java.util.Properties;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 
@@ -48,11 +48,11 @@ public class KeyValueStoreFactoryTest {
     @Test
     public void testGetKeyValueStore() {
         if (new File("testRedis").exists()) {
-            HashMap configuration = new HashMap<>();
-            configuration.put("className", RedisKeyValueStore.class.getName());
-            configuration.put("hostname", "localhost");
-            configuration.put("password", "mypassword");
-            assertNotNull(KeyValueStoreFactory.getKeyValueStore(configuration));
+            Properties properties = new Properties();
+            properties.put("className", RedisKeyValueStore.class.getName());
+            properties.put("hostname", "localhost");
+            properties.put("password", "mypassword");
+            assertNotNull(KeyValueStoreFactory.getKeyValueStore(properties));
         }
     }
 }

@@ -33,10 +33,10 @@ The factory makes it possible to create a KeyValueStore using factory with a map
 For example see the snippet below to create a FilesystemKeyValueStore.
 
 ```java
-    HashMap map = new HashMap();
-    map.put("className", "com.manorrock.eagle.filesystem.FilesystemKeyValueStore");
-    map.put("baseDirectory", "mydirectory");
-    KeyValueStore store = KeyValueStoreFactory.getKeyValueStore(map);
+    Properties properties = new Properties();
+    properties.put("className", "com.manorrock.eagle.filesystem.FilesystemKeyValueStore");
+    properties.put("baseDirectory", "mydirectory");
+    KeyValueStore store = KeyValueStoreFactory.getKeyValueStore(properties);
 ```
 
 Note the key/values in the map are dependent on the underlying KeyValueStore you are trying to create.

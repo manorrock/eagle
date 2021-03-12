@@ -33,10 +33,12 @@ import com.manorrock.eagle.api.KeyValueStore;
 import com.manorrock.eagle.azure.blob.BlobKeyValueStore;
 import com.manorrock.eagle.azure.cosmosdb.CosmosDBKeyValueStore;
 import com.manorrock.eagle.chroniclemap.ChronicleMapKeyValueStore;
+import com.manorrock.eagle.hazelcast.HazelcastKeyValueStore;
 import com.manorrock.eagle.redis.RedisKeyValueStore;
 import io.lettuce.core.RedisURI;
 import java.net.URI;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * A KeyValueStore factory.
@@ -57,66 +59,79 @@ public final class KeyValueStoreFactory {
     }
 
     /**
-     * Create the BlobKeyValueStore.
+     * Create the Azure Blob Storage KeyValueStore.
      *
-     * @param configuration the configuration.
+     * @param properties the configuration properties.
      * @return the KeyValueStore or null if it could not be created.
      */
-    private static KeyValueStore getBlobKeyValueStore(Map configuration) {
+    private static KeyValueStore getBlobKeyValueStore(Properties properties) {
         return new BlobKeyValueStore(
-                (String) configuration.get("endpoint"),
-                (String) configuration.get("containerName"));
+                properties.getProperty("endpoint"),
+                properties.getProperty("containerName"));
     }
 
     /**
-     * Create the ChronicleMapKeyValueStore.
+     * Create the ChronicleMap KeyValueStore.
      * 
-     * @param configuration the configuration.
+     * @param properties the configuration properties.
      * @return the KeyValueStore or null if it could not be created.
      */
-    private static KeyValueStore getChronicleMapKeyValueStore(Map configuration) {
+    private static KeyValueStore getChronicleMapKeyValueStore(Properties properties) {
         return new ChronicleMapKeyValueStore(
-                (String) configuration.get("name"),
-                Long.valueOf((String) configuration.get("maxSize")));
+                properties.getProperty("name"),
+                Long.valueOf(properties.getProperty("maxSize")));
     }
 
     /**
-     * Create the CosmosDBKeyValueStore.
+     * Create the CosmosDB KeyValueStore.
      *
-     * @param configuration the configuration.
+     * @param properties the configuration properties
      * @return the KeyValueStore or null if it could not be created.
      */
-    private static KeyValueStore getCosmosDBKeyValueStore(Map configuration) {
+    private static KeyValueStore getCosmosDBKeyValueStore(Properties properties) {
         return new CosmosDBKeyValueStore(
-                (String) configuration.get("endpoint"),
-                (String) configuration.get("masterKey"),
-                (String) configuration.get("consistencyLevel"),
-                (String) configuration.get("databaseName"),
-                (String) configuration.get("containerName"));
+                properties.getProperty("endpoint"),
+                properties.getProperty("masterKey"),
+                properties.getProperty("consistencyLevel"),
+                properties.getProperty("databaseName"),
+                properties.getProperty("containerName"));
+    }
+
+    /**
+     * Create the Hazelcast KeyValueStore.
+     *
+     * @param properties the configuration properties.
+     * @return the KeyValueStore or null if it could not be created.
+     */
+    private static KeyValueStore getHazelcastKeyValueStore(Properties properties) {
+        return new HazelcastKeyValueStore(properties.getProperty("name"));
     }
 
     /**
      * Get the KeyValueStore.
      *
-     * @param configuration the configuration map.
+     * @param properties the configuration properties.
      * @return the KeyValueStore, or null if unable to create one.
      */
-    public static KeyValueStore getKeyValueStore(Map configuration) {
+    public static KeyValueStore getKeyValueStore(Properties properties) {
         KeyValueStore result = null;
-        String className = (String) configuration.get("className");
+        String className = (String) properties.getProperty("className");
         if (className != null) {
             switch (className) {
                 case "com.manorrock.eagle.azure.blob.BlobKeyValueStore":
-                    result = getBlobKeyValueStore(configuration);
+                    result = getBlobKeyValueStore(properties);
                     break;
                 case "com.manorrock.eagle.chroniclemap.ChronicleMapKeyValueStore":
-                    result = getChronicleMapKeyValueStore(configuration);
+                    result = getChronicleMapKeyValueStore(properties);
                     break;
                 case "com.manorrock.eagle.azure.cosmosdb.CosmosDBKeyValueStore":
-                    result = getCosmosDBKeyValueStore(configuration);
+                    result = getCosmosDBKeyValueStore(properties);
+                    break;
+                case "com.manorrock.eagle.hazelcast.HazelcastKeyValueStore":
+                    result = getHazelcastKeyValueStore(properties);
                     break;
                 case "com.manorrock.eagle.redis.RedisKeyValueStore":
-                    result = getRedisKeyValueStore(configuration);
+                    result = getRedisKeyValueStore(properties);
                     break;
             }
         }
@@ -124,19 +139,17 @@ public final class KeyValueStoreFactory {
     }
 
     /**
-     * Create the RedisKeyValueStore.
+     * Create the Redis KeyValueStore.
      *
-     * @param configuration the configuration.
+     * @param properties the configuration properties.
      * @return the KeyValueStore or null if it could not be created.
      */
-    private static KeyValueStore getRedisKeyValueStore(Map configuration) {
+    private static KeyValueStore getRedisKeyValueStore(Properties properties) {
         URI uri = RedisURI.Builder
-                .redis((String) configuration.get("hostname"))
-                .withPort(configuration.containsKey("portNumber")
-                        ? (Integer) configuration.get("portNumber") : 6379)
-                .withSsl(configuration.containsKey("ssl")
-                        ? (Boolean) configuration.get("ssl") : false)
-                .withPassword((String) configuration.get("password"))
+                .redis(properties.getProperty("hostname"))
+                .withPort(Integer.valueOf(properties.getProperty("portNumber", "6379")))
+                .withSsl(Boolean.valueOf(properties.getProperty("ssl", "false")))
+                .withPassword(properties.getProperty("password"))
                 .build()
                 .toURI();
         return new RedisKeyValueStore(uri);

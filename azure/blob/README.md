@@ -46,7 +46,7 @@ pom.xml file of this module.
 ## Factory properties
 
 If you want to create the BlobKeyValueStore using the KeyValueStoreFactory 
-use the following
+use the following properties.
 
 | Key | Value 
 | --- | -----

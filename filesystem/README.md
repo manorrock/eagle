@@ -35,7 +35,8 @@ Then the rest is using the KeyValueStore APIs.
 
 ## Factory properties
 
-If you want to create the FilesystemKeyValueStore using the KeyValueStoreFactory use the following
+If you want to create the FilesystemKeyValueStore using the KeyValueStoreFactory
+use the following properties.
 
 | Key | Value 
 | --- | -----
