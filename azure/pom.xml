@@ -12,10 +12,11 @@
     <packaging>pom</packaging>
     <name>Manorrock Eagle - Azure - Project</name>
     <modules>
-        <module>cosmosdb</module>
         <module>blob</module>
-        <module>keyvault-secrets</module>
+        <module>cosmosdb</module>
         <module>keyvault-certificates</module>
+        <module>keyvault-keys</module>
+        <module>keyvault-secrets</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
