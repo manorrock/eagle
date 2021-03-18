@@ -47,8 +47,10 @@ import net.openhft.chronicle.map.ChronicleMapBuilder;
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
+ * @param <KU> the type of the underlying key.
+ * @param <VU> the type of the underlying value.
  */
-public class ChronicleMapKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class ChronicleMapKeyValueStore<K, V, KU, VU> implements KeyValueStore<K, V, KU, VU> {
     
     /**
      * Stores the ChronicleMap.
@@ -102,9 +104,9 @@ public class ChronicleMapKeyValueStore<K, V> implements KeyValueStore<K, V> {
     @Override
     public V get(K key) {
         V result = null;
-        Object keyBytes = chronicleMap.get(keyMapper.to(key));
-        if (keyBytes != null) {
-            result = (V) valueMapper.from(keyBytes);
+        Object value = chronicleMap.get(keyMapper.to(key));
+        if (value != null) {
+            result = (V) valueMapper.from(value);
         }
         return result;
     }
@@ -115,12 +117,12 @@ public class ChronicleMapKeyValueStore<K, V> implements KeyValueStore<K, V> {
     }
 
     @Override
-    public void setKeyMapper(KeyValueStoreMapper<K, ?> keyMapper) {
+    public void setKeyMapper(KeyValueStoreMapper<K, KU> keyMapper) {
         this.keyMapper = keyMapper;
     }
 
     @Override
-    public void setValueMapper(KeyValueStoreMapper<V, ?> valueMapper) {
+    public void setValueMapper(KeyValueStoreMapper<V, VU> valueMapper) {
         this.valueMapper = valueMapper;
     }
 }

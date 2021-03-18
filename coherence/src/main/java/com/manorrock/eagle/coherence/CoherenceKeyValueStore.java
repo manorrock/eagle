@@ -47,13 +47,15 @@ import com.tangosol.net.Session;
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
+ * @param <KU> the type of the underlying key.
+ * @param <VU> the type of the underlying value.
  */
-public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class CoherenceKeyValueStore<K, V, KU, VU> implements KeyValueStore<K, V, KU, VU> {
 
     /**
      * Stores the named cache.
      */
-    private NamedCache namedCache;
+    private NamedCache<KU, VU> namedCache;
     
     /**
      * Stores the key mapper.
@@ -79,13 +81,13 @@ public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V> {
 
     @Override
     public void delete(K key) {
-        namedCache.remove(keyMapper.to(key));
+        namedCache.remove((KU) keyMapper.to(key));
     }
 
     @Override
     public V get(K key) {
         V result = null;
-        Object value = namedCache.get(keyMapper.to(key));
+        Object value = namedCache.get((KU) keyMapper.to(key));
         if (value != null) {
             result = (V) valueMapper.from(value);
         }
@@ -94,16 +96,16 @@ public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V> {
 
     @Override
     public void put(K key, V value) {
-        namedCache.put(keyMapper.to(key), valueMapper.to(value));
+        namedCache.put((KU) keyMapper.to(key), (VU) valueMapper.to(value));
     }
 
     @Override
-    public void setKeyMapper(KeyValueStoreMapper<K, ?> keyMapper) {
+    public void setKeyMapper(KeyValueStoreMapper<K, KU> keyMapper) {
         this.keyMapper = keyMapper;
     }
 
     @Override
-    public void setValueMapper(KeyValueStoreMapper<V, ?> valueMapper) {
+    public void setValueMapper(KeyValueStoreMapper<V, VU> valueMapper) {
         this.valueMapper = valueMapper;
     }
 }

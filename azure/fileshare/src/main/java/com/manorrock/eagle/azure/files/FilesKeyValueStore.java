@@ -27,42 +27,44 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.eagle.azure.keyvault.secrets;
+package com.manorrock.eagle.azure.files;
 
-import com.azure.core.credential.TokenCredential;
-import com.azure.identity.DefaultAzureCredentialBuilder;
-import com.azure.security.keyvault.secrets.SecretClient;
-import com.azure.security.keyvault.secrets.SecretClientBuilder;
-import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
+import com.azure.storage.file.share.ShareClient;
+import com.azure.storage.file.share.ShareClientBuilder;
+import com.azure.storage.file.share.ShareFileClient;
 import com.manorrock.eagle.api.KeyValueStore;
 import com.manorrock.eagle.api.KeyValueStoreMapper;
 import com.manorrock.eagle.common.IdentityMapper;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * An Azure Blob Storage based KeyValueStore.
+ * An Azure File Share based KeyValueStore.
  *
  * <p>
- * Note the default keyMapper is setup assuming the K type is String, the
- * default valueMapper is setup assuming the V type is String. If that is not
- * the case make sure to deliver the appropriate mapper.
+ *  Note the default keyMapper is setup assuming the K type is String, the 
+ *  default valueMapper is setup assuming the V type is byte-array. If that is
+ *  not the case make sure to deliver the appropriate mapper.
  * </p>
  *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class FilesKeyValueStore<K, V> implements KeyValueStore<K, V, String, byte[]> {
 
     /**
      * Stores the logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(SecretKeyValueStore.class.getPackage().getName());
+    private static final Logger LOGGER = Logger.getLogger(FilesKeyValueStore.class.getPackage().getName());
 
     /**
      * Stores the client.
      */
-    private SecretClient client;
+    private final ShareClient client;
 
     /**
      * Stores the key mapper.
@@ -78,21 +80,14 @@ public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * Constructor.
      *
      * @param endpoint the endpoint.
+     * @param shareName the share name.
+     * @param sasToken the SAS token.
      */
-    public SecretKeyValueStore(String endpoint) {
-        this(endpoint, new DefaultAzureCredentialBuilder().build());
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param endpoint the endpoint.
-     * @param credential the token credential.
-     */
-    public SecretKeyValueStore(String endpoint, TokenCredential credential) {
-        client = new SecretClientBuilder()
-                .vaultUrl(endpoint)
-                .credential(credential)
+    public FilesKeyValueStore(String endpoint, String shareName, String sasToken) {
+        client = new ShareClientBuilder()
+                .endpoint(endpoint)
+                .shareName(shareName)
+                .sasToken(sasToken)
                 .buildClient();
         keyMapper = new IdentityMapper();
         valueMapper = new IdentityMapper();
@@ -101,38 +96,41 @@ public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V> {
     @Override
     public void delete(K key) {
         String name = (String) keyMapper.to(key);
-        client.beginDeleteSecret(name);
+        client.deleteFile(name);
     }
 
     @Override
     public V get(K key) {
-        String name = (String) keyMapper.to(key);
-        KeyVaultSecret secret = client.getSecret(name);
+        String filename = (String) keyMapper.to(key);
         V result = null;
-        if (secret != null) {
-            result = (V) valueMapper.from(secret);
+        try ( ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            client.getFileClient(filename).download(outputStream);
+            result = (V) valueMapper.from(outputStream.toByteArray());
+        } catch (IOException ioe) {
+            LOGGER.log(Level.WARNING, "Unable to download file: {0}", filename);
         }
         return result;
     }
 
     @Override
     public void put(K key, V value) {
-        String name = (String) keyMapper.to(key);
-        if (value instanceof KeyVaultSecret) {
-            KeyVaultSecret secret = (KeyVaultSecret) value;
-            client.setSecret(secret);
-        } else {
-            client.setSecret(name, ((KeyVaultSecret) valueMapper.to(value)).getName());
+        String filename = (String) keyMapper.to(key);
+        byte[] bytes = (byte[]) valueMapper.to(value);
+        try ( ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes)) {
+            ShareFileClient fileClient = client.createFile(filename, bytes.length);
+            fileClient.upload(inputStream, bytes.length);
+        } catch (IOException ioe) {
+            LOGGER.log(Level.WARNING, "Unable to upload file: {0}", filename);
         }
     }
 
     @Override
-    public void setKeyMapper(KeyValueStoreMapper<K, ?> keyMapper) {
+    public void setKeyMapper(KeyValueStoreMapper<K, String> keyMapper) {
         this.keyMapper = keyMapper;
     }
 
     @Override
-    public void setValueMapper(KeyValueStoreMapper<V, ?> valueMapper) {
+    public void setValueMapper(KeyValueStoreMapper<V, byte[]> valueMapper) {
         this.valueMapper = valueMapper;
     }
 }

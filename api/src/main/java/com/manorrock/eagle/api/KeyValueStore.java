@@ -35,8 +35,10 @@ package com.manorrock.eagle.api;
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
+ * @param <KU> the type of underlying key.
+ * @param <VU> the type of the underlying value.
  */
-public interface KeyValueStore<K, V> {
+public interface KeyValueStore<K, V, KU, VU> {
     
     /**
      * Delete the value.
@@ -66,12 +68,12 @@ public interface KeyValueStore<K, V> {
      * 
      * @param keyMapper the key mapper.
      */
-    void setKeyMapper(KeyValueStoreMapper<K,?> keyMapper);
+    void setKeyMapper(KeyValueStoreMapper<K,KU> keyMapper);
     
     /**
      * Set the value mapper.
      * 
      * @param valueMapper the value mapper.
      */
-    void setValueMapper(KeyValueStoreMapper<V,?> valueMapper);
+    void setValueMapper(KeyValueStoreMapper<V,VU> valueMapper);
 }

@@ -53,7 +53,7 @@ import java.util.logging.Logger;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class PathKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, Path, byte[]> {
 
     /**
      * Stores the logger.

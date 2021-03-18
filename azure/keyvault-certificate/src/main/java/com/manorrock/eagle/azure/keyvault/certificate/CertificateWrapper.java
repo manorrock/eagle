@@ -27,14 +27,70 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
+package com.manorrock.eagle.azure.keyvault.certificate;
+
+import com.azure.security.keyvault.certificates.models.KeyVaultCertificateWithPolicy;
 
 /**
- * The Eagle API - the K/V API.
+ * A wrapper to deal with certificates.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-module com.manorrock.eagle.api {
-   
-    exports com.manorrock.eagle.api;
-    opens com.manorrock.eagle.api;
+public class CertificateWrapper {
+
+    /**
+     * Stores the certificate bytes.
+     */
+    private byte[] bytes;
+
+    /**
+     * Stores the wrapped certificate.
+     */
+    private KeyVaultCertificateWithPolicy wrapped;
+
+    /**
+     * Constructor.
+     */
+    public CertificateWrapper() {
+    }
+    
+    /**
+     * Constructor.
+     * 
+     * @param bytes the certificate bytes.
+     */
+    public CertificateWrapper(byte[] bytes) {
+        this.bytes = bytes;
+    }
+    
+    /**
+     * Get the certificate bytes.
+     * 
+     * @return the certificate bytes.
+    */
+    public byte[] getBytes() {
+        byte[] result = bytes;
+        if (result == null) {
+            result = wrapped.getCer();
+        }
+        return result;
+    }
+
+    /**
+     * Set the certificate bytes.
+     * 
+     * @param bytes the bytes.
+     */
+    public void setBytes(byte[] bytes) {
+        this.bytes = bytes;
+    }
+
+    /**
+     * Set the wrapped certificate.
+     * 
+     * @param wrapped the certificate
+     */
+    public void setWrapped(KeyVaultCertificateWithPolicy wrapped) {
+        this.wrapped = wrapped;
+    }
 }

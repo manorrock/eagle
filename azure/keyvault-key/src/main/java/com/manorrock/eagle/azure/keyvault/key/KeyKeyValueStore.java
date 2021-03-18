@@ -27,36 +27,38 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.eagle.redis;
+package com.manorrock.eagle.azure.keyvault.key;
 
+import com.azure.core.credential.TokenCredential;
+import com.azure.identity.DefaultAzureCredentialBuilder;
+import com.azure.security.keyvault.keys.KeyClient;
+import com.azure.security.keyvault.keys.KeyClientBuilder;
+import com.azure.security.keyvault.keys.models.ImportKeyOptions;
+import com.azure.security.keyvault.keys.models.JsonWebKey;
+import com.azure.security.keyvault.keys.models.KeyVaultKey;
 import com.manorrock.eagle.api.KeyValueStore;
 import com.manorrock.eagle.api.KeyValueStoreMapper;
-import com.manorrock.eagle.common.StringToByteArrayMapper;
-import io.lettuce.core.RedisClient;
-import io.lettuce.core.api.StatefulRedisConnection;
-import io.lettuce.core.codec.RedisCodec;
-import java.net.URI;
-import java.nio.ByteBuffer;
+import com.manorrock.eagle.common.IdentityMapper;
 
 /**
- * A Redis based KeyValueStore.
- * 
+ * An Azure KeyVault Key based KeyValueStore.
+ *
  * <p>
  *  Note the default keyMapper is setup assuming the K type is String, the 
- *  default valueMapper is setup assuming the V type is String. If that is not
- *  the case make sure to deliver the appropriate mapper.
+ *  default valueMapper is setup assuming the V type is JsonWebKey. If that is
+ *  not the case make sure to deliver the appropriate mapper.
  * </p>
  *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, byte[], byte[]> {
-    
+public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V, String, JsonWebKey> {
+
     /**
-     * Stores the Redis connection.
+     * Stores the client.
      */
-    private final StatefulRedisConnection<K, V> connection;
+    private KeyClient client;
 
     /**
      * Stores the key mapper.
@@ -71,61 +73,59 @@ public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, byte[], byt
     /**
      * Constructor.
      *
-     * @param uri the URI.
+     * @param endpoint the endpoint.
      */
-    public RedisKeyValueStore(URI uri) {
-        this.keyMapper = new StringToByteArrayMapper();
-        this.valueMapper = new StringToByteArrayMapper();
-        RedisClient client = RedisClient.create(uri.toString());
-        connection = client.connect(new RedisCodec<K, V>() {
-            @Override
-            public K decodeKey(ByteBuffer bb) {
-                byte[] bytes = new byte[bb.remaining()];
-                bb.get(bytes);
-                return (K) keyMapper.from(bytes);
-            }
+    public KeyKeyValueStore(String endpoint) {
+        this(endpoint, new DefaultAzureCredentialBuilder().build());
+    }
 
-            @Override
-            public V decodeValue(ByteBuffer bb) {
-                byte[] bytes = new byte[bb.remaining()];
-                bb.get(bytes);
-                return (V) valueMapper.from(bytes);
-            }
-
-            @Override
-            public ByteBuffer encodeKey(K k) {
-                return ByteBuffer.wrap((byte[]) keyMapper.to(k));
-            }
-
-            @Override
-            public ByteBuffer encodeValue(V v) {
-                return ByteBuffer.wrap((byte[]) valueMapper.to(v));
-            }
-        });
+    /**
+     * Constructor.
+     *
+     * @param endpoint the endpoint.
+     * @param credential the token credential.
+     */
+    public KeyKeyValueStore(String endpoint, TokenCredential credential) {
+        client = new KeyClientBuilder()
+                .vaultUrl(endpoint)
+                .credential(credential)
+                .buildClient();
+        keyMapper = new IdentityMapper();
+        valueMapper = new IdentityMapper();
     }
 
     @Override
     public void delete(K key) {
-        connection.sync().del(key);
+        String name = (String) keyMapper.to(key);
+        client.beginDeleteKey(name);
     }
 
     @Override
     public V get(K key) {
-        return connection.sync().get(key);
+        String name = (String) keyMapper.to(key);
+        KeyVaultKey keyVaultKey = client.getKey(name);
+        V result = null;
+        if (keyVaultKey != null && keyVaultKey.getKey()!= null) {
+            result = (V) valueMapper.from(keyVaultKey.getKey());
+        }
+        return result;
     }
 
     @Override
     public void put(K key, V value) {
-        connection.sync().set(key, value);
+        String name = (String) keyMapper.to(key);
+        JsonWebKey webKey = (JsonWebKey) valueMapper.to(value);
+        ImportKeyOptions options = new ImportKeyOptions(name, webKey);
+        client.importKey(options);
     }
 
     @Override
-    public void setKeyMapper(KeyValueStoreMapper<K,byte[]> keyMapper) {
+    public void setKeyMapper(KeyValueStoreMapper<K, String> keyMapper) {
         this.keyMapper = keyMapper;
     }
 
     @Override
-    public void setValueMapper(KeyValueStoreMapper<V,byte[]> valueMapper) {
+    public void setValueMapper(KeyValueStoreMapper<V, JsonWebKey> valueMapper) {
         this.valueMapper = valueMapper;
     }
 }

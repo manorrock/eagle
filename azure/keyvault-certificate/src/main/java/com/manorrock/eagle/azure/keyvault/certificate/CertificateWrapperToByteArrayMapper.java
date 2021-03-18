@@ -27,15 +27,25 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
+package com.manorrock.eagle.azure.keyvault.certificate;
+
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
- * The Path implementation of the K/V API.
+ * The CertificateWrapper to byte-array mapper.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-module com.manorrock.eagle.path {
+public class CertificateWrapperToByteArrayMapper 
+        implements KeyValueStoreMapper<byte[], CertificateWrapper> {
 
-    exports com.manorrock.eagle.path;
-    opens com.manorrock.eagle.path;
-    requires com.manorrock.eagle.common;
+    @Override
+    public CertificateWrapper to(byte[] bytes) {
+        return new CertificateWrapper(bytes);
+    }
+
+    @Override
+    public byte[] from(CertificateWrapper to) {
+        return to.getBytes();
+    }
 }

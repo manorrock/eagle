@@ -54,7 +54,7 @@ import java.util.logging.Logger;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V, File, byte[]> {
 
     /**
      * Stores the logger.

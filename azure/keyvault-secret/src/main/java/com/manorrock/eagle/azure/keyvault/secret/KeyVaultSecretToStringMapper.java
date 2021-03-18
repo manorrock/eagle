@@ -27,16 +27,25 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
+package com.manorrock.eagle.azure.keyvault.secret;
+
+import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
- * Common functionality the for K/V stores.
+ * A Key Vault Secret to String mapper.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-module com.manorrock.eagle.common {
+public class KeyVaultSecretToStringMapper implements KeyValueStoreMapper<String, KeyVaultSecret> {
 
-    exports com.manorrock.eagle.common;
-    opens com.manorrock.eagle.common;
-    requires transitive com.manorrock.eagle.api;
-    requires transitive java.logging;
+    @Override
+    public KeyVaultSecret to(String from) {
+        return new KeyVaultSecret("", from);
+    }
+
+    @Override
+    public String from(KeyVaultSecret to) {
+        return to.getValue();
+    }
 }
