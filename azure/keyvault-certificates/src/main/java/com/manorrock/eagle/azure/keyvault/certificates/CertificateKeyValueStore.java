@@ -27,24 +27,25 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.eagle.azure.keyvault.secrets;
+package com.manorrock.eagle.azure.keyvault.certificates;
 
 import com.azure.core.credential.TokenCredential;
 import com.azure.identity.DefaultAzureCredentialBuilder;
-import com.azure.security.keyvault.secrets.SecretClient;
-import com.azure.security.keyvault.secrets.SecretClientBuilder;
-import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
+import com.azure.security.keyvault.certificates.CertificateClient;
+import com.azure.security.keyvault.certificates.CertificateClientBuilder;
+import com.azure.security.keyvault.certificates.models.ImportCertificateOptions;
+import com.azure.security.keyvault.certificates.models.KeyVaultCertificateWithPolicy;
 import com.manorrock.eagle.api.KeyValueStore;
 import com.manorrock.eagle.api.KeyValueStoreMapper;
 import com.manorrock.eagle.common.IdentityMapper;
 import java.util.logging.Logger;
 
 /**
- * An Azure Blob Storage based KeyValueStore.
+ * An Azure Key Vault Certificates based KeyValueStore.
  *
  * <p>
  * Note the default keyMapper is setup assuming the K type is String, the
- * default valueMapper is setup assuming the V type is String. If that is not
+ * default valueMapper is setup assuming the V type is byte[]. If that is not
  * the case make sure to deliver the appropriate mapper.
  * </p>
  *
@@ -52,17 +53,17 @@ import java.util.logging.Logger;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class KeyVaultSecretKeyStore<K, V> implements KeyValueStore<K, V> {
+public class CertificateKeyValueStore<K, V> implements KeyValueStore<K, V> {
 
     /**
      * Stores the logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(KeyVaultSecretKeyStore.class.getPackage().getName());
+    private static final Logger LOGGER = Logger.getLogger(CertificateKeyValueStore.class.getPackage().getName());
 
     /**
      * Stores the client.
      */
-    private SecretClient client;
+    private CertificateClient client;
 
     /**
      * Stores the key mapper.
@@ -79,7 +80,7 @@ public class KeyVaultSecretKeyStore<K, V> implements KeyValueStore<K, V> {
      *
      * @param endpoint the endpoint.
      */
-    public KeyVaultSecretKeyStore(String endpoint) {
+    public CertificateKeyValueStore(String endpoint) {
         this(endpoint, new DefaultAzureCredentialBuilder().build());
     }
 
@@ -89,8 +90,8 @@ public class KeyVaultSecretKeyStore<K, V> implements KeyValueStore<K, V> {
      * @param endpoint the endpoint.
      * @param credential the token credential.
      */
-    public KeyVaultSecretKeyStore(String endpoint, TokenCredential credential) {
-        client = new SecretClientBuilder()
+    public CertificateKeyValueStore(String endpoint, TokenCredential credential) {
+        client = new CertificateClientBuilder()
                 .vaultUrl(endpoint)
                 .credential(credential)
                 .buildClient();
@@ -101,16 +102,16 @@ public class KeyVaultSecretKeyStore<K, V> implements KeyValueStore<K, V> {
     @Override
     public void delete(K key) {
         String name = (String) keyMapper.to(key);
-        client.beginDeleteSecret(name);
+        client.beginDeleteCertificate(name);
     }
 
     @Override
     public V get(K key) {
         String name = (String) keyMapper.to(key);
-        KeyVaultSecret secret = client.getSecret(name);
+        KeyVaultCertificateWithPolicy certificate = client.getCertificate(name);
         V result = null;
-        if (secret != null) {
-            result = (V) valueMapper.from(secret);
+        if (certificate != null && certificate.getCer() != null) {
+            result = (V) valueMapper.from(certificate.getCer());
         }
         return result;
     }
@@ -118,12 +119,9 @@ public class KeyVaultSecretKeyStore<K, V> implements KeyValueStore<K, V> {
     @Override
     public void put(K key, V value) {
         String name = (String) keyMapper.to(key);
-        if (value instanceof KeyVaultSecret) {
-            KeyVaultSecret secret = (KeyVaultSecret) value;
-            client.setSecret(secret);
-        } else {
-            client.setSecret(name, ((KeyVaultSecret) valueMapper.to(value)).getName());
-        }
+        byte[] certificateBytes = (byte[]) valueMapper.to(value);
+        ImportCertificateOptions options = new ImportCertificateOptions(name, certificateBytes);
+        client.importCertificate(options);
     }
 
     @Override
