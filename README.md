@@ -6,7 +6,7 @@ Our current list of features/implementations available:
 
 1. [Azure Cosmos DB implementation](azure/cosmosdb/README.md)
 1. [Azure Blob Storage implementation](azure/blob/README.md)
-1. Azure File Share implementation
+1. [Azure File Share implementation](azure/fileshare/README.md)
 1. Azure KeyVault Certificate implementation
 1. Azure KeyVault Key implementation
 1. Azure KeyVault Secret implementation
