@@ -35,9 +35,8 @@ package com.manorrock.eagle.api;
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
- * @param <KU> the type of underlying key.
  */
-public interface KeyValueStore<K, V, KU> {
+public interface KeyValueStore<K, V> {
     
     /**
      * Delete the value.
@@ -47,10 +46,20 @@ public interface KeyValueStore<K, V, KU> {
     void delete(K key);
     
     /**
-     * Convert from value type to underlying type.
+     * Convert from the key to the underlying key.
+     * 
+     * @param key the key.
+     * @return the underlying key.
+     */
+    default Object fromKey(K key) {
+        return key;
+    }
+    
+    /**
+     * Convert from the value to the underlying value.
      * 
      * @param value the value.
-     * @return the object.
+     * @return the underlying value.
      */
     default Object fromValue(V value) {
         return value;
@@ -73,19 +82,22 @@ public interface KeyValueStore<K, V, KU> {
     void put(K key, V value);
     
     /**
-     * Convert from underlying type to value type.
+     * Convert the underlying key to the key.
      * 
-     * @param object the underlying type.
-     * @return the value.
+     * @param underlyingKey the underlying key.
+     * @return the key.
      */
-    default V toValue(Object object) {
-        return (V) object;
+    default K toKey(Object underlyingKey) {
+        return (K) underlyingKey;
     }
     
     /**
-     * Set the key mapper.
+     * Convert from the underlying value to the value.
      * 
-     * @param keyMapper the key mapper.
+     * @param underlyingValue the underlying value.
+     * @return the value.
      */
-    void setKeyMapper(KeyValueStoreMapper<K,KU> keyMapper);
+    default V toValue(Object underlyingValue) {
+        return (V) underlyingValue;
+    }
 }

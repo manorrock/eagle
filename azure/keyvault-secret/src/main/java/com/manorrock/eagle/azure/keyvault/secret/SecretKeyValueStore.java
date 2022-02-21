@@ -35,8 +35,6 @@ import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import com.manorrock.eagle.api.KeyValueStore;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
-import com.manorrock.eagle.common.IdentityMapper;
 
 /**
  * An Azure KeyVayl Secret based KeyValueStore.
@@ -45,23 +43,12 @@ import com.manorrock.eagle.common.IdentityMapper;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V, String> {
+public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V> {
 
     /**
      * Stores the client.
      */
     private SecretClient client;
-
-    /**
-     * Stores the key mapper.
-     */
-    private KeyValueStoreMapper keyMapper;
-
-    /**
-     * Stores the value mapper.
-     */
-    private KeyValueStoreMapper valueMapper;
-
     /**
      * Constructor.
      *
@@ -82,35 +69,28 @@ public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V, String> {
                 .vaultUrl(endpoint)
                 .credential(credential)
                 .buildClient();
-        keyMapper = new IdentityMapper();
-        valueMapper = new KeyVaultSecretToStringMapper();
     }
 
     @Override
     public void delete(K key) {
-        String name = (String) keyMapper.to(key);
+        String name = (String) fromKey(key);
         client.beginDeleteSecret(name);
     }
 
     @Override
     public V get(K key) {
-        String name = (String) keyMapper.to(key);
+        String name = (String) fromKey(key);
         KeyVaultSecret secret = client.getSecret(name);
         V result = null;
         if (secret != null) {
-            result = (V) valueMapper.from(secret);
+            result = (V) toValue(secret);
         }
         return result;
     }
 
     @Override
     public void put(K key, V value) {
-        String name = (String) keyMapper.to(key);
-        client.setSecret(name, ((KeyVaultSecret) valueMapper.to(value)).getValue());
-    }
-
-    @Override
-    public void setKeyMapper(KeyValueStoreMapper<K, String> keyMapper) {
-        this.keyMapper = keyMapper;
+        String name = (String) fromKey(key);
+        client.setSecret(name, ((KeyVaultSecret) fromValue(value)).getValue());
     }
 }

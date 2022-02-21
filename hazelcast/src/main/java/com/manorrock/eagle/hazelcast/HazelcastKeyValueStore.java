@@ -33,25 +33,16 @@ import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.manorrock.eagle.api.KeyValueStore;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
-import com.manorrock.eagle.common.StringToByteArrayMapper;
 import java.util.Map;
 
 /**
  * A Hazelcast based KeyValueStore.
  *
- * <p>
- * Note the default keyMapper is setup assuming the K type is String, the
- * default valueMapper is setup assuming the V type is String. If that is not
- * the case make sure to deliver the appropriate mapper.
- * </p>
- *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
- * @param <KU> the type of the underlying key.
  */
-public class HazelcastKeyValueStore<K, V, KU, VU> implements KeyValueStore<K, V, KU> {
+public class HazelcastKeyValueStore<K, V> implements KeyValueStore<K, V> {
 
     /**
      * Stores the Hazelcast instance.
@@ -64,23 +55,11 @@ public class HazelcastKeyValueStore<K, V, KU, VU> implements KeyValueStore<K, V,
     private Map hazelcastMap;
 
     /**
-     * Stores the key mapper.
-     */
-    private KeyValueStoreMapper keyMapper;
-
-    /**
-     * Stores the value mapper.
-     */
-    private KeyValueStoreMapper valueMapper;
-
-    /**
      * Constructor.
      *
      * @param name the name.
      */
     public HazelcastKeyValueStore(String name) {
-        this.keyMapper = new StringToByteArrayMapper();
-        this.valueMapper = new StringToByteArrayMapper();
         Config config = new Config();
         config.setInstanceName(name);
         hazelcast = Hazelcast.newHazelcastInstance(config);
@@ -89,26 +68,21 @@ public class HazelcastKeyValueStore<K, V, KU, VU> implements KeyValueStore<K, V,
 
     @Override
     public void delete(K key) {
-        hazelcastMap.remove(keyMapper.to(key));
+        hazelcastMap.remove(fromKey(key));
     }
 
     @Override
     public V get(K key) {
         V result = null;
-        Object value = hazelcastMap.get(keyMapper.to(key));
+        Object value = hazelcastMap.get(fromKey(key));
         if (value != null) {
-            result = (V) valueMapper.from(value);
+            result = (V) toValue(value);
         }
         return result;
     }
 
     @Override
     public void put(K key, V value) {
-        hazelcastMap.put(keyMapper.to(key), valueMapper.to(value));
-    }
-
-    @Override
-    public void setKeyMapper(KeyValueStoreMapper<K, KU> keyMapper) {
-        this.keyMapper = keyMapper;
+        hazelcastMap.put(fromKey(key), fromValue(value));
     }
 }

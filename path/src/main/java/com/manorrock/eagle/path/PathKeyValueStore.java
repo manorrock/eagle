@@ -29,41 +29,39 @@
  */
 package com.manorrock.eagle.path;
 
-import com.manorrock.eagle.common.FilenameToPathMapper;
 import com.manorrock.eagle.api.KeyValueStore;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
-import com.manorrock.eagle.common.StringToByteArrayMapper;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
 
 /**
- * A path based KeyValueStore.
+ * A Path based KeyValueStore.
+ * 
+ * <p>
+ *  This KeyValueStore is by default implemented with a K and V as Strings. If
+ *  you want to change K and/or V you will need to implement the appropriate
+ *  from and to methods.
+ * </p> 
  *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, Path> {
+public class PathKeyValueStore<K, V> implements KeyValueStore<K, V> {
 
     /**
      * Stores the logger.
      */
-    private static final Logger LOGGER
-            = Logger.getLogger(PathKeyValueStore.class.getPackage().getName());
-
+    private static final Logger LOGGER = Logger.getLogger(PathKeyValueStore.class.getName());
+    
     /**
-     * Stores the key mapper.
+     * Stores the base path.
      */
-    private KeyValueStoreMapper keyMapper;
-
-    /**
-     * Stores the value mapper.
-     */
-    private KeyValueStoreMapper valueMapper;
+    private final Path basePath;
 
     /**
      * Constructor.
@@ -71,14 +69,13 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, Path> {
      * @param basePath the base path.
      */
     public PathKeyValueStore(Path basePath) {
-        this.keyMapper = new FilenameToPathMapper(basePath);
-        this.valueMapper = new StringToByteArrayMapper();
+        this.basePath = basePath;
     }
 
     @Override
     public void delete(K key) {
         try {
-            Path path = (Path) keyMapper.to(key);
+            Path path = (Path) fromKey(key);
             Files.deleteIfExists(path);
         } catch (IOException ioe) {
             LOGGER.log(WARNING, "An I/O error occured deleting key: " + key, ioe);
@@ -86,13 +83,29 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, Path> {
     }
 
     @Override
+    public Object fromKey(K key) {
+        return basePath.resolve(key.toString());
+    }
+
+    @Override
+    public Object fromValue(V value) {
+        byte[] result = null;
+        try {
+            result = value.toString().getBytes("UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            LOGGER.log(WARNING, "Encountered an unsupported encoding", uee);
+        }
+        return result;
+    }
+
+    @Override
     public V get(K key) {
         V result = null;
-        Path path = (Path) keyMapper.to(key);
+        Path path = (Path) fromKey(key);
         if (Files.exists(path)) {
             try {
                 byte[] bytes = Files.readAllBytes(path);
-                result = (V) valueMapper.from(bytes);
+                result = (V) toValue(bytes);
             } catch (IOException ioe) {
                 LOGGER.log(WARNING, "Unable to get content for key: " + key, ioe);
             }
@@ -102,7 +115,7 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, Path> {
 
     @Override
     public void put(K key, V value) {
-        Path path = (Path) keyMapper.to(key);
+        Path path = (Path) fromKey(key);
         if (!Files.exists(path.getParent())) {
             try {
                 Files.createDirectories(path.getParent());
@@ -112,7 +125,7 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, Path> {
             }
         }
         try (OutputStream output = Files.newOutputStream(path)) {
-            output.write((byte[]) valueMapper.to(value));
+            output.write((byte[]) fromValue(value));
             output.flush();
         } catch (IOException ioe) {
             LOGGER.log(WARNING, "Unable to put content for key: " + key, ioe);
@@ -120,7 +133,18 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, Path> {
     }
 
     @Override
-    public void setKeyMapper(KeyValueStoreMapper keyMapper) {
-        this.keyMapper = keyMapper;
+    public K toKey(Object underlyingKey) {
+        return (K) ((Path) underlyingKey).toString().substring(basePath.toString().length());
+    }
+
+    @Override
+    public V toValue(Object underlyingValue) {
+        String result = null;
+        try {
+            result = new String((byte[]) underlyingValue, "UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            LOGGER.log(WARNING, "Encountered an unsupported encoding", uee);
+        }
+        return (V) result;
     }
 }

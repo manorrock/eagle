@@ -134,7 +134,6 @@
         <!-- does not support Java 17 -->
         <!--<module>chroniclemap</module>-->
         <module>coherence</module>
-        <module>common</module>
         <module>factory</module>
         <module>filesystem</module>
         <module>hazelcast</module>

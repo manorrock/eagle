@@ -30,12 +30,10 @@
 package com.manorrock.eagle.filesystem;
 
 import com.manorrock.eagle.api.KeyValueStore;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
-import com.manorrock.eagle.common.FilenameToFileMapper;
-import com.manorrock.eagle.common.StringToByteArrayMapper;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import static java.util.logging.Level.WARNING;
@@ -45,32 +43,26 @@ import java.util.logging.Logger;
  * A file-system based KeyValueStore.
  * 
  * <p>
- *  Note the default keyMapper is setup assuming the K type is String, the 
- *  default valueMapper is setup assuming the V type is String. If that is not
- *  the case make sure to deliver the appropriate mapper.
+ *  This KeyValueStore is by default implemented with a K and V as Strings. If
+ *  you want to change K and/or V you will need to implement the appropriate
+ *  from and to methods.
  * </p>
  *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V, File> {
+public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V> {
 
     /**
      * Stores the logger.
      */
-    private static final Logger LOGGER
-            = Logger.getLogger(FilesystemKeyValueStore.class.getPackage().getName());
+    private static final Logger LOGGER = Logger.getLogger(FilesystemKeyValueStore.class.getName());
 
     /**
-     * Stores the key mapper.
+     * Stores the base directory.
      */
-    private KeyValueStoreMapper keyMapper;
-
-    /**
-     * Stores the value mapper.
-     */
-    private KeyValueStoreMapper valueMapper;
+    private final File baseDirectory;
 
     /**
      * Constructor.
@@ -78,26 +70,41 @@ public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V, File> 
      * @param baseDirectory the base directory.
      */
     public FilesystemKeyValueStore(File baseDirectory) {
-        this.keyMapper = new FilenameToFileMapper(baseDirectory);
-        this.valueMapper = new StringToByteArrayMapper();
+        this.baseDirectory = baseDirectory;
     }
 
     @Override
     public void delete(K key) {
-        File file = (File) keyMapper.to(key);
+        File file = (File) fromKey(key);
         if (file.exists()) {
             file.delete();
         }
     }
 
     @Override
+    public Object fromKey(K key) {
+        return new File(baseDirectory, key.toString());
+    }
+
+    @Override
+    public Object fromValue(V value) {
+        byte[] result = null;
+        try {
+            result = value.toString().getBytes("UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            LOGGER.log(WARNING, "Encountered an unsupported encoding", uee);
+        }
+        return result;
+    }
+
+    @Override
     public V get(K key) {
         V result = null;
-        File file = (File) keyMapper.to(key);
+        File file = (File) fromKey(key);
         if (file.exists()) {
             try {
                 byte[] bytes = Files.readAllBytes(Paths.get(file.toURI()));
-                result = (V) valueMapper.from(bytes);
+                result = (V) toValue(bytes);
             } catch (IOException ioe) {
                 LOGGER.log(WARNING, "Unable to get content for key: " + key, ioe);
             }
@@ -107,11 +114,11 @@ public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V, File> 
 
     @Override
     public void put(K key, V value) {
-        File file = (File) keyMapper.to(key);
+        File file = (File) fromKey(key);
         File parentFile = file.getParentFile();
         parentFile.mkdirs();
         try ( FileOutputStream fileOutput = new FileOutputStream(file)) {
-            fileOutput.write((byte[]) valueMapper.to(value));
+            fileOutput.write((byte[]) fromValue(value));
             fileOutput.flush();
         } catch (IOException ioe) {
             LOGGER.log(WARNING, "Unable to put content for key: " + key, ioe);
@@ -119,7 +126,21 @@ public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V, File> 
     }
 
     @Override
-    public void setKeyMapper(KeyValueStoreMapper keyMapper) {
-        this.keyMapper = keyMapper;
+    public K toKey(Object underlyingKey) {
+        File file = (File) underlyingKey;
+        String to = file.getAbsolutePath();
+        to = to.substring(baseDirectory.getAbsolutePath().length());
+        return (K) to;
+    }
+
+    @Override
+    public V toValue(Object underlyingValue) {
+        String result = null;
+        try {
+            result = new String((byte[]) underlyingValue, "UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            LOGGER.log(WARNING, "Encountered an unsupported encoding", uee);
+        }
+        return (V) result;
     }
 }

@@ -30,76 +30,50 @@
 package com.manorrock.eagle.coherence;
 
 import com.manorrock.eagle.api.KeyValueStore;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
-import com.manorrock.eagle.common.StringToByteArrayMapper;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.Session;
 
 /**
  * A Coherence based KeyValueStore.
- * 
- *<p>
- *  Note the default keyMapper is setup assuming the K type is String, the 
- *  default valueMapper is setup assuming the V type is String. If that is not
- *  the case make sure to deliver the appropriate mapper.
- * </p>
  *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
- * @param <KU> the type of the underlying key.
  */
-public class CoherenceKeyValueStore<K, V, KU, VU> implements KeyValueStore<K, V, KU> {
+public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V> {
 
     /**
      * Stores the named cache.
      */
-    private NamedCache<KU, VU> namedCache;
+    private NamedCache namedCache;
     
-    /**
-     * Stores the key mapper.
-     */
-    private KeyValueStoreMapper keyMapper;
-
-    /**
-     * Stores the value mapper.
-     */
-    private KeyValueStoreMapper valueMapper;
-
     /**
      * Constructor.
      *
      * @param name the name.
      */
     public CoherenceKeyValueStore(String name) {
-        keyMapper = new StringToByteArrayMapper();
-        valueMapper = new StringToByteArrayMapper();
         Session session = Session.create();
         session.getCache(name);
     }
 
     @Override
     public void delete(K key) {
-        namedCache.remove((KU) keyMapper.to(key));
+        namedCache.remove(fromKey(key));
     }
 
     @Override
     public V get(K key) {
         V result = null;
-        Object value = namedCache.get((KU) keyMapper.to(key));
+        Object value = namedCache.get(fromKey(key));
         if (value != null) {
-            result = (V) valueMapper.from(value);
+            result = (V) toValue(value);
         }
         return result;
     }
 
     @Override
     public void put(K key, V value) {
-        namedCache.put((KU) keyMapper.to(key), (VU) valueMapper.to(value));
-    }
-
-    @Override
-    public void setKeyMapper(KeyValueStoreMapper<K, KU> keyMapper) {
-        this.keyMapper = keyMapper;
+        namedCache.put(fromKey(key), fromValue(value));
     }
 }

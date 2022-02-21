@@ -30,8 +30,6 @@
 package com.manorrock.eagle.redis;
 
 import com.manorrock.eagle.api.KeyValueStore;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
-import com.manorrock.eagle.common.StringToByteArrayMapper;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.codec.RedisCodec;
@@ -46,7 +44,7 @@ import java.nio.ByteBuffer;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, byte[]> {
+public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V> {
     
     /**
      * Stores the Redis connection.
@@ -54,47 +52,35 @@ public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, byte[]> {
     private final StatefulRedisConnection<K, V> connection;
 
     /**
-     * Stores the key mapper.
-     */
-    private KeyValueStoreMapper keyMapper;
-
-    /**
-     * Stores the value mapper.
-     */
-    private KeyValueStoreMapper valueMapper;
-
-    /**
      * Constructor.
      *
      * @param uri the URI.
      */
     public RedisKeyValueStore(URI uri) {
-        this.keyMapper = new StringToByteArrayMapper();
-        this.valueMapper = new StringToByteArrayMapper();
         RedisClient client = RedisClient.create(uri.toString());
         connection = client.connect(new RedisCodec<K, V>() {
             @Override
             public K decodeKey(ByteBuffer bb) {
                 byte[] bytes = new byte[bb.remaining()];
                 bb.get(bytes);
-                return (K) keyMapper.from(bytes);
+                return (K) toKey(bytes);
             }
 
             @Override
             public V decodeValue(ByteBuffer bb) {
                 byte[] bytes = new byte[bb.remaining()];
                 bb.get(bytes);
-                return (V) valueMapper.from(bytes);
+                return (V) toValue(bytes);
             }
 
             @Override
             public ByteBuffer encodeKey(K k) {
-                return ByteBuffer.wrap((byte[]) keyMapper.to(k));
+                return ByteBuffer.wrap((byte[]) fromKey(k));
             }
 
             @Override
             public ByteBuffer encodeValue(V v) {
-                return ByteBuffer.wrap((byte[]) valueMapper.to(v));
+                return ByteBuffer.wrap((byte[]) fromValue(v));
             }
         });
     }
@@ -112,10 +98,5 @@ public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, byte[]> {
     @Override
     public void put(K key, V value) {
         connection.sync().set(key, value);
-    }
-
-    @Override
-    public void setKeyMapper(KeyValueStoreMapper<K,byte[]> keyMapper) {
-        this.keyMapper = keyMapper;
     }
 }

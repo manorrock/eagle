@@ -37,8 +37,6 @@ import com.azure.security.keyvault.keys.models.ImportKeyOptions;
 import com.azure.security.keyvault.keys.models.JsonWebKey;
 import com.azure.security.keyvault.keys.models.KeyVaultKey;
 import com.manorrock.eagle.api.KeyValueStore;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
-import com.manorrock.eagle.common.IdentityMapper;
 
 /**
  * An Azure KeyVault Key based KeyValueStore.
@@ -47,22 +45,12 @@ import com.manorrock.eagle.common.IdentityMapper;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V, String> {
+public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V> {
 
     /**
      * Stores the client.
      */
     private KeyClient client;
-
-    /**
-     * Stores the key mapper.
-     */
-    private KeyValueStoreMapper keyMapper;
-
-    /**
-     * Stores the value mapper.
-     */
-    private KeyValueStoreMapper valueMapper;
 
     /**
      * Constructor.
@@ -84,37 +72,30 @@ public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V, String> {
                 .vaultUrl(endpoint)
                 .credential(credential)
                 .buildClient();
-        keyMapper = new IdentityMapper();
-        valueMapper = new IdentityMapper();
     }
 
     @Override
     public void delete(K key) {
-        String name = (String) keyMapper.to(key);
+        String name = (String) toKey(key);
         client.beginDeleteKey(name);
     }
 
     @Override
     public V get(K key) {
-        String name = (String) keyMapper.to(key);
+        String name = (String) toKey(key);
         KeyVaultKey keyVaultKey = client.getKey(name);
         V result = null;
         if (keyVaultKey != null && keyVaultKey.getKey()!= null) {
-            result = (V) valueMapper.from(keyVaultKey.getKey());
+            result = (V) toValue(keyVaultKey.getKey());
         }
         return result;
     }
 
     @Override
     public void put(K key, V value) {
-        String name = (String) keyMapper.to(key);
-        JsonWebKey webKey = (JsonWebKey) valueMapper.to(value);
+        String name = (String) toKey(key);
+        JsonWebKey webKey = (JsonWebKey) fromValue(value);
         ImportKeyOptions options = new ImportKeyOptions(name, webKey);
         client.importKey(options);
-    }
-
-    @Override
-    public void setKeyMapper(KeyValueStoreMapper<K, String> keyMapper) {
-        this.keyMapper = keyMapper;
     }
 }

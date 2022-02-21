@@ -36,9 +36,6 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.manorrock.eagle.api.KeyValueStore;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
-import com.manorrock.eagle.common.IdentityMapper;
-import com.manorrock.eagle.common.StringToByteArrayMapper;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,17 +45,11 @@ import java.util.logging.Logger;
 /**
  * An Azure Blob Storage based KeyValueStore.
  *
- * <p>
- *  Note the default keyMapper is setup assuming the K type is String, the 
- *  default valueMapper is setup assuming the V type is String. If that is not
- *  the case make sure to deliver the appropriate mapper.
- * </p>
- *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V, String> {
+public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V> {
     
     /**
      * Stores the logger.
@@ -74,16 +65,6 @@ public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V, String> {
      * Stores the container.
      */
     private BlobContainerClient container;
-
-    /**
-     * Stores the key mapper.
-     */
-    private KeyValueStoreMapper keyMapper;
-
-    /**
-     * Stores the value mapper.
-     */
-    private KeyValueStoreMapper valueMapper;
 
     /**
      * Constructor.
@@ -108,25 +89,23 @@ public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V, String> {
                 .credential(credential)
                 .buildClient();
         container = client.getBlobContainerClient(containerName);
-        keyMapper = new IdentityMapper();
-        valueMapper = new StringToByteArrayMapper();
     }
 
     @Override
     public void delete(K key) {
-        String blobName = (String) keyMapper.to(key);
+        String blobName = (String) toKey(key);
         BlobClient blob = container.getBlobClient(blobName);
         blob.delete();
     }
 
     @Override
     public V get(K key) {
-        String blobName = (String) keyMapper.to(key);
+        String blobName = (String) toKey(key);
         BlobClient blob = container.getBlobClient(blobName);
         V result = null;
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             blob.download(outputStream);
-            result = (V) valueMapper.from(outputStream.toByteArray());
+            result = (V) toValue(outputStream.toByteArray());
         } catch (IOException ioe) {
             LOGGER.log(Level.WARNING, "Unable to download blob: {0}", blobName);
         }
@@ -135,18 +114,13 @@ public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V, String> {
 
     @Override
     public void put(K key, V value) {
-        String blobName = (String) keyMapper.to(key);
+        String blobName = (String) toKey(key);
         BlobClient blob = container.getBlobClient(blobName);
-        byte[] bytes = (byte[]) valueMapper.to(value);
+        byte[] bytes = (byte[]) toValue(value);
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes)) {
             blob.upload(inputStream, bytes.length);
         } catch (IOException ioe) {
             LOGGER.log(Level.WARNING, "Unable to upload blob: {0}", blobName);
         }
-    }
-
-    @Override
-    public void setKeyMapper(KeyValueStoreMapper<K, String> keyMapper) {
-        this.keyMapper = keyMapper;
     }
 }
