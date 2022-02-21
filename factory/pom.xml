@@ -33,13 +33,6 @@
         </dependency>
         <dependency>
             <groupId>com.manorrock.eagle</groupId>
-            <artifactId>eagle-chroniclemap</artifactId>
-            <version>${project.version}</version>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>com.manorrock.eagle</groupId>
             <artifactId>eagle-coherence</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>

@@ -32,7 +32,6 @@ package com.manorrock.eagle.factory;
 import com.manorrock.eagle.api.KeyValueStore;
 import com.manorrock.eagle.azure.blob.BlobKeyValueStore;
 import com.manorrock.eagle.azure.cosmosdb.CosmosDBKeyValueStore;
-import com.manorrock.eagle.chroniclemap.ChronicleMapKeyValueStore;
 import com.manorrock.eagle.coherence.CoherenceKeyValueStore;
 import com.manorrock.eagle.hazelcast.HazelcastKeyValueStore;
 import com.manorrock.eagle.redis.RedisKeyValueStore;
@@ -68,18 +67,6 @@ public final class KeyValueStoreFactory {
         return new BlobKeyValueStore(
                 properties.getProperty("endpoint"),
                 properties.getProperty("containerName"));
-    }
-
-    /**
-     * Create the ChronicleMap KeyValueStore.
-     * 
-     * @param properties the configuration properties.
-     * @return the KeyValueStore or null if it could not be created.
-     */
-    private static KeyValueStore getChronicleMapKeyValueStore(Properties properties) {
-        return new ChronicleMapKeyValueStore(
-                properties.getProperty("name"),
-                Long.valueOf(properties.getProperty("maxSize")));
     }
 
     /**
@@ -130,9 +117,6 @@ public final class KeyValueStoreFactory {
             switch (className) {
                 case "com.manorrock.eagle.azure.blob.BlobKeyValueStore":
                     result = getBlobKeyValueStore(properties);
-                    break;
-                case "com.manorrock.eagle.chroniclemap.ChronicleMapKeyValueStore":
-                    result = getChronicleMapKeyValueStore(properties);
                     break;
                 case "com.manorrock.eagle.coherence.CoherenceKeyValueStore":
                     result = getCoherenceMapKeyValueStore(properties);
