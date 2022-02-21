@@ -14,10 +14,10 @@
     <modules>
         <module>blob</module>
         <module>cosmosdb</module>
+        <module>fileshare</module>
         <module>keyvault-certificate</module>
         <module>keyvault-key</module>
         <module>keyvault-secret</module>
-        <module>fileshare</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
