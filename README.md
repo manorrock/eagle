@@ -1,5 +1,3 @@
-_This project is no longer being maintained and unless a maintainer steps up it will be removed Jan 1st, 2023_
-
 # Manorrock Eagle
 
 This project delivers you with a Key-Value Store abstraction.
@@ -12,7 +10,6 @@ Our current list of features/implementations available:
 1. [Azure KeyVault Certificate implementation](azure/keyvault-certificate/README.md)
 1. [Azure KeyVault Key implementation](azure/keyvault-key/README.md)
 1. [Azure KeyVault Secret implementation](azure/keyvault-secret/README.md)
-1. [ChronicleMap implementation](chroniclemap/README.md)
 1. [Factory functionality](factory/README.md)
 1. [Filesystem implementation](filesystem/README.md)
 1. [Hazelcast implementation](hazelcast/README.md)
