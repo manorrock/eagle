@@ -48,9 +48,8 @@ import com.tangosol.net.Session;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  * @param <KU> the type of the underlying key.
- * @param <VU> the type of the underlying value.
  */
-public class CoherenceKeyValueStore<K, V, KU, VU> implements KeyValueStore<K, V, KU, VU> {
+public class CoherenceKeyValueStore<K, V, KU, VU> implements KeyValueStore<K, V, KU> {
 
     /**
      * Stores the named cache.
@@ -102,10 +101,5 @@ public class CoherenceKeyValueStore<K, V, KU, VU> implements KeyValueStore<K, V,
     @Override
     public void setKeyMapper(KeyValueStoreMapper<K, KU> keyMapper) {
         this.keyMapper = keyMapper;
-    }
-
-    @Override
-    public void setValueMapper(KeyValueStoreMapper<V, VU> valueMapper) {
-        this.valueMapper = valueMapper;
     }
 }

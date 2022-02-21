@@ -43,17 +43,11 @@ import com.manorrock.eagle.common.IdentityMapper;
 /**
  * An Azure KeyVault Key based KeyValueStore.
  *
- * <p>
- *  Note the default keyMapper is setup assuming the K type is String, the 
- *  default valueMapper is setup assuming the V type is JsonWebKey. If that is
- *  not the case make sure to deliver the appropriate mapper.
- * </p>
- *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V, String, JsonWebKey> {
+public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V, String> {
 
     /**
      * Stores the client.
@@ -122,10 +116,5 @@ public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V, String, JsonW
     @Override
     public void setKeyMapper(KeyValueStoreMapper<K, String> keyMapper) {
         this.keyMapper = keyMapper;
-    }
-
-    @Override
-    public void setValueMapper(KeyValueStoreMapper<V, JsonWebKey> valueMapper) {
-        this.valueMapper = valueMapper;
     }
 }

@@ -41,17 +41,11 @@ import com.manorrock.eagle.common.IdentityMapper;
 /**
  * A Cosmos DB based KeyValueStore.
  *
- * <p>
- *  Note the default keyMapper is setup assuming the K type is String, the 
- *  default valueMapper is setup assuming the V type is String. If that is not
- *  the case make sure to deliver the appropriate mapper.
- * </p>
- *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class CosmosDBKeyValueStore<K, V> implements KeyValueStore<K, V, CosmosDBKey, String> {
+public class CosmosDBKeyValueStore<K, V> implements KeyValueStore<K, V, CosmosDBKey> {
     
     /**
      * Stores the CosmosDB client.
@@ -132,10 +126,5 @@ public class CosmosDBKeyValueStore<K, V> implements KeyValueStore<K, V, CosmosDB
     @Override
     public void setKeyMapper(KeyValueStoreMapper<K,CosmosDBKey> keyMapper) {
         this.keyMapper = keyMapper;
-    }
-
-    @Override
-    public void setValueMapper(KeyValueStoreMapper<V,String> valueMapper) {
-        this.valueMapper = valueMapper;
     }
 }

@@ -41,17 +41,12 @@ import java.nio.ByteBuffer;
 /**
  * A Redis based KeyValueStore.
  * 
- * <p>
- *  Note the default keyMapper is setup assuming the K type is String, the 
- *  default valueMapper is setup assuming the V type is String. If that is not
- *  the case make sure to deliver the appropriate mapper.
- * </p>
  *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, byte[], byte[]> {
+public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, byte[]> {
     
     /**
      * Stores the Redis connection.
@@ -122,10 +117,5 @@ public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, byte[], byt
     @Override
     public void setKeyMapper(KeyValueStoreMapper<K,byte[]> keyMapper) {
         this.keyMapper = keyMapper;
-    }
-
-    @Override
-    public void setValueMapper(KeyValueStoreMapper<V,byte[]> valueMapper) {
-        this.valueMapper = valueMapper;
     }
 }

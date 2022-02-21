@@ -54,7 +54,7 @@ import java.util.logging.Logger;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V, File, byte[]> {
+public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V, File> {
 
     /**
      * Stores the logger.
@@ -121,10 +121,5 @@ public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V, File, 
     @Override
     public void setKeyMapper(KeyValueStoreMapper keyMapper) {
         this.keyMapper = keyMapper;
-    }
-
-    @Override
-    public void setValueMapper(KeyValueStoreMapper valueMapper) {
-        this.valueMapper = valueMapper;
     }
 }

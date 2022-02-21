@@ -41,17 +41,11 @@ import com.manorrock.eagle.common.IdentityMapper;
 /**
  * An Azure KeyVayl Secret based KeyValueStore.
  *
- * <p>
- *  Note the default keyMapper is setup assuming the K type is String, the 
- *  default valueMapper is setup assuming the V type is String. If that is
- *  not the case make sure to deliver the appropriate mapper.
- * </p>
- *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V, String, String> {
+public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V, String> {
 
     /**
      * Stores the client.
@@ -118,10 +112,5 @@ public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V, String, St
     @Override
     public void setKeyMapper(KeyValueStoreMapper<K, String> keyMapper) {
         this.keyMapper = keyMapper;
-    }
-
-    @Override
-    public void setValueMapper(KeyValueStoreMapper<V, String> valueMapper) {
-        this.valueMapper = valueMapper;
     }
 }

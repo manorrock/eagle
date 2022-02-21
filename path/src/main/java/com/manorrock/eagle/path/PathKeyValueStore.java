@@ -42,18 +42,12 @@ import java.util.logging.Logger;
 
 /**
  * A path based KeyValueStore.
- * 
- * <p>
- *  Note the default keyMapper is setup assuming the K type is String, the 
- *  default valueMapper is setup assuming the V type is String. If that is not
- *  the case make sure to deliver the appropriate mapper.
- * </p>
  *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, Path, byte[]> {
+public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, Path> {
 
     /**
      * Stores the logger.
@@ -128,10 +122,5 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, Path, byte[]
     @Override
     public void setKeyMapper(KeyValueStoreMapper keyMapper) {
         this.keyMapper = keyMapper;
-    }
-
-    @Override
-    public void setValueMapper(KeyValueStoreMapper valueMapper) {
-        this.valueMapper = valueMapper;
     }
 }
