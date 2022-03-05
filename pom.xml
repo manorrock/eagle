@@ -132,7 +132,7 @@
         <module>api</module>
         <module>azure</module>
         <!-- does not support Java 17 -->
-        <!--<module>chroniclemap</module>-->
+        <module>chroniclemap</module>
         <module>coherence</module>
         <module>factory</module>
         <module>filesystem</module>

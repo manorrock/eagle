@@ -45,10 +45,10 @@ public class ChronicleMapKeyValueStoreTest {
      */
     @Test
     public void testDelete() {
-        ChronicleMapKeyValueStore<String, String, byte[], byte[]> kvs = new ChronicleMapKeyValueStore<>("mymap", 50000);
-        kvs.put("delete", "deleteme");
-        assertEquals("deleteme", kvs.get("delete"));
-        kvs.delete("delete");
-        assertNull(kvs.get("delete"));
+        ChronicleMapKeyValueStore<byte[], byte[]> kvs = new ChronicleMapKeyValueStore<>("mymap", 50000);
+        kvs.put("delete".getBytes(), "deleteme".getBytes());
+        assertEquals("deleteme", new String(kvs.get("delete".getBytes())));
+        kvs.delete("delete".getBytes());
+        assertNull(kvs.get("delete".getBytes()));
     }
 }

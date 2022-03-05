@@ -30,42 +30,22 @@
 package com.manorrock.eagle.chroniclemap;
 
 import com.manorrock.eagle.api.KeyValueStore;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
-import com.manorrock.eagle.common.StringToByteArrayMapper;
 import net.openhft.chronicle.map.ChronicleMap;
 import net.openhft.chronicle.map.ChronicleMapBuilder;
 
 /**
  * A ChronicleMap based KeyValueStore.
  * 
- *<p>
- *  Note the default keyMapper is setup assuming the K type is String, the 
- *  default valueMapper is setup assuming the V type is String. If that is not
- *  the case make sure to deliver the appropriate mapper.
- * </p>
- *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
- * @param <KU> the type of the underlying key.
- * @param <VU> the type of the underlying value.
  */
-public class ChronicleMapKeyValueStore<K, V, KU, VU> implements KeyValueStore<K, V, KU, VU> {
+public class ChronicleMapKeyValueStore<K, V> implements KeyValueStore<K, V> {
     
     /**
      * Stores the ChronicleMap.
      */
     private final ChronicleMap chronicleMap;
-
-    /**
-     * Stores the key mapper.
-     */
-    private KeyValueStoreMapper keyMapper;
-
-    /**
-     * Stores the value mapper.
-     */
-    private KeyValueStoreMapper valueMapper;
 
     /**
      * Constructor.
@@ -92,37 +72,25 @@ public class ChronicleMapKeyValueStore<K, V, KU, VU> implements KeyValueStore<K,
                 .averageValue(name.getBytes())
                 .entries(maxSize)
                 .create();
-        keyMapper = new StringToByteArrayMapper();
-        valueMapper = new StringToByteArrayMapper();
     }
 
     @Override
     public void delete(K key) {
-        chronicleMap.remove(keyMapper.to(key));
+        chronicleMap.remove(fromKey(key));
     }
 
     @Override
     public V get(K key) {
         V result = null;
-        Object value = chronicleMap.get(keyMapper.to(key));
+        Object value = chronicleMap.get(fromKey(key));
         if (value != null) {
-            result = (V) valueMapper.from(value);
+            result = (V) toValue(value);
         }
         return result;
     }
 
     @Override
     public void put(K key, V value) {
-        chronicleMap.put(keyMapper.to(key), valueMapper.to(value));
-    }
-
-    @Override
-    public void setKeyMapper(KeyValueStoreMapper<K, KU> keyMapper) {
-        this.keyMapper = keyMapper;
-    }
-
-    @Override
-    public void setValueMapper(KeyValueStoreMapper<V, VU> valueMapper) {
-        this.valueMapper = valueMapper;
+        chronicleMap.put(fromKey(key), fromValue(value));
     }
 }
