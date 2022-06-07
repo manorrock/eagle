@@ -17,12 +17,6 @@ Our current list of features/implementations available:
 1. [Path implementation](path/README.md)
 1. [Redis implementation](redis/README.md)
 
-Our list of things under consideration:
-
-1. CDI integration
-1. JDBC implementation
-1. Spring Boot starter
-
 ## Getting started
 
 1. Creating the Key-Value Store
