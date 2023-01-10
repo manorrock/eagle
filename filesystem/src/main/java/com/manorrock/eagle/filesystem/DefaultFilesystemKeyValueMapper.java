@@ -30,93 +30,69 @@
 package com.manorrock.eagle.filesystem;
 
 import com.manorrock.eagle.api.KeyValueMapper;
-import com.manorrock.eagle.api.KeyValueStore;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.UnsupportedEncodingException;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
 
 /**
- * A file-system based KeyValueStore.
- * 
- * <p>
- *  This KeyValueStore uses the DefaultFilesystemKeyValueMapper if no 
- *  KeyValueMapper is passed in. If you want different behavior you will have to
- *  deliver your own implementation of the KeyValueMapper.
- * </p>
+ * The default Filesystem KeyValueMapper.
  *
  * @author Manfred Riem (mriem@manorrock.com)
- * @param <K> the key type.
- * @param <V> the value type.
  */
-public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class DefaultFilesystemKeyValueMapper implements KeyValueMapper<String, String> {
 
     /**
      * Stores the logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(FilesystemKeyValueStore.class.getName());
-    
+    private static final Logger LOGGER = Logger.getLogger(DefaultFilesystemKeyValueMapper.class.getName());
+
     /**
-     * Stores the mapper type.
+     * Stores the base directory.
      */
-    private KeyValueMapper mapper;
+    private final File baseDirectory;
 
     /**
      * Constructor.
      *
      * @param baseDirectory the base directory.
      */
-    public FilesystemKeyValueStore(File baseDirectory) {
-        this.mapper = new DefaultFilesystemKeyValueMapper(baseDirectory);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param mapper the KeyValueMapper.
-     * @param baseDirectory the base directory.
-     */
-    public FilesystemKeyValueStore(KeyValueMapper mapper, File baseDirectory) {
-        this(baseDirectory);
-        this.mapper = mapper;
+    public DefaultFilesystemKeyValueMapper(File baseDirectory) {
+        this.baseDirectory = baseDirectory;
     }
 
     @Override
-    public void delete(K key) {
-        File file = (File) mapper.fromKey(key);
-        if (file.exists()) {
-            file.delete();
-        }
+    public Object fromKey(String key) {
+        return new File(baseDirectory, key);
     }
 
     @Override
-    public V get(K key) {
-        V result = null;
-        File file = (File) mapper.fromKey(key);
-        if (file.exists()) {
-            try {
-                byte[] bytes = Files.readAllBytes(Paths.get(file.toURI()));
-                result = (V) mapper.toValue(bytes);
-            } catch (IOException ioe) {
-                LOGGER.log(WARNING, "Unable to get content for key: " + key, ioe);
-            }
+    public Object fromValue(String value) {
+        byte[] result = null;
+        try {
+            result = value.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            LOGGER.log(WARNING, "Encountered an unsupported encoding", uee);
         }
         return result;
     }
 
     @Override
-    public void put(K key, V value) {
-        File file = (File) mapper.fromKey(key);
-        File parentFile = file.getParentFile();
-        parentFile.mkdirs();
-        try ( FileOutputStream fileOutput = new FileOutputStream(file)) {
-            fileOutput.write((byte[]) mapper.fromValue(value));
-            fileOutput.flush();
-        } catch (IOException ioe) {
-            LOGGER.log(WARNING, "Unable to put content for key: " + key, ioe);
+    public String toKey(Object underlyingKey) {
+        File file = (File) underlyingKey;
+        String to = file.getAbsolutePath();
+        to = to.substring(baseDirectory.getAbsolutePath().length());
+        return to;
+    }
+
+    @Override
+    public String toValue(Object underlyingValue) {
+        String result = null;
+        try {
+            result = new String((byte[]) underlyingValue, "UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            LOGGER.log(WARNING, "Encountered an unsupported encoding", uee);
         }
+        return result;
     }
 }
