@@ -29,26 +29,32 @@
  */
 package com.manorrock.eagle.chroniclemap;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import org.junit.jupiter.api.Test;
+import com.manorrock.eagle.api.KeyValueMapper;
 
 /**
- * The JUnit tests for the ChronicleMapKeyValueStore class.
- *
+ * The default ChronicleMap KeyValueMapper.
+ * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class ChronicleMapKeyValueStoreTest {
+public class DefaultChronicleMapKeyValueMapper implements KeyValueMapper<byte[], byte[]> {
 
-    /**
-     * Test delete method.
-     */
-    @Test
-    public void testDelete() {
-        ChronicleMapKeyValueStore kvs = new ChronicleMapKeyValueStore<>("mymap", 50000);
-        kvs.put("delete".getBytes(), "deleteme".getBytes());
-        assertEquals("deleteme", new String((byte[]) kvs.get("delete".getBytes())));
-        kvs.delete("delete".getBytes());
-        assertNull(kvs.get("delete".getBytes()));
+    @Override
+    public Object fromKey(byte[] key) {
+        return key;
+    }
+
+    @Override
+    public Object fromValue(byte[] value) {
+        return value;
+    }
+
+    @Override
+    public byte[] toKey(Object underlyingKey) {
+        return (byte[]) underlyingKey;
+    }
+
+    @Override
+    public byte[] toValue(Object underlyingValue) {
+        return (byte[]) underlyingValue;
     }
 }

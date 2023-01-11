@@ -29,6 +29,7 @@
  */
 package com.manorrock.eagle.chroniclemap;
 
+import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
 import net.openhft.chronicle.map.ChronicleMap;
 import net.openhft.chronicle.map.ChronicleMapBuilder;
@@ -46,6 +47,11 @@ public class ChronicleMapKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * Stores the ChronicleMap.
      */
     private final ChronicleMap chronicleMap;
+    
+    /**
+     * Stores the mapper.
+     */
+    private final KeyValueMapper mapper;
 
     /**
      * Constructor.
@@ -66,31 +72,45 @@ public class ChronicleMapKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * @param valueClass the value class.
      */
     public ChronicleMapKeyValueStore(String name, long maxSize, Class keyClass, Class valueClass) {
+        this(new DefaultChronicleMapKeyValueMapper(), name, maxSize, keyClass, valueClass);
+    }
+    
+    /**
+     * Constructor.
+     *
+     * @param mapper the KeyValueMapper
+     * @param name the name.
+     * @param maxSize the max size.
+     * @param keyClass the key class.
+     * @param valueClass the value class.
+     */
+    public ChronicleMapKeyValueStore(KeyValueMapper mapper, String name, long maxSize, Class keyClass, Class valueClass) {
         chronicleMap = ChronicleMapBuilder
                 .of(keyClass, valueClass)
                 .averageKey(name.getBytes())
                 .averageValue(name.getBytes())
                 .entries(maxSize)
                 .create();
+        this.mapper = mapper;
     }
 
     @Override
     public void delete(K key) {
-        chronicleMap.remove(fromKey(key));
+        chronicleMap.remove(mapper.fromKey(key));
     }
 
     @Override
     public V get(K key) {
         V result = null;
-        Object value = chronicleMap.get(fromKey(key));
+        Object value = chronicleMap.get(mapper.fromKey(key));
         if (value != null) {
-            result = (V) toValue(value);
+            result = (V) mapper.toValue(value);
         }
         return result;
     }
 
     @Override
     public void put(K key, V value) {
-        chronicleMap.put(fromKey(key), fromValue(value));
+        chronicleMap.put(mapper.fromKey(key), mapper.fromValue(value));
     }
 }
