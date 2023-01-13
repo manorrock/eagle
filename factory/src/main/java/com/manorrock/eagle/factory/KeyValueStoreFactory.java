@@ -30,7 +30,7 @@
 package com.manorrock.eagle.factory;
 
 import com.manorrock.eagle.api.KeyValueStore;
-import com.manorrock.eagle.azure.blob.BlobKeyValueStore;
+import com.manorrock.eagle.azure.blob.AzureBlobKeyValueStore;
 import com.manorrock.eagle.azure.cosmosdb.CosmosDBKeyValueStore;
 import com.manorrock.eagle.coherence.CoherenceKeyValueStore;
 import com.manorrock.eagle.hazelcast.HazelcastKeyValueStore;
@@ -64,7 +64,7 @@ public final class KeyValueStoreFactory {
      * @return the KeyValueStore or null if it could not be created.
      */
     private static KeyValueStore getBlobKeyValueStore(Properties properties) {
-        return new BlobKeyValueStore(
+        return new AzureBlobKeyValueStore(
                 properties.getProperty("endpoint"),
                 properties.getProperty("containerName"));
     }

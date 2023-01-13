@@ -18,7 +18,7 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.manorrock.eagle.azure</groupId>
+            <groupId>com.manorrock.eagle</groupId>
             <artifactId>eagle-azure-blob</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>

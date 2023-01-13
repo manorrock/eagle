@@ -12,7 +12,6 @@
     <packaging>pom</packaging>
     <name>Manorrock Eagle - Azure - Project</name>
     <modules>
-        <module>blob</module>
         <module>cosmosdb</module>
         <module>fileshare</module>
         <module>keyvault-certificate</module>

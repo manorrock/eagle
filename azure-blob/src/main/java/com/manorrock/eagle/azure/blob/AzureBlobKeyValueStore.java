@@ -35,6 +35,7 @@ import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -49,12 +50,12 @@ import java.util.logging.Logger;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class AzureBlobKeyValueStore<K, V> implements KeyValueStore<K, V> {
     
     /**
      * Stores the logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(BlobKeyValueStore.class.getPackage().getName());
+    private static final Logger LOGGER = Logger.getLogger(AzureBlobKeyValueStore.class.getPackage().getName());
 
     /**
      * Stores the client.
@@ -65,6 +66,11 @@ public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * Stores the container.
      */
     private BlobContainerClient container;
+    
+    /**
+     * Stores the mapper.
+     */
+    private KeyValueMapper mapper;
 
     /**
      * Constructor.
@@ -72,7 +78,7 @@ public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * @param endpoint the endpoint.
      * @param containerName the container name.
      */
-    public BlobKeyValueStore(String endpoint, String containerName) {
+    public AzureBlobKeyValueStore(String endpoint, String containerName) {
         this(endpoint, containerName, new DefaultAzureCredentialBuilder().build());
     }
 
@@ -83,29 +89,42 @@ public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * @param containerName the container name.
      * @param credential the token credential.
      */
-    public BlobKeyValueStore(String endpoint, String containerName, TokenCredential credential) {
+    public AzureBlobKeyValueStore(String endpoint, String containerName, TokenCredential credential) {
+        this(new DefaultAzureBlobKeyValueMapper(), endpoint, containerName, credential);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param mapper the KeyValueMapper.
+     * @param endpoint the endpoint.
+     * @param containerName the container name.
+     * @param credential the token credential.
+     */
+    public AzureBlobKeyValueStore(KeyValueMapper mapper, String endpoint, String containerName, TokenCredential credential) {
         client = new BlobServiceClientBuilder()
                 .endpoint(endpoint)
                 .credential(credential)
                 .buildClient();
         container = client.getBlobContainerClient(containerName);
+        this.mapper = mapper;
     }
 
     @Override
     public void delete(K key) {
-        String blobName = (String) toKey(key);
+        String blobName = (String) mapper.toKey(key);
         BlobClient blob = container.getBlobClient(blobName);
         blob.delete();
     }
 
     @Override
     public V get(K key) {
-        String blobName = (String) toKey(key);
+        String blobName = (String) mapper.toKey(key);
         BlobClient blob = container.getBlobClient(blobName);
         V result = null;
         try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             blob.download(outputStream);
-            result = (V) toValue(outputStream.toByteArray());
+            result = (V) mapper.toValue(outputStream.toByteArray());
         } catch (IOException ioe) {
             LOGGER.log(Level.WARNING, "Unable to download blob: {0}", blobName);
         }
@@ -114,9 +133,9 @@ public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V> {
 
     @Override
     public void put(K key, V value) {
-        String blobName = (String) toKey(key);
+        String blobName = (String) mapper.toKey(key);
         BlobClient blob = container.getBlobClient(blobName);
-        byte[] bytes = (byte[]) toValue(value);
+        byte[] bytes = (byte[]) mapper.toValue(value);
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes)) {
             blob.upload(inputStream, bytes.length);
         } catch (IOException ioe) {
