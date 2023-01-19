@@ -27,7 +27,7 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.eagle.azure.cosmosdb;
+package com.manorrock.eagle.azure.cosmos;
 
 import com.azure.cosmos.models.CosmosItemRequestOptions;
 import com.azure.cosmos.models.PartitionKey;
@@ -37,7 +37,7 @@ import com.azure.cosmos.models.PartitionKey;
  * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class CosmosDBKey {
+public class CosmosKey {
     
     /**
      * Stores the item id.

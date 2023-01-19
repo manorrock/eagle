@@ -131,6 +131,7 @@
     <modules>
         <module>api</module>
         <module>azure-blob</module>
+        <module>azure-cosmosdb</module>
         <module>azure</module>
         <!-- does not support Java 17 -->
         <module>chroniclemap</module>
