@@ -3,18 +3,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.manorrock.eagle.azure</groupId>
+        <groupId>com.manorrock.eagle</groupId>
         <artifactId>project</artifactId>
         <version>21.3.0-SNAPSHOT</version>
     </parent>
     <artifactId>eagle-azure-cosmosdb</artifactId>
     <packaging>jar</packaging>
-    <name>Manorrock Eagle - Azure - CosmosDB</name>
+    <name>Manorrock Eagle - Azure CosmosDB</name>
     <dependencies>
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-cosmos</artifactId>
-            <version>4.26.0</version>
+            <version>4.39.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

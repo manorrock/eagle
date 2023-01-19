@@ -27,13 +27,14 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.eagle.azure.cosmosdb;
+package com.manorrock.eagle.azure.cosmos;
 
 import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.CosmosContainer;
 import com.azure.cosmos.CosmosDatabase;
+import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
 
 /**
@@ -43,7 +44,7 @@ import com.manorrock.eagle.api.KeyValueStore;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class CosmosDBKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class CosmosKeyValueStore<K, V> implements KeyValueStore<K, V> {
     
     /**
      * Stores the CosmosDB client.
@@ -59,6 +60,11 @@ public class CosmosDBKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * Stores the CosmosDB database.
      */
     private final CosmosDatabase database;
+    
+    /**
+     * Stores the mapper.
+     */
+    private KeyValueMapper mapper;
 
     /**
      * Constructor.
@@ -69,7 +75,7 @@ public class CosmosDBKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * @param databaseName the database.
      * @param containerName the container name.
      */
-    public CosmosDBKeyValueStore(String endpoint, String masterKey, 
+    public CosmosKeyValueStore(String endpoint, String masterKey, 
             String consistencyLevel, String databaseName, String containerName) {
         client = new CosmosClientBuilder()
                 .endpoint(endpoint)
@@ -82,7 +88,7 @@ public class CosmosDBKeyValueStore<K, V> implements KeyValueStore<K, V> {
 
     @Override
     public void delete(K key) {
-        CosmosDBKey cosmosKey = (CosmosDBKey) toKey(key);
+        CosmosKey cosmosKey = (CosmosKey) mapper.toKey(key);
         container.deleteItem(
                 cosmosKey.getItemId(), 
                 cosmosKey.getPartitionKey(),
@@ -91,18 +97,18 @@ public class CosmosDBKeyValueStore<K, V> implements KeyValueStore<K, V> {
 
     @Override
     public V get(K key) {
-        CosmosDBKey cosmosKey = (CosmosDBKey) toKey(key);
+        CosmosKey cosmosKey = (CosmosKey) mapper.toKey(key);
         Object cosmosValue = container.readItem(
                 cosmosKey.getItemId(), 
                 cosmosKey.getPartitionKey(), 
                 String.class);
-        return (V) toValue(cosmosValue);
+        return (V) mapper.toValue(cosmosValue);
     }
 
     @Override
     public void put(K key, V value) {
-        CosmosDBKey cosmosKey = (CosmosDBKey) toKey(key);
-        Object cosmosValue = toValue(value);
+        CosmosKey cosmosKey = (CosmosKey) mapper.toKey(key);
+        Object cosmosValue = mapper.toValue(value);
         container.upsertItem(
                 cosmosValue,
                 cosmosKey.getPartitionKey(),
