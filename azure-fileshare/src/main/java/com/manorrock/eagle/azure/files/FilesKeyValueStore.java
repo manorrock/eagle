@@ -32,6 +32,7 @@ package com.manorrock.eagle.azure.files;
 import com.azure.storage.file.share.ShareClient;
 import com.azure.storage.file.share.ShareClientBuilder;
 import com.azure.storage.file.share.ShareFileClient;
+import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -57,6 +58,11 @@ public class FilesKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * Stores the client.
      */
     private final ShareClient client;
+    
+    /**
+     * Stores the mapper.
+     */
+    private KeyValueMapper mapper;
 
     /**
      * Constructor.
@@ -71,21 +77,35 @@ public class FilesKeyValueStore<K, V> implements KeyValueStore<K, V> {
                 .shareName(shareName)
                 .sasToken(sasToken)
                 .buildClient();
+        this.mapper = new DefaultFilesKeyValueMapper();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param mapper the mapper.
+     * @param endpoint the endpoint.
+     * @param shareName the share name.
+     * @param sasToken the SAS token.
+     */
+    public FilesKeyValueStore(KeyValueMapper mapper, String endpoint, String shareName, String sasToken) {
+        this(endpoint, shareName, sasToken);
+        this.mapper = mapper;
     }
 
     @Override
     public void delete(K key) {
-        String name = (String) fromKey(key);
+        String name = (String) mapper.fromKey(key);
         client.deleteFile(name);
     }
 
     @Override
     public V get(K key) {
-        String filename = (String) fromKey(key);
+        String filename = (String) mapper.fromKey(key);
         V result = null;
         try ( ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             client.getFileClient(filename).download(outputStream);
-            result = (V) toValue(outputStream.toByteArray());
+            result = (V) mapper.toValue(outputStream.toByteArray());
         } catch (IOException ioe) {
             LOGGER.log(Level.WARNING, "Unable to download file: {0}", filename);
         }
@@ -94,8 +114,8 @@ public class FilesKeyValueStore<K, V> implements KeyValueStore<K, V> {
 
     @Override
     public void put(K key, V value) {
-        String filename = (String) fromKey(key);
-        byte[] bytes = (byte[]) fromValue(value);
+        String filename = (String) mapper.fromKey(key);
+        byte[] bytes = (byte[]) mapper.fromValue(value);
         try ( ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes)) {
             ShareFileClient fileClient = client.createFile(filename, bytes.length);
             fileClient.upload(inputStream, bytes.length);
