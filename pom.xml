@@ -133,6 +133,7 @@
         <module>azure-blob</module>
         <module>azure-cosmosdb</module>
         <module>azure-fileshare</module>
+        <module>azure-keyvault-certificate</module>
         <module>azure</module>
         <!-- does not support Java 17 -->
         <module>chroniclemap</module>
