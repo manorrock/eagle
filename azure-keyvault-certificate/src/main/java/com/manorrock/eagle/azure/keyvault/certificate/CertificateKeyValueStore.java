@@ -35,6 +35,7 @@ import com.azure.security.keyvault.certificates.CertificateClient;
 import com.azure.security.keyvault.certificates.CertificateClientBuilder;
 import com.azure.security.keyvault.certificates.models.ImportCertificateOptions;
 import com.azure.security.keyvault.certificates.models.KeyVaultCertificateWithPolicy;
+import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
 
 /**
@@ -50,6 +51,11 @@ public class CertificateKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * Stores the client.
      */
     private CertificateClient client;
+    
+    /**
+     * Stores the mapper.
+     */
+    private KeyValueMapper mapper;
 
     /**
      * Constructor.
@@ -71,31 +77,32 @@ public class CertificateKeyValueStore<K, V> implements KeyValueStore<K, V> {
                 .vaultUrl(endpoint)
                 .credential(credential)
                 .buildClient();
+        mapper = new DefaultAzureCertificateKeyValueMapper();
     }
 
     @Override
     public void delete(K key) {
-        String name = (String) toKey(key);
+        String name = (String) mapper.toKey(key);
         client.beginDeleteCertificate(name);
     }
 
     @Override
     public V get(K key) {
-        String name = (String) toKey(key);
+        String name = (String) mapper.toKey(key);
         KeyVaultCertificateWithPolicy certificate = client.getCertificate(name);
         V result = null;
         if (certificate != null) {
             CertificateWrapper wrapper = new CertificateWrapper();
             wrapper.setWrapped(certificate);
-            result = (V) toValue(wrapper);
+            result = (V) mapper.toValue(wrapper);
         }
         return result;
     }
 
     @Override
     public void put(K key, V value) {
-        String name = (String) toKey(key);
-        CertificateWrapper wrapper = (CertificateWrapper) toValue(value);
+        String name = (String) mapper.toKey(key);
+        CertificateWrapper wrapper = (CertificateWrapper) mapper.toValue(value);
         ImportCertificateOptions options = new ImportCertificateOptions(name, wrapper.getBytes());
         client.importCertificate(options);
     }

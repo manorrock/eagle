@@ -36,7 +36,7 @@ import com.azure.security.keyvault.certificates.models.KeyVaultCertificateWithPo
  * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class CertificateWrapper {
+class CertificateWrapper {
 
     /**
      * Stores the certificate bytes.
