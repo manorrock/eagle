@@ -12,7 +12,6 @@
     <packaging>pom</packaging>
     <name>Manorrock Eagle - Azure - Project</name>
     <modules>
-        <module>keyvault-key</module>
         <module>keyvault-secret</module>
     </modules>
     <properties>

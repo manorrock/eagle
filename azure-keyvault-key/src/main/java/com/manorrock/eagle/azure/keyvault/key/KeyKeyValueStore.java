@@ -36,6 +36,7 @@ import com.azure.security.keyvault.keys.KeyClientBuilder;
 import com.azure.security.keyvault.keys.models.ImportKeyOptions;
 import com.azure.security.keyvault.keys.models.JsonWebKey;
 import com.azure.security.keyvault.keys.models.KeyVaultKey;
+import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
 
 /**
@@ -51,6 +52,11 @@ public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * Stores the client.
      */
     private KeyClient client;
+    
+    /**
+     * Stores the mapper.
+     */
+    private KeyValueMapper mapper;
 
     /**
      * Constructor.
@@ -72,29 +78,30 @@ public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V> {
                 .vaultUrl(endpoint)
                 .credential(credential)
                 .buildClient();
+        mapper = new DefaultAzureKeyKeyValueMapper();
     }
 
     @Override
     public void delete(K key) {
-        String name = (String) toKey(key);
+        String name = (String) mapper.toKey(key);
         client.beginDeleteKey(name);
     }
 
     @Override
     public V get(K key) {
-        String name = (String) toKey(key);
+        String name = (String) mapper.toKey(key);
         KeyVaultKey keyVaultKey = client.getKey(name);
         V result = null;
         if (keyVaultKey != null && keyVaultKey.getKey()!= null) {
-            result = (V) toValue(keyVaultKey.getKey());
+            result = (V) mapper.toValue(keyVaultKey.getKey());
         }
         return result;
     }
 
     @Override
     public void put(K key, V value) {
-        String name = (String) toKey(key);
-        JsonWebKey webKey = (JsonWebKey) fromValue(value);
+        String name = (String) mapper.toKey(key);
+        JsonWebKey webKey = (JsonWebKey) mapper.fromValue(value);
         ImportKeyOptions options = new ImportKeyOptions(name, webKey);
         client.importKey(options);
     }
