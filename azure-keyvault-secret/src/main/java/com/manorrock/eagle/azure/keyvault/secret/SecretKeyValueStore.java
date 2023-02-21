@@ -34,6 +34,7 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
+import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
 
 /**
@@ -49,6 +50,12 @@ public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * Stores the client.
      */
     private SecretClient client;
+    
+    /**
+     * Stores the mapper.
+     */
+    private KeyValueMapper mapper;
+    
     /**
      * Constructor.
      *
@@ -69,28 +76,29 @@ public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V> {
                 .vaultUrl(endpoint)
                 .credential(credential)
                 .buildClient();
+        mapper = new DefaultAzureSecretKeyValueMapper();
     }
 
     @Override
     public void delete(K key) {
-        String name = (String) fromKey(key);
+        String name = (String) mapper.fromKey(key);
         client.beginDeleteSecret(name);
     }
 
     @Override
     public V get(K key) {
-        String name = (String) fromKey(key);
+        String name = (String) mapper.fromKey(key);
         KeyVaultSecret secret = client.getSecret(name);
         V result = null;
         if (secret != null) {
-            result = (V) toValue(secret);
+            result = (V) mapper.toValue(secret);
         }
         return result;
     }
 
     @Override
     public void put(K key, V value) {
-        String name = (String) fromKey(key);
-        client.setSecret(name, ((KeyVaultSecret) fromValue(value)).getValue());
+        String name = (String) mapper.fromKey(key);
+        client.setSecret(name, ((KeyVaultSecret) mapper.fromValue(value)).getValue());
     }
 }

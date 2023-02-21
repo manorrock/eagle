@@ -135,7 +135,7 @@
         <module>azure-fileshare</module>
         <module>azure-keyvault-certificate</module>
         <module>azure-keyvault-key</module>
-        <module>azure</module>
+        <module>azure-keyvault-secret</module>
         <!-- does not support Java 17 -->
         <module>chroniclemap</module>
         <module>coherence</module>
