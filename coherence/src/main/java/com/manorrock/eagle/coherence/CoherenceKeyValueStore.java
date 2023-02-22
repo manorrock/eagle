@@ -29,6 +29,7 @@
  */
 package com.manorrock.eagle.coherence;
 
+import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.Session;
@@ -48,6 +49,11 @@ public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V> {
     private NamedCache namedCache;
     
     /**
+     * Stores the mapper.
+     */
+    private KeyValueMapper mapper;
+    
+    /**
      * Constructor.
      *
      * @param name the name.
@@ -55,25 +61,26 @@ public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V> {
     public CoherenceKeyValueStore(String name) {
         Session session = Session.create();
         session.getCache(name);
+        mapper = new DefaultCoherenceKeyValueMapper();
     }
 
     @Override
     public void delete(K key) {
-        namedCache.remove(fromKey(key));
+        namedCache.remove(mapper.fromKey(key));
     }
 
     @Override
     public V get(K key) {
         V result = null;
-        Object value = namedCache.get(fromKey(key));
+        Object value = namedCache.get(mapper.fromKey(key));
         if (value != null) {
-            result = (V) toValue(value);
+            result = (V) mapper.toValue(value);
         }
         return result;
     }
 
     @Override
     public void put(K key, V value) {
-        namedCache.put(fromKey(key), fromValue(value));
+        namedCache.put(mapper.fromKey(key), mapper.fromValue(value));
     }
 }
