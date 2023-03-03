@@ -26,6 +26,39 @@
             <artifactId>eagle-api</artifactId>
             <version>${project.version}</version>
             <scope>compile</scope>
-        </dependency>  
+        </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>azure</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skip>false</skip>
+                            <systemProperties>
+                                <blob.endpoint>${env.BLOB_ENDPOINT}</blob.endpoint>
+                                <blob.containerName>${env.BLOB_CONTAINER_NAME}</blob.containerName>
+                                <blob.accountName>${env.BLOB_ACCOUNT_NAME}</blob.accountName>
+                                <blob.accountKey>${env.BLOB_ACCOUNT_KEY}</blob.accountKey>
+                            </systemProperties>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

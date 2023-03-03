@@ -29,6 +29,7 @@
  */
 package com.manorrock.eagle.factory;
 
+import com.azure.storage.common.StorageSharedKeyCredential;
 import com.manorrock.eagle.api.KeyValueStore;
 import com.manorrock.eagle.azure.blob.AzureBlobKeyValueStore;
 import com.manorrock.eagle.azure.cosmosdb.CosmosDBKeyValueStore;
@@ -66,12 +67,16 @@ public final class KeyValueStoreFactory {
     private static KeyValueStore getBlobKeyValueStore(Properties properties) {
         return new AzureBlobKeyValueStore(
                 properties.getProperty("endpoint"),
-                properties.getProperty("containerName"));
+                properties.getProperty("containerName"),
+                new StorageSharedKeyCredential(
+                        properties.getProperty("accountName"),
+                        properties.getProperty("accountKey")
+                ));
     }
 
     /**
      * Create the Coherence KeyValueStore.
-     * 
+     *
      * @param properties the configuration properties.
      * @return the KeyValueStore or null if it could not be created.
      */
