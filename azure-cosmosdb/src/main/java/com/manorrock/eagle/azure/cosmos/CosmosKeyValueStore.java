@@ -84,6 +84,7 @@ public class CosmosKeyValueStore<K, V> implements KeyValueStore<K, V> {
                 .buildClient();
         database = client.getDatabase(databaseName);
         container = database.getContainer(containerName);
+        mapper = new DefaultCosmosKeyValueMapper();
     }
 
     @Override
