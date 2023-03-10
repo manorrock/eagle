@@ -40,7 +40,9 @@ import net.openhft.chronicle.map.ChronicleMapBuilder;
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
+ * @deprecated
  */
+@Deprecated(since = "23.3.0", forRemoval = true)
 public class ChronicleMapKeyValueStore<K, V> implements KeyValueStore<K, V> {
     
     /**

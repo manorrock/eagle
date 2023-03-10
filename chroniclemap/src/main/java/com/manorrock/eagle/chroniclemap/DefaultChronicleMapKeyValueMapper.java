@@ -35,7 +35,9 @@ import com.manorrock.eagle.api.KeyValueMapper;
  * The default ChronicleMap KeyValueMapper.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
+ * @deprecated
  */
+@Deprecated(since = "23.3.0", forRemoval = true)
 public class DefaultChronicleMapKeyValueMapper implements KeyValueMapper<byte[], byte[]> {
 
     @Override
