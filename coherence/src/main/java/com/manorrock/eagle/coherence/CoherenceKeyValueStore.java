@@ -29,10 +29,10 @@
  */
 package com.manorrock.eagle.coherence;
 
-import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.Session;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
  * A Coherence based KeyValueStore.
@@ -41,7 +41,7 @@ import com.tangosol.net.Session;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V, CoherenceKeyValueStoreMapper> {
 
     /**
      * Stores the named cache.
@@ -51,7 +51,7 @@ public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V> {
     /**
      * Stores the mapper.
      */
-    private KeyValueMapper mapper;
+    private KeyValueStoreMapper mapper;
     
     /**
      * Constructor.
@@ -61,7 +61,7 @@ public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V> {
     public CoherenceKeyValueStore(String name) {
         Session session = Session.create();
         session.getCache(name);
-        mapper = new DefaultCoherenceKeyValueMapper();
+        mapper = new CoherenceKeyValueStoreMapper();
     }
 
     @Override

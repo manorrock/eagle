@@ -1,13 +1,13 @@
-package com.manorrock.eagle.azure.files;
+package com.manorrock.eagle.redis;
 
-import com.manorrock.eagle.api.KeyValueMapper;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
- * The default Azure Files KeyValueMapper.
+ * The Redis KeyValueStoreMapper.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class DefaultFilesKeyValueMapper implements KeyValueMapper<String, byte[]> {
+public class RedisKeyValueStoreMapper implements KeyValueStoreMapper<String, byte[]> {
     
     @Override
     public Object fromKey(String key) {
@@ -21,7 +21,7 @@ public class DefaultFilesKeyValueMapper implements KeyValueMapper<String, byte[]
 
     @Override
     public String toKey(Object underlyingKey) {
-        return underlyingKey.toString();
+        return (String) underlyingKey;
     }
 
     @Override

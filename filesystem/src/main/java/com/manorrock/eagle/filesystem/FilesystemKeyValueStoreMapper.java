@@ -27,36 +27,72 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.eagle.chroniclemap;
+package com.manorrock.eagle.filesystem;
 
-import com.manorrock.eagle.api.KeyValueMapper;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
+import static java.util.logging.Level.WARNING;
+import java.util.logging.Logger;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
- * The default ChronicleMap KeyValueMapper.
- * 
+ * The default Filesystem KeyValueStoreMapper.
+ *
  * @author Manfred Riem (mriem@manorrock.com)
- * @deprecated
  */
-@Deprecated(since = "23.3.0", forRemoval = true)
-public class DefaultChronicleMapKeyValueMapper implements KeyValueMapper<byte[], byte[]> {
+public class FilesystemKeyValueStoreMapper implements KeyValueStoreMapper<String, String> {
 
-    @Override
-    public Object fromKey(byte[] key) {
-        return key;
+    /**
+     * Stores the logger.
+     */
+    private static final Logger LOGGER = Logger.getLogger(FilesystemKeyValueStoreMapper.class.getName());
+
+    /**
+     * Stores the base directory.
+     */
+    private final File baseDirectory;
+
+    /**
+     * Constructor.
+     *
+     * @param baseDirectory the base directory.
+     */
+    public FilesystemKeyValueStoreMapper(File baseDirectory) {
+        this.baseDirectory = baseDirectory;
     }
 
     @Override
-    public Object fromValue(byte[] value) {
-        return value;
+    public Object fromKey(String key) {
+        return new File(baseDirectory, key);
     }
 
     @Override
-    public byte[] toKey(Object underlyingKey) {
-        return (byte[]) underlyingKey;
+    public Object fromValue(String value) {
+        byte[] result = null;
+        try {
+            result = value.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            LOGGER.log(WARNING, "Encountered an unsupported encoding", uee);
+        }
+        return result;
     }
 
     @Override
-    public byte[] toValue(Object underlyingValue) {
-        return (byte[]) underlyingValue;
+    public String toKey(Object underlyingKey) {
+        File file = (File) underlyingKey;
+        String to = file.getAbsolutePath();
+        to = to.substring(baseDirectory.getAbsolutePath().length());
+        return to;
+    }
+
+    @Override
+    public String toValue(Object underlyingValue) {
+        String result = null;
+        try {
+            result = new String((byte[]) underlyingValue, "UTF-8");
+        } catch (UnsupportedEncodingException uee) {
+            LOGGER.log(WARNING, "Encountered an unsupported encoding", uee);
+        }
+        return result;
     }
 }

@@ -1,13 +1,13 @@
-package com.manorrock.eagle.azure.keyvault.secret;
+package com.manorrock.eagle.azure.keyvault.certificate;
 
-import com.manorrock.eagle.api.KeyValueMapper;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
- * The default Azure KeyVault Key KeyValueMapper.
+ * The default Azure KeyVault Certificate KeyValueStoreMapper.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class DefaultAzureSecretKeyValueMapper implements KeyValueMapper<String, byte[]> {
+public class CertificateKeyValueStoreMapper implements KeyValueStoreMapper<String, byte[]> {
     
     @Override
     public Object fromKey(String key) {

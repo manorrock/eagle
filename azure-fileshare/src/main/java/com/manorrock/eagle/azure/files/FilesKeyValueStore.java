@@ -32,13 +32,13 @@ package com.manorrock.eagle.azure.files;
 import com.azure.storage.file.share.ShareClient;
 import com.azure.storage.file.share.ShareClientBuilder;
 import com.azure.storage.file.share.ShareFileClient;
-import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
  * An Azure File Share based KeyValueStore.
@@ -47,7 +47,7 @@ import java.util.logging.Logger;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class FilesKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class FilesKeyValueStore<K, V> implements KeyValueStore<K, V, FilesKeyValueStoreMapper> {
 
     /**
      * Stores the logger.
@@ -62,7 +62,7 @@ public class FilesKeyValueStore<K, V> implements KeyValueStore<K, V> {
     /**
      * Stores the mapper.
      */
-    private KeyValueMapper mapper;
+    private KeyValueStoreMapper mapper;
 
     /**
      * Constructor.
@@ -77,7 +77,7 @@ public class FilesKeyValueStore<K, V> implements KeyValueStore<K, V> {
                 .shareName(shareName)
                 .sasToken(sasToken)
                 .buildClient();
-        this.mapper = new DefaultFilesKeyValueMapper();
+        this.mapper = new FilesKeyValueStoreMapper();
     }
 
     /**
@@ -88,7 +88,7 @@ public class FilesKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * @param shareName the share name.
      * @param sasToken the SAS token.
      */
-    public FilesKeyValueStore(KeyValueMapper mapper, String endpoint, String shareName, String sasToken) {
+    public FilesKeyValueStore(KeyValueStoreMapper mapper, String endpoint, String shareName, String sasToken) {
         this(endpoint, shareName, sasToken);
         this.mapper = mapper;
     }

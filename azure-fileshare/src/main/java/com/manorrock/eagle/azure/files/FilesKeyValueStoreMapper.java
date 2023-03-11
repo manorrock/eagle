@@ -1,13 +1,13 @@
-package com.manorrock.eagle.azure.blob;
+package com.manorrock.eagle.azure.files;
 
-import com.manorrock.eagle.api.KeyValueMapper;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
- * The default Azure Blob Storage KeyValueMapper.
+ * The default Azure Files KeyValueStoreMapper.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class DefaultAzureBlobKeyValueMapper implements KeyValueMapper<String, byte[]> {
+public class FilesKeyValueStoreMapper implements KeyValueStoreMapper<String, byte[]> {
     
     @Override
     public Object fromKey(String key) {
@@ -21,7 +21,7 @@ public class DefaultAzureBlobKeyValueMapper implements KeyValueMapper<String, by
 
     @Override
     public String toKey(Object underlyingKey) {
-        return (String) underlyingKey;
+        return underlyingKey.toString();
     }
 
     @Override

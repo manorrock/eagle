@@ -1,13 +1,13 @@
 package com.manorrock.eagle.azure.cosmos;
 
-import com.manorrock.eagle.api.KeyValueMapper;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
- * The default Azure Blob Storage KeyValueMapper.
+ * The default Azure Blob Storage KeyValueStoreMapper.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class DefaultCosmosKeyValueMapper implements KeyValueMapper<CosmosKey, byte[]> {
+public class CosmosKeyValueStoreMapper implements KeyValueStoreMapper<CosmosKey, byte[]> {
     
     @Override
     public Object fromKey(CosmosKey key) {

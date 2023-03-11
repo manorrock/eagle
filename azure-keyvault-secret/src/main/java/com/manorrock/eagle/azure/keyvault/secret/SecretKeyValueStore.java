@@ -34,8 +34,8 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
-import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
  * An Azure KeyVayl Secret based KeyValueStore.
@@ -44,7 +44,7 @@ import com.manorrock.eagle.api.KeyValueStore;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V, SecretKeyValueStoreMapper> {
 
     /**
      * Stores the client.
@@ -54,7 +54,7 @@ public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V> {
     /**
      * Stores the mapper.
      */
-    private KeyValueMapper mapper;
+    private KeyValueStoreMapper mapper;
     
     /**
      * Constructor.
@@ -76,7 +76,7 @@ public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V> {
                 .vaultUrl(endpoint)
                 .credential(credential)
                 .buildClient();
-        mapper = new DefaultAzureSecretKeyValueMapper();
+        mapper = new SecretKeyValueStoreMapper();
     }
 
     @Override

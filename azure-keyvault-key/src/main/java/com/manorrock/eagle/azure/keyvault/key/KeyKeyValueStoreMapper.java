@@ -1,13 +1,13 @@
-package com.manorrock.eagle.coherence;
+package com.manorrock.eagle.azure.keyvault.key;
 
-import com.manorrock.eagle.api.KeyValueMapper;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
- * The default Azure KeyVault Key KeyValueMapper.
+ * The default Azure KeyVault Key KeyValueStoreMapper.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class DefaultCoherenceKeyValueMapper implements KeyValueMapper<String, byte[]> {
+public class KeyKeyValueStoreMapper implements KeyValueStoreMapper<String, byte[]> {
     
     @Override
     public Object fromKey(String key) {
