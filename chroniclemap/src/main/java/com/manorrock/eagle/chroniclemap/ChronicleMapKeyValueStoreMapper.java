@@ -27,46 +27,36 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.eagle.api;
+package com.manorrock.eagle.chroniclemap;
+
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
- * The Key-Value mapper API.
+ * The default ChronicleMap KeyValueStoreMapper.
  * 
- * @author Manfred Riem (mriem@manorrock.com)s
- * @param <K> the typed key.
- * @param <V> the typed value.
+ * @author Manfred Riem (mriem@manorrock.com)
+ * @deprecated
  */
-public interface KeyValueMapper<K,V> {
+@Deprecated(since = "23.3.0", forRemoval = true)
+public class ChronicleMapKeyValueStoreMapper implements KeyValueStoreMapper<byte[], byte[]> {
 
-    /**
-     * Convert the typed key to the underlying key.
-     * 
-     * @param key the typed key.
-     * @return the underlying key.
-     */
-    Object fromKey(K key);
-    
-    /**
-     * Convert the typed value to the underlying value.
-     * 
-     * @param value the typed value.
-     * @return the underlying value.
-     */
-    Object fromValue(V value);
-    
-    /**
-     * Convert underlying key to typed key.
-     * 
-     * @param underlyingKey the underlying key.
-     * @return the typed key.
-     */
-    K toKey(Object underlyingKey);
-    
-    /**
-     * Convert underlying value to typed value.
-     * 
-     * @param underlyingValue the underlying value.
-     * @return the typed value.
-     */
-    V toValue(Object underlyingValue);
+    @Override
+    public Object fromKey(byte[] key) {
+        return key;
+    }
+
+    @Override
+    public Object fromValue(byte[] value) {
+        return value;
+    }
+
+    @Override
+    public byte[] toKey(Object underlyingKey) {
+        return (byte[]) underlyingKey;
+    }
+
+    @Override
+    public byte[] toValue(Object underlyingValue) {
+        return (byte[]) underlyingValue;
+    }
 }

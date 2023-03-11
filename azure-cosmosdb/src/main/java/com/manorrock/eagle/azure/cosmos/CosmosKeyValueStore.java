@@ -34,8 +34,8 @@ import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.CosmosContainer;
 import com.azure.cosmos.CosmosDatabase;
-import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
  * A Cosmos DB based KeyValueStore.
@@ -44,7 +44,7 @@ import com.manorrock.eagle.api.KeyValueStore;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class CosmosKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class CosmosKeyValueStore<K, V> implements KeyValueStore<K, V, CosmosKeyValueStoreMapper> {
     
     /**
      * Stores the CosmosDB client.
@@ -64,7 +64,7 @@ public class CosmosKeyValueStore<K, V> implements KeyValueStore<K, V> {
     /**
      * Stores the mapper.
      */
-    private KeyValueMapper mapper;
+    private KeyValueStoreMapper mapper;
 
     /**
      * Constructor.
@@ -84,7 +84,7 @@ public class CosmosKeyValueStore<K, V> implements KeyValueStore<K, V> {
                 .buildClient();
         database = client.getDatabase(databaseName);
         container = database.getContainer(containerName);
-        mapper = new DefaultCosmosKeyValueMapper();
+        mapper = new CosmosKeyValueStoreMapper();
     }
 
     @Override

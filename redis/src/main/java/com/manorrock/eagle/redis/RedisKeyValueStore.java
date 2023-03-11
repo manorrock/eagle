@@ -35,6 +35,7 @@ import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.codec.RedisCodec;
 import java.net.URI;
 import java.nio.ByteBuffer;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
  * A Redis based KeyValueStore.
@@ -44,12 +45,17 @@ import java.nio.ByteBuffer;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, RedisKeyValueStoreMapper> {
     
     /**
      * Stores the Redis connection.
      */
     private final StatefulRedisConnection<K, V> connection;
+    
+    /**
+     * Stores the mapper.
+     */
+    private KeyValueStoreMapper mapper;
 
     /**
      * Constructor.
@@ -58,29 +64,30 @@ public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V> {
      */
     public RedisKeyValueStore(URI uri) {
         RedisClient client = RedisClient.create(uri.toString());
+        mapper = new RedisKeyValueStoreMapper();
         connection = client.connect(new RedisCodec<K, V>() {
             @Override
             public K decodeKey(ByteBuffer bb) {
                 byte[] bytes = new byte[bb.remaining()];
                 bb.get(bytes);
-                return (K) toKey(bytes);
+                return (K) mapper.toKey(bytes);
             }
 
             @Override
             public V decodeValue(ByteBuffer bb) {
                 byte[] bytes = new byte[bb.remaining()];
                 bb.get(bytes);
-                return (V) toValue(bytes);
+                return (V) mapper.toValue(bytes);
             }
 
             @Override
             public ByteBuffer encodeKey(K k) {
-                return ByteBuffer.wrap((byte[]) fromKey(k));
+                return ByteBuffer.wrap((byte[]) mapper.fromKey(k));
             }
 
             @Override
             public ByteBuffer encodeValue(V v) {
-                return ByteBuffer.wrap((byte[]) fromValue(v));
+                return ByteBuffer.wrap((byte[]) mapper.fromValue(v));
             }
         });
     }

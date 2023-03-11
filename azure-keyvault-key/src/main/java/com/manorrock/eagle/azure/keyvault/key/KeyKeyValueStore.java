@@ -36,8 +36,8 @@ import com.azure.security.keyvault.keys.KeyClientBuilder;
 import com.azure.security.keyvault.keys.models.ImportKeyOptions;
 import com.azure.security.keyvault.keys.models.JsonWebKey;
 import com.azure.security.keyvault.keys.models.KeyVaultKey;
-import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
  * An Azure KeyVault Key based KeyValueStore.
@@ -46,7 +46,7 @@ import com.manorrock.eagle.api.KeyValueStore;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V, KeyKeyValueStoreMapper> {
 
     /**
      * Stores the client.
@@ -56,7 +56,7 @@ public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V> {
     /**
      * Stores the mapper.
      */
-    private KeyValueMapper mapper;
+    private KeyValueStoreMapper mapper;
 
     /**
      * Constructor.
@@ -78,7 +78,7 @@ public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V> {
                 .vaultUrl(endpoint)
                 .credential(credential)
                 .buildClient();
-        mapper = new DefaultAzureKeyKeyValueMapper();
+        mapper = new KeyKeyValueStoreMapper();
     }
 
     @Override

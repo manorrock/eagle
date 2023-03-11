@@ -34,13 +34,13 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
-import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
  * An Azure Blob Storage based KeyValueStore.
@@ -49,12 +49,12 @@ import java.util.logging.Logger;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class AzureBlobKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V, BlobKeyValueStoreMapper> {
     
     /**
      * Stores the logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(AzureBlobKeyValueStore.class.getPackage().getName());
+    private static final Logger LOGGER = Logger.getLogger(BlobKeyValueStore.class.getPackage().getName());
 
     /**
      * Stores the client.
@@ -69,7 +69,7 @@ public class AzureBlobKeyValueStore<K, V> implements KeyValueStore<K, V> {
     /**
      * Stores the mapper.
      */
-    private KeyValueMapper mapper;
+    private KeyValueStoreMapper mapper;
 
     /**
      * Constructor.
@@ -85,19 +85,19 @@ public class AzureBlobKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * @param containerName the container name.
      * @param credential the shared storage key credential.
      */
-    public AzureBlobKeyValueStore(String endpoint, String containerName, StorageSharedKeyCredential credential) {
-        this(new DefaultAzureBlobKeyValueMapper(), endpoint, containerName, credential);
+    public BlobKeyValueStore(String endpoint, String containerName, StorageSharedKeyCredential credential) {
+        this(new BlobKeyValueStoreMapper(), endpoint, containerName, credential);
     }
 
     /**
      * Constructor.
      *
-     * @param mapper the KeyValueMapper.
+     * @param mapper the KeyValueStoreMapper.
      * @param endpoint the endpoint.
      * @param containerName the container name.
      * @param credential the storage shared key credential.
      */
-    public AzureBlobKeyValueStore(KeyValueMapper mapper, String endpoint, String containerName, StorageSharedKeyCredential credential) {
+    public BlobKeyValueStore(KeyValueStoreMapper mapper, String endpoint, String containerName, StorageSharedKeyCredential credential) {
         client = new BlobServiceClientBuilder()
                 .endpoint(endpoint)
                 .credential(credential)

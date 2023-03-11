@@ -29,7 +29,6 @@
  */
 package com.manorrock.eagle.filesystem;
 
-import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -38,21 +37,22 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
  * A file-system based KeyValueStore.
  * 
  * <p>
- *  This KeyValueStore uses the DefaultFilesystemKeyValueMapper if no 
- *  KeyValueMapper is passed in. If you want different behavior you will have to
- *  deliver your own implementation of the KeyValueMapper.
- * </p>
+  This KeyValueStore uses the FilesystemKeyValueStoreMapper if no 
+  KeyValueStoreMapper is passed in. If you want different behavior you will have to
+  deliver your own implementation of the KeyValueStoreMapper.
+ </p>
  *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the key type.
  * @param <V> the value type.
  */
-public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V, FilesystemKeyValueStoreMapper> {
 
     /**
      * Stores the logger.
@@ -62,7 +62,7 @@ public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V> {
     /**
      * Stores the mapper type.
      */
-    private KeyValueMapper mapper;
+    private KeyValueStoreMapper mapper;
 
     /**
      * Constructor.
@@ -70,16 +70,16 @@ public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * @param baseDirectory the base directory.
      */
     public FilesystemKeyValueStore(File baseDirectory) {
-        this.mapper = new DefaultFilesystemKeyValueMapper(baseDirectory);
+        this.mapper = new FilesystemKeyValueStoreMapper(baseDirectory);
     }
 
     /**
      * Constructor.
      *
-     * @param mapper the KeyValueMapper.
+     * @param mapper the KeyValueStoreMapper.
      * @param baseDirectory the base directory.
      */
-    public FilesystemKeyValueStore(KeyValueMapper mapper, File baseDirectory) {
+    public FilesystemKeyValueStore(KeyValueStoreMapper mapper, File baseDirectory) {
         this(baseDirectory);
         this.mapper = mapper;
     }

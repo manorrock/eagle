@@ -27,43 +27,44 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.eagle.filesystem;
+package com.manorrock.eagle.path;
 
-import com.manorrock.eagle.api.KeyValueMapper;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Path;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
- * The default Filesystem KeyValueMapper.
+ * The default Filesystem KeyValueStoreMapper.
  *
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class DefaultFilesystemKeyValueMapper implements KeyValueMapper<String, String> {
+public class PathKeyValueStoreMapper implements KeyValueStoreMapper<String, String> {
 
     /**
      * Stores the logger.
      */
-    private static final Logger LOGGER = Logger.getLogger(DefaultFilesystemKeyValueMapper.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PathKeyValueStoreMapper.class.getName());
 
     /**
-     * Stores the base directory.
+     * Stores the base path.
      */
-    private final File baseDirectory;
+    private final Path basePath;
 
     /**
      * Constructor.
      *
-     * @param baseDirectory the base directory.
+     * @param basePath the base path.
      */
-    public DefaultFilesystemKeyValueMapper(File baseDirectory) {
-        this.baseDirectory = baseDirectory;
+    public PathKeyValueStoreMapper(Path basePath) {
+        this.basePath = basePath;
     }
 
     @Override
     public Object fromKey(String key) {
-        return new File(baseDirectory, key);
+        return basePath.resolve(key);
     }
 
     @Override
@@ -76,13 +77,10 @@ public class DefaultFilesystemKeyValueMapper implements KeyValueMapper<String, S
         }
         return result;
     }
-
+    
     @Override
     public String toKey(Object underlyingKey) {
-        File file = (File) underlyingKey;
-        String to = file.getAbsolutePath();
-        to = to.substring(baseDirectory.getAbsolutePath().length());
-        return to;
+        return ((Path) underlyingKey).toString().substring(basePath.toString().length());
     }
 
     @Override
@@ -95,4 +93,5 @@ public class DefaultFilesystemKeyValueMapper implements KeyValueMapper<String, S
         }
         return result;
     }
+    
 }

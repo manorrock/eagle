@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * The JUnit tests for the AzureBlobKeyValueStore class.
+ * The JUnit tests for the BlobKeyValueStore class.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
@@ -45,14 +45,14 @@ public class AzureBlobKeyValueStoreTest {
     /**
      * Stores the KV store.
      */
-    private static AzureBlobKeyValueStore<String, byte[]> store;
+    private static BlobKeyValueStore<String, byte[]> store;
     
     /**
      * Setup before testing.
      */
     @BeforeAll
     public static void setUpClass() {
-        store = new AzureBlobKeyValueStore<>(
+        store = new BlobKeyValueStore<>(
                 System.getProperty("blob.endpoint"),
                 System.getProperty("blob.containerName"),
                 new StorageSharedKeyCredential(

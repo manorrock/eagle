@@ -37,6 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
  * A Path based KeyValueStore.
@@ -51,7 +52,7 @@ import java.util.logging.Logger;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class PathKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, PathKeyValueStoreMapper> {
 
     /**
      * Stores the logger.
@@ -62,6 +63,11 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * Stores the base path.
      */
     private final Path basePath;
+    
+    /**
+     * Stores the mapper.
+     */
+    private KeyValueStoreMapper mapper;
 
     /**
      * Constructor.
@@ -70,12 +76,13 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V> {
      */
     public PathKeyValueStore(Path basePath) {
         this.basePath = basePath;
+        this.mapper = new PathKeyValueStoreMapper(basePath);
     }
 
     @Override
     public void delete(K key) {
         try {
-            Path path = (Path) fromKey(key);
+            Path path = (Path) mapper.fromKey(key);
             Files.deleteIfExists(path);
         } catch (IOException ioe) {
             LOGGER.log(WARNING, "An I/O error occured deleting key: " + key, ioe);
@@ -83,29 +90,13 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V> {
     }
 
     @Override
-    public Object fromKey(K key) {
-        return basePath.resolve(key.toString());
-    }
-
-    @Override
-    public Object fromValue(V value) {
-        byte[] result = null;
-        try {
-            result = value.toString().getBytes("UTF-8");
-        } catch (UnsupportedEncodingException uee) {
-            LOGGER.log(WARNING, "Encountered an unsupported encoding", uee);
-        }
-        return result;
-    }
-
-    @Override
     public V get(K key) {
         V result = null;
-        Path path = (Path) fromKey(key);
+        Path path = (Path) mapper.fromKey(key);
         if (Files.exists(path)) {
             try {
                 byte[] bytes = Files.readAllBytes(path);
-                result = (V) toValue(bytes);
+                result = (V) mapper.toValue(bytes);
             } catch (IOException ioe) {
                 LOGGER.log(WARNING, "Unable to get content for key: " + key, ioe);
             }
@@ -115,7 +106,7 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V> {
 
     @Override
     public void put(K key, V value) {
-        Path path = (Path) fromKey(key);
+        Path path = (Path) mapper.fromKey(key);
         if (!Files.exists(path.getParent())) {
             try {
                 Files.createDirectories(path.getParent());
@@ -125,26 +116,10 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V> {
             }
         }
         try (OutputStream output = Files.newOutputStream(path)) {
-            output.write((byte[]) fromValue(value));
+            output.write((byte[]) mapper.fromValue(value));
             output.flush();
         } catch (IOException ioe) {
             LOGGER.log(WARNING, "Unable to put content for key: " + key, ioe);
         }
-    }
-
-    @Override
-    public K toKey(Object underlyingKey) {
-        return (K) ((Path) underlyingKey).toString().substring(basePath.toString().length());
-    }
-
-    @Override
-    public V toValue(Object underlyingValue) {
-        String result = null;
-        try {
-            result = new String((byte[]) underlyingValue, "UTF-8");
-        } catch (UnsupportedEncodingException uee) {
-            LOGGER.log(WARNING, "Encountered an unsupported encoding", uee);
-        }
-        return (V) result;
     }
 }

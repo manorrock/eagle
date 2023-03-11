@@ -29,10 +29,10 @@
  */
 package com.manorrock.eagle.chroniclemap;
 
-import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
 import net.openhft.chronicle.map.ChronicleMap;
 import net.openhft.chronicle.map.ChronicleMapBuilder;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
  * A ChronicleMap based KeyValueStore.
@@ -43,7 +43,7 @@ import net.openhft.chronicle.map.ChronicleMapBuilder;
  * @deprecated
  */
 @Deprecated(since = "23.3.0", forRemoval = true)
-public class ChronicleMapKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class ChronicleMapKeyValueStore<K, V> implements KeyValueStore<K, V, ChronicleMapKeyValueStoreMapper> {
     
     /**
      * Stores the ChronicleMap.
@@ -53,7 +53,7 @@ public class ChronicleMapKeyValueStore<K, V> implements KeyValueStore<K, V> {
     /**
      * Stores the mapper.
      */
-    private final KeyValueMapper mapper;
+    private final KeyValueStoreMapper mapper;
 
     /**
      * Constructor.
@@ -74,19 +74,19 @@ public class ChronicleMapKeyValueStore<K, V> implements KeyValueStore<K, V> {
      * @param valueClass the value class.
      */
     public ChronicleMapKeyValueStore(String name, long maxSize, Class keyClass, Class valueClass) {
-        this(new DefaultChronicleMapKeyValueMapper(), name, maxSize, keyClass, valueClass);
+        this(new ChronicleMapKeyValueStoreMapper(), name, maxSize, keyClass, valueClass);
     }
     
     /**
      * Constructor.
      *
-     * @param mapper the KeyValueMapper
+     * @param mapper the KeyValueStoreMapper
      * @param name the name.
      * @param maxSize the max size.
      * @param keyClass the key class.
      * @param valueClass the value class.
      */
-    public ChronicleMapKeyValueStore(KeyValueMapper mapper, String name, long maxSize, Class keyClass, Class valueClass) {
+    public ChronicleMapKeyValueStore(KeyValueStoreMapper mapper, String name, long maxSize, Class keyClass, Class valueClass) {
         chronicleMap = ChronicleMapBuilder
                 .of(keyClass, valueClass)
                 .averageKey(name.getBytes())

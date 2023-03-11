@@ -35,8 +35,8 @@ import com.azure.security.keyvault.certificates.CertificateClient;
 import com.azure.security.keyvault.certificates.CertificateClientBuilder;
 import com.azure.security.keyvault.certificates.models.ImportCertificateOptions;
 import com.azure.security.keyvault.certificates.models.KeyVaultCertificateWithPolicy;
-import com.manorrock.eagle.api.KeyValueMapper;
 import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
  * An Azure Key Vault Certificates based KeyValueStore.
@@ -45,7 +45,7 @@ import com.manorrock.eagle.api.KeyValueStore;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class CertificateKeyValueStore<K, V> implements KeyValueStore<K, V> {
+public class CertificateKeyValueStore<K, V> implements KeyValueStore<K, V, CertificateKeyValueStoreMapper> {
 
     /**
      * Stores the client.
@@ -55,7 +55,7 @@ public class CertificateKeyValueStore<K, V> implements KeyValueStore<K, V> {
     /**
      * Stores the mapper.
      */
-    private KeyValueMapper mapper;
+    private KeyValueStoreMapper mapper;
 
     /**
      * Constructor.
@@ -77,7 +77,7 @@ public class CertificateKeyValueStore<K, V> implements KeyValueStore<K, V> {
                 .vaultUrl(endpoint)
                 .credential(credential)
                 .buildClient();
-        mapper = new DefaultAzureCertificateKeyValueMapper();
+        mapper = new CertificateKeyValueStoreMapper();
     }
 
     @Override

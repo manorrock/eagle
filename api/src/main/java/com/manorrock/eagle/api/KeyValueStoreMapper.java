@@ -27,69 +27,46 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.eagle.hazelcast;
-
-import com.hazelcast.config.Config;
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-import com.manorrock.eagle.api.KeyValueStore;
-import java.util.Map;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
+package com.manorrock.eagle.api;
 
 /**
- * A Hazelcast based KeyValueStore.
- *
- * @author Manfred Riem (mriem@manorrock.com)
- * @param <K> the type of the key.
- * @param <V> the type of the value.
+ * The Key-Value mapper API.
+ * 
+ * @author Manfred Riem (mriem@manorrock.com)s
+ * @param <K> the typed key.
+ * @param <V> the typed value.
  */
-public class HazelcastKeyValueStore<K, V> implements KeyValueStore<K, V, HazelcastKeyValueStoreMapper> {
+public interface KeyValueStoreMapper<K,V> {
 
     /**
-     * Stores the Hazelcast instance.
+     * Convert the typed key to the underlying key.
+     * 
+     * @param key the typed key.
+     * @return the underlying key.
      */
-    private HazelcastInstance hazelcast;
-
-    /**
-     * Stores the Hazelcast map.
-     */
-    private Map hazelcastMap;
+    Object fromKey(K key);
     
     /**
-     * Stores the mapper.
+     * Convert the typed value to the underlying value.
+     * 
+     * @param value the typed value.
+     * @return the underlying value.
      */
-    private KeyValueStoreMapper mapper;
-
+    Object fromValue(V value);
+    
     /**
-     * Constructor.
-     *
-     * @param name the name.
+     * Convert underlying key to typed key.
+     * 
+     * @param underlyingKey the underlying key.
+     * @return the typed key.
      */
-    public HazelcastKeyValueStore(String name) {
-        Config config = new Config();
-        config.setInstanceName(name);
-        hazelcast = Hazelcast.newHazelcastInstance(config);
-        hazelcastMap = hazelcast.getMap(name);
-        mapper = new HazelcastKeyValueStoreMapper();
-    }
-
-    @Override
-    public void delete(K key) {
-        hazelcastMap.remove(mapper.fromKey(key));
-    }
-
-    @Override
-    public V get(K key) {
-        V result = null;
-        Object value = hazelcastMap.get(mapper.fromKey(key));
-        if (value != null) {
-            result = (V) mapper.toValue(value);
-        }
-        return result;
-    }
-
-    @Override
-    public void put(K key, V value) {
-        hazelcastMap.put(mapper.fromKey(key), mapper.fromValue(value));
-    }
+    K toKey(Object underlyingKey);
+    
+    /**
+     * Convert underlying value to typed value.
+     * 
+     * @param underlyingValue the underlying value.
+     * @return the typed value.
+     */
+    V toValue(Object underlyingValue);
 }
