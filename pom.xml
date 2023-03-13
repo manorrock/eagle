@@ -161,7 +161,7 @@
         <module>azure-keyvault-certificate</module>
         <module>azure-keyvault-key</module>
         <module>azure-keyvault-secret</module>
-        <!-- does not support Java 17 -->
+        <module>calico</module>
         <module>coherence</module>
         <module>factory</module>
         <module>filesystem</module>
