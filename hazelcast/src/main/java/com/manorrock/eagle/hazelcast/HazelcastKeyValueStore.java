@@ -42,7 +42,9 @@ import com.manorrock.eagle.api.KeyValueStoreMapper;
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
+ * @deprecated 
  */
+@Deprecated(since = "23.4.0", forRemoval = true)
 public class HazelcastKeyValueStore<K, V> implements KeyValueStore<K, V, HazelcastKeyValueStoreMapper> {
 
     /**
