@@ -6,7 +6,9 @@ import com.manorrock.eagle.api.KeyValueStoreMapper;
  * The default Azure KeyVault Key KeyValueStoreMapper.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
+ * @deprecated
  */
+@Deprecated(since = "23.4.0", forRemoval = true)
 public class CoherenceKeyValueStoreMapper implements KeyValueStoreMapper<String, byte[]> {
     
     @Override
