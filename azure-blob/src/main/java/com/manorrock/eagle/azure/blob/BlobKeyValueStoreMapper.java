@@ -6,7 +6,9 @@ import com.manorrock.eagle.api.KeyValueStoreMapper;
  * The default Azure Blob Storage KeyValueStoreMapper.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
+ * @deprecated 
  */
+@Deprecated(since = "23.4.0", forRemoval = true)
 public class BlobKeyValueStoreMapper implements KeyValueStoreMapper<String, byte[]> {
     
     @Override
