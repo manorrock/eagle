@@ -162,7 +162,6 @@
         <module>azure-keyvault-key</module>
         <module>azure-keyvault-secret</module>
         <module>calico</module>
-        <module>chroniclemap</module>
         <module>coherence</module>
         <module>factory</module>
         <module>filesystem</module>
