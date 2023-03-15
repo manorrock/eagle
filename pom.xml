@@ -165,6 +165,7 @@
         <module>coherence</module>
         <module>factory</module>
         <module>filesystem</module>
+        <module>git</module>
         <module>hazelcast</module>
         <module>jdbc</module>
         <module>maven</module>
