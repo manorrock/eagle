@@ -29,16 +29,21 @@
  */
 package com.manorrock.eagle.jdbc;
 
-import java.math.BigInteger;
 import java.net.URI;
 import java.sql.Blob;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * The JUnit tests for the JdbcKeyValueStore class.
- * 
+ *
  * @author Manfred Riem (mriem@manorrock.com)
  */
 public class JdbcKeyValueStoreTest {
@@ -46,14 +51,29 @@ public class JdbcKeyValueStoreTest {
     /**
      * Stores the JDBC URI used for testing.
      */
-    private static String JDBC_URI = "jdbc:h2:mem:";
+    private static String JDBC_URI = "jdbc:h2:mem:test";
+
+    /**
+     * Before all.
+     */
+    @BeforeAll
+    public static void beforeAll() {
+        try {
+            Connection connection = DriverManager.getConnection(JDBC_URI);
+            Statement statement = connection.createStatement();
+            statement.execute("CREATE TABLE IF NOT EXISTS kvs(kvs_id BIGINT PRIMARY KEY, kvs_value BLOB(10K));");
+        } catch (SQLException se) {
+            se.printStackTrace();
+        }
+    }
 
     /**
      * Test delete method.
      */
     @Test
     public void testDelete() {
-        JdbcKeyValueStore store = new JdbcKeyValueStore<Long, Blob>(URI.create(JDBC_URI)) {};
+        JdbcKeyValueStore store = new JdbcKeyValueStore<Long, Blob>(URI.create(JDBC_URI)) {
+        };
         store.delete(1234L);
     }
 
@@ -62,7 +82,8 @@ public class JdbcKeyValueStoreTest {
      */
     @Test
     public void testGet() {
-        JdbcKeyValueStore store = new JdbcKeyValueStore<Long, Blob>(URI.create(JDBC_URI)) {};
+        JdbcKeyValueStore store = new JdbcKeyValueStore<Long, Blob>(URI.create(JDBC_URI)) {
+        };
         assertNull(store.get(2345L));
     }
 
@@ -71,8 +92,11 @@ public class JdbcKeyValueStoreTest {
      */
     @Test
     public void testPut() {
-        JdbcKeyValueStore store = new JdbcKeyValueStore<Long, Blob>(URI.create(JDBC_URI)) {};
+        JdbcKeyValueStore store = new JdbcKeyValueStore<Long, Blob>(URI.create(JDBC_URI)) {
+        };
         store.put(3456L, "test".getBytes());
-        assertNotNull(store.get(new BigInteger("3456")));
+        assertNotNull(store.get(3456L));
+        store.put(3456L, "test2".getBytes());
+        assertEquals("test2", new String((byte[]) store.get(3456L)));
     }
 }

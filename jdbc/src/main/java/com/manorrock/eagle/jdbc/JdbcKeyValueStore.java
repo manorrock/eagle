@@ -29,16 +29,14 @@
  */
 package com.manorrock.eagle.jdbc;
 
+import com.manorrock.eagle.api.KeyValueStoreException;
 import com.manorrock.eagle.api.KeyValueStore2;
 import java.net.URI;
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * The JDBC KeyValueStore.
@@ -47,22 +45,12 @@ import java.util.logging.Logger;
  * @param <K> the key type.
  * @param <V> the value type.
  */
-public abstract class JdbcKeyValueStore<K, V> implements KeyValueStore2<K, V, Long, Blob> {
+public abstract class JdbcKeyValueStore<K, V> implements KeyValueStore2<K, V, Long, byte[]> {
 
     /**
      * Stores the connection.
      */
     private Connection connection;
-    
-    /**
-     * Stores the table name.
-     */
-    private String tableName = "key_value_store";
-
-    /**
-     * Stores the URI.
-     */
-    private URI uri;
 
     /**
      * Constructor.
@@ -70,34 +58,45 @@ public abstract class JdbcKeyValueStore<K, V> implements KeyValueStore2<K, V, Lo
      * @param uri the URI.
      */
     public JdbcKeyValueStore(URI uri) {
-        this.uri = uri;
         try {
             connection = DriverManager.getConnection(uri.toString());
         } catch (SQLException se) {
-            se.printStackTrace();
+            throw new KeyValueStoreException(se);
         }
     }
 
     @Override
     public void delete(K key) {
-        Long id = toUnderlyingKey(key);
-        jdbcDelete(id);
+        try {
+            Long id = toUnderlyingKey(key);
+            jdbcDelete(id);
+        } catch(SQLException se) {
+            throw new KeyValueStoreException(se);
+        }
     }
 
     @Override
     public V get(K key) {
-        Long id = toUnderlyingKey(key);
-        return toValue(jdbcSelect(id));
+        try {
+            Long id = toUnderlyingKey(key);
+            return toValue(jdbcSelect(id));
+        } catch(SQLException se) {
+            throw new KeyValueStoreException(se);
+        }
     }
 
     @Override
     public void put(K key, V value) {
-        Long id = toUnderlyingKey(key);
-        Blob jdbcValue = jdbcSelect(id);
-        if (jdbcValue == null) {
-            jdbcInsert(id, toUnderlyingValue(value));
-        } else {
-            jdbcUpdate(id, toUnderlyingValue(value));
+        try {
+            Long id = toUnderlyingKey(key);
+            byte[] jdbcValue = jdbcSelect(id);
+            if (jdbcValue == null) {
+                jdbcInsert(id, toUnderlyingValue(value));
+            } else {
+                jdbcUpdate(id, toUnderlyingValue(value));
+            }
+        } catch(SQLException se) {
+            throw new KeyValueStoreException(se);
         }
     }
 
@@ -112,40 +111,47 @@ public abstract class JdbcKeyValueStore<K, V> implements KeyValueStore2<K, V, Lo
     }
 
     @Override
-    public Blob toUnderlyingValue(V value) {
-        return (Blob) value;
+    public byte[] toUnderlyingValue(V value) {
+        return (byte[]) value;
     }
 
     @Override
-    public V toValue(Blob underlyingValue) {
+    public V toValue(byte[] underlyingValue) {
         return (V) underlyingValue;
     }
 
-    private void jdbcDelete(Long id) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    private void jdbcDelete(Long id) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(
+                "DELETE FROM kvs AS o WHERE o.kvs_id = ?");
+        statement.setLong(1, id);
+        statement.execute();
     }
 
-    private void jdbcInsert(Long id, Blob toUnderlyingValue) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    private void jdbcInsert(Long id, byte[] bytes) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(
+                "INSERT INTO kvs(kvs_id, kvs_value) VALUES(?,?)");
+        statement.setLong(1, id);
+        statement.setBytes(2, bytes);
+        statement.execute();
     }
 
-    private Blob jdbcSelect(Long id) {
-        Blob result = null;
-        try {
-            PreparedStatement statement = connection.prepareStatement(
-                    "SELECT s.value FROM " + tableName + " AS o WHERE o.id = ?");
-            statement.setLong(1, id);
-            ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
-                result = resultSet.getBlob(1);
-            }
-        } catch (SQLException se) {
-            se.printStackTrace();
+    private byte[] jdbcSelect(Long id) throws SQLException {
+        byte[] result = null;
+        PreparedStatement statement = connection.prepareStatement(
+                "SELECT kvs_value FROM kvs AS o WHERE o.kvs_id = ?");
+        statement.setLong(1, id);
+        ResultSet resultSet = statement.executeQuery();
+        if (resultSet.next()) {
+            result = resultSet.getBytes(1);
         }
         return result;
     }
 
-    private void jdbcUpdate(Long id, Blob toUnderlyingValue) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    private void jdbcUpdate(Long id, byte[] bytes) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(
+                "UPDATE kvs SET kvs_value = ? WHERE kvs_id = ?");
+        statement.setBytes(1, bytes);
+        statement.setLong(2, id);
+        statement.execute();
     }
 }

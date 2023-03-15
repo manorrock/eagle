@@ -30,68 +30,18 @@
 package com.manorrock.eagle.api;
 
 /**
- * The KeyValueStore API.
+ * The KeyValueStore exception class.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
- * @param <K> the key type.
- * @param <V> the value type.
- * @param <UK> the underlying key type.
- * @param <UV> the underlying value type.
  */
-public interface KeyValueStore2<K, V, UK, UV> {
-    
-    /**
-     * Delete the value.
-     * 
-     * @param key the key.
-     */
-    void delete(K key);
-        
-    /**
-     * Get the value.
-     * 
-     * @param key the key.
-     * @return the value.
-     */
-    V get(K key);
+public class KeyValueStoreException extends RuntimeException {
 
     /**
-     * Put the value.
-     *
-     * @param key the key.
-     * @param value the value.
-     */
-    void put(K key, V value);
-    
-    /**
-     * To key.
+     * Constructor.
      * 
-     * @param underlyingKey the underlying key.
-     * @return the key.
+     * @param exception the wrapped exception. 
      */
-    K toKey(UK underlyingKey);
-    
-    /**
-     * To underlying key.
-     * 
-     * @param key the key.
-     * @return the underlying key.
-     */
-    UK toUnderlyingKey(K key);
-    
-    /**
-     * To underlying value.
-     * 
-     * @param value the value.
-     * @return the underlying value.
-     */
-    UV toUnderlyingValue(V value);
-    
-    /**
-     * To value.
-     * 
-     * @param underlyingValue the underlying value.
-     * @return the value.
-     */
-    V toValue(UV underlyingValue);
+    public KeyValueStoreException(Exception exception) {
+        super(exception);
+    }
 }
