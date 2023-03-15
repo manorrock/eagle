@@ -32,7 +32,7 @@ package com.manorrock.eagle.factory;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import com.manorrock.eagle.api.KeyValueStore;
 import com.manorrock.eagle.azure.blob.BlobKeyValueStore;
-import com.manorrock.eagle.azure.cosmosdb.CosmosDBKeyValueStore;
+import com.manorrock.eagle.azure.cosmos.CosmosKeyValueStore;
 import com.manorrock.eagle.coherence.CoherenceKeyValueStore;
 import com.manorrock.eagle.hazelcast.HazelcastKeyValueStore;
 import com.manorrock.eagle.redis.RedisKeyValueStore;
@@ -91,7 +91,7 @@ public final class KeyValueStoreFactory {
      * @return the KeyValueStore or null if it could not be created.
      */
     private static KeyValueStore getCosmosDBKeyValueStore(Properties properties) {
-        return new CosmosDBKeyValueStore(
+        return new CosmosKeyValueStore(
                 properties.getProperty("endpoint"),
                 properties.getProperty("masterKey"),
                 properties.getProperty("consistencyLevel"),
