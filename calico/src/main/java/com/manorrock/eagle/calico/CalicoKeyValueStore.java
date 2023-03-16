@@ -29,7 +29,7 @@
  */
 package com.manorrock.eagle.calico;
 
-import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueStore2;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -42,8 +42,10 @@ import java.net.http.HttpResponse.BodyHandlers;
  * A Manorrock Calico based KeyValueStore.
  *
  * @author Manfred Riem (mriem@manorrock.com)
+ * @param <K> the key type.
+ * @param <V> the value type.
  */
-public class CalicoKeyValueStore implements KeyValueStore<String, byte[], CalicoKeyValueStoreMapper> {
+public class CalicoKeyValueStore<K, V> implements KeyValueStore2<K, V, String, byte[]> {
 
     /**
      * Stores the base URI.
@@ -56,24 +58,18 @@ public class CalicoKeyValueStore implements KeyValueStore<String, byte[], Calico
     private final HttpClient client;
 
     /**
-     * Stores the mapper.
-     */
-    private CalicoKeyValueStoreMapper mapper;
-
-    /**
      * Constructor.
      *
      * @param baseUri the URI.
      */
     public CalicoKeyValueStore(URI baseUri) {
         this.baseUri = baseUri;
-        mapper = new CalicoKeyValueStoreMapper();
         client = HttpClient.newHttpClient();
     }
 
     @Override
-    public void delete(String key) {
-        deleteFile((String) mapper.fromKey(key));
+    public void delete(K key) {
+        deleteFile(toUnderlyingKey(key));
     }
 
     /**
@@ -89,15 +85,16 @@ public class CalicoKeyValueStore implements KeyValueStore<String, byte[], Calico
                     .build();
             client.send(request, BodyHandlers.discarding());
         } catch (IOException | InterruptedException ex) {
+            ex.printStackTrace();
         }
     }
-    
+
     @Override
-    public byte[] get(String key) {
-        byte[] result = null;
-        Object value = getFile((String) mapper.fromKey(key));
-        if (value != null) {
-            result = mapper.toValue(value);
+    public V get(K key) {
+        V result = null;
+        byte[] underLyingValue = getFile(toUnderlyingKey(key));
+        if (underLyingValue != null) {
+            result = toValue(underLyingValue);
         }
         return result;
     }
@@ -106,16 +103,18 @@ public class CalicoKeyValueStore implements KeyValueStore<String, byte[], Calico
      * Get the file.
      *
      * @param path.
-     * @return the file content.
+     * @return the file content, or null if not found.
      */
     private byte[] getFile(String path) {
-        byte[] result;
+        byte[] result = null;
         try {
             HttpRequest request = HttpRequest
                     .newBuilder(baseUri.resolve(URI.create(path)))
                     .build();
             HttpResponse<byte[]> response = client.send(request, BodyHandlers.ofByteArray());
-            result = response.body();
+            if (response.statusCode() < 400) {
+                result = response.body();
+            }
         } catch (IOException | InterruptedException ex) {
             result = null;
         }
@@ -123,17 +122,39 @@ public class CalicoKeyValueStore implements KeyValueStore<String, byte[], Calico
     }
 
     @Override
-    public void put(String key, byte[] value) {
-        putFile((String) mapper.fromKey(key), (byte[]) mapper.fromValue(value));
+    public void put(K key, V value) {
+        if (getFile(toUnderlyingKey(key)) == null) {
+            createFile(toUnderlyingKey(key), toUnderlyingValue(value));
+        } else {
+            updateFile(toUnderlyingKey(key), toUnderlyingValue(value));
+        }
     }
 
     /**
-     * Put the file.
+     * Create the file.
      *
      * @param path the path
      * @param conten the content.
      */
-    private void putFile(String path, byte[] content) {
+    private void createFile(String path, byte[] content) {
+        try {
+            HttpRequest request = HttpRequest
+                    .newBuilder(baseUri.resolve(URI.create(path)))
+                    .POST(BodyPublishers.ofByteArray(content))
+                    .build();
+            client.send(request, BodyHandlers.discarding());
+        } catch (IOException | InterruptedException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+    /**
+     * Update the file.
+     *
+     * @param path the path
+     * @param conten the content.
+     */
+    private void updateFile(String path, byte[] content) {
         try {
             HttpRequest request = HttpRequest
                     .newBuilder(baseUri.resolve(URI.create(path)))
@@ -141,6 +162,27 @@ public class CalicoKeyValueStore implements KeyValueStore<String, byte[], Calico
                     .build();
             client.send(request, BodyHandlers.discarding());
         } catch (IOException | InterruptedException ex) {
+            ex.printStackTrace();
         }
+    }
+
+    @Override
+    public K toKey(String underlyingKey) {
+        return (K) underlyingKey;
+    }
+
+    @Override
+    public String toUnderlyingKey(K key) {
+        return key.toString();
+    }
+
+    @Override
+    public byte[] toUnderlyingValue(V value) {
+        return (byte[]) value;
+    }
+
+    @Override
+    public V toValue(byte[] underlyingValue) {
+        return (V) underlyingValue;
     }
 }
