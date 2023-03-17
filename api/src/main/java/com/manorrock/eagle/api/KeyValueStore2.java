@@ -69,7 +69,9 @@ public interface KeyValueStore2<K, V, UK, UV> {
      * @param underlyingKey the underlying key.
      * @return the key.
      */
-    K toKey(UK underlyingKey);
+    default K toKey(UK underlyingKey) {
+        return (K) underlyingKey;
+    }
     
     /**
      * To underlying key.
@@ -77,7 +79,9 @@ public interface KeyValueStore2<K, V, UK, UV> {
      * @param key the key.
      * @return the underlying key.
      */
-    UK toUnderlyingKey(K key);
+    default UK toUnderlyingKey(K key) {
+        return (UK) key;
+    }
     
     /**
      * To underlying value.
@@ -85,7 +89,9 @@ public interface KeyValueStore2<K, V, UK, UV> {
      * @param value the value.
      * @return the underlying value.
      */
-    UV toUnderlyingValue(V value);
+    default UV toUnderlyingValue(V value) {
+        return (UV) value;
+    }
     
     /**
      * To value.
@@ -93,5 +99,7 @@ public interface KeyValueStore2<K, V, UK, UV> {
      * @param underlyingValue the underlying value.
      * @return the value.
      */
-    V toValue(UV underlyingValue);
+    default V toValue(UV underlyingValue) {
+        return (V) underlyingValue;
+    }
 }
