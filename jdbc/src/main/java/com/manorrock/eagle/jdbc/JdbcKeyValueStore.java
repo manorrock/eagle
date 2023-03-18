@@ -101,11 +101,6 @@ public abstract class JdbcKeyValueStore<K, V> implements KeyValueStore2<K, V, Lo
     }
 
     @Override
-    public K toKey(Long underlyingKey) {
-        return (K) underlyingKey;
-    }
-
-    @Override
     public Long toUnderlyingKey(K key) {
         return (Long) key;
     }
@@ -113,11 +108,6 @@ public abstract class JdbcKeyValueStore<K, V> implements KeyValueStore2<K, V, Lo
     @Override
     public byte[] toUnderlyingValue(V value) {
         return (byte[]) value;
-    }
-
-    @Override
-    public V toValue(byte[] underlyingValue) {
-        return (V) underlyingValue;
     }
 
     private void jdbcDelete(Long id) throws SQLException {

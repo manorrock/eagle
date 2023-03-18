@@ -167,11 +167,6 @@ public class CalicoKeyValueStore<K, V> implements KeyValueStore2<K, V, String, b
     }
 
     @Override
-    public K toKey(String underlyingKey) {
-        return (K) underlyingKey;
-    }
-
-    @Override
     public String toUnderlyingKey(K key) {
         return key.toString();
     }
@@ -179,10 +174,5 @@ public class CalicoKeyValueStore<K, V> implements KeyValueStore2<K, V, String, b
     @Override
     public byte[] toUnderlyingValue(V value) {
         return (byte[]) value;
-    }
-
-    @Override
-    public V toValue(byte[] underlyingValue) {
-        return (V) underlyingValue;
     }
 }
