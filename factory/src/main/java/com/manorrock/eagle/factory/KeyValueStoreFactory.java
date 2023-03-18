@@ -31,6 +31,7 @@ package com.manorrock.eagle.factory;
 
 import com.azure.storage.common.StorageSharedKeyCredential;
 import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueStore2;
 import com.manorrock.eagle.azure.blob.BlobKeyValueStore;
 import com.manorrock.eagle.azure.cosmos.CosmosKeyValueStore;
 import com.manorrock.eagle.coherence.CoherenceKeyValueStore;
@@ -115,8 +116,8 @@ public final class KeyValueStoreFactory {
      * @param properties the configuration properties.
      * @return the KeyValueStore, or null if unable to create one.
      */
-    public static KeyValueStore getKeyValueStore(Properties properties) {
-        KeyValueStore result = null;
+    public static Object getKeyValueStore(Properties properties) {
+        Object result = null;
         String className = (String) properties.getProperty("className");
         if (className != null) {
             switch (className) {
@@ -146,7 +147,7 @@ public final class KeyValueStoreFactory {
      * @param properties the configuration properties.
      * @return the KeyValueStore or null if it could not be created.
      */
-    private static KeyValueStore getRedisKeyValueStore(Properties properties) {
+    private static KeyValueStore2 getRedisKeyValueStore(Properties properties) {
         URI uri = RedisURI.Builder
                 .redis(properties.getProperty("hostname"))
                 .withPort(Integer.valueOf(properties.getProperty("portNumber", "6379")))
@@ -154,6 +155,6 @@ public final class KeyValueStoreFactory {
                 .withPassword(properties.getProperty("password"))
                 .build()
                 .toURI();
-        return new RedisKeyValueStore(uri);
+        return new RedisKeyValueStore<byte[], byte[]>(uri);
     }
 }
