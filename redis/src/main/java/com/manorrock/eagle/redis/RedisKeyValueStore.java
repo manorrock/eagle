@@ -29,35 +29,26 @@
  */
 package com.manorrock.eagle.redis;
 
-import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueStore2;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.codec.RedisCodec;
 import java.net.URI;
 import java.nio.ByteBuffer;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
  * A Redis based KeyValueStore.
- * 
  *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
- * @deprecated 
  */
-@Deprecated(since = "23.4.0", forRemoval = true)
-public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, RedisKeyValueStoreMapper> {
+public class RedisKeyValueStore<K, V> implements KeyValueStore2<K, V, byte[], byte[]> {
     
     /**
      * Stores the Redis connection.
      */
     private final StatefulRedisConnection<K, V> connection;
-    
-    /**
-     * Stores the mapper.
-     */
-    private KeyValueStoreMapper mapper;
 
     /**
      * Constructor.
@@ -66,30 +57,29 @@ public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, RedisKeyVal
      */
     public RedisKeyValueStore(URI uri) {
         RedisClient client = RedisClient.create(uri.toString());
-        mapper = new RedisKeyValueStoreMapper();
         connection = client.connect(new RedisCodec<K, V>() {
             @Override
             public K decodeKey(ByteBuffer bb) {
                 byte[] bytes = new byte[bb.remaining()];
                 bb.get(bytes);
-                return (K) mapper.toKey(bytes);
+                return (K) toKey(bytes);
             }
 
             @Override
             public V decodeValue(ByteBuffer bb) {
                 byte[] bytes = new byte[bb.remaining()];
                 bb.get(bytes);
-                return (V) mapper.toValue(bytes);
+                return (V) toValue(bytes);
             }
 
             @Override
             public ByteBuffer encodeKey(K k) {
-                return ByteBuffer.wrap((byte[]) mapper.fromKey(k));
+                return ByteBuffer.wrap(toUnderlyingKey(k));
             }
 
             @Override
             public ByteBuffer encodeValue(V v) {
-                return ByteBuffer.wrap((byte[]) mapper.fromValue(v));
+                return ByteBuffer.wrap(toUnderlyingValue(v));
             }
         });
     }
