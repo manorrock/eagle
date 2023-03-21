@@ -48,11 +48,11 @@ public class PathKeyValueStoreTest {
      */
     @Test
     public void testDelete() {
-        PathKeyValueStore<String, String> kvs
+        PathKeyValueStore<Path, byte[]> kvs
                 = new PathKeyValueStore<>(Path.of("target"));
-        kvs.put("delete", "deleteme");
+        kvs.put(Path.of("delete"), "deleteme".getBytes());
         assertTrue(new File("target/delete").exists());
-        kvs.delete("delete");
+        kvs.delete(Path.of("delete"));
         assertFalse(new File("target/delete").exists());
     }
     
@@ -61,11 +61,11 @@ public class PathKeyValueStoreTest {
      */
     @Test
     public void testGet() {
-        PathKeyValueStore<String, String> kvs
+        PathKeyValueStore<Path, byte[]> kvs
                 = new PathKeyValueStore<>(Path.of("target"));
-        kvs.put("get", "getme");
+        kvs.put(Path.of("get"), "getme".getBytes());
         assertTrue(new File("target/get").exists());
-        assertEquals("getme", kvs.get("get"));
+        assertEquals("getme", new String(kvs.get(Path.of("get"))));
     }
 
     /**
@@ -73,10 +73,10 @@ public class PathKeyValueStoreTest {
      */
     @Test
     public void testPut() {
-        PathKeyValueStore<String, String> kvs
+        PathKeyValueStore<Path, byte[]> kvs
                 = new PathKeyValueStore<>(Path.of("target"));
-        kvs.put("put", "putme");
+        kvs.put(Path.of("put"), "putme".getBytes());
         assertTrue(new File("target/put").exists());
-        assertEquals("putme", kvs.get("put"));
+        assertEquals("putme", new String(kvs.get(Path.of("put"))));
     }
 }

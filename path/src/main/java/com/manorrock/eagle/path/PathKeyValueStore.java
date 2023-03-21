@@ -29,10 +29,9 @@
  */
 package com.manorrock.eagle.path;
 
-import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueStore2;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import static java.util.logging.Level.WARNING;
@@ -41,18 +40,12 @@ import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
  * A Path based KeyValueStore.
- * 
- * <p>
- *  This KeyValueStore is by default implemented with a K and V as Strings. If
- *  you want to change K and/or V you will need to implement the appropriate
- *  from and to methods.
- * </p> 
  *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, PathKeyValueStoreMapper> {
+public class PathKeyValueStore<K, V> implements KeyValueStore2<K, V, Path, byte[]> {
 
     /**
      * Stores the logger.
@@ -65,25 +58,19 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, PathKeyValue
     private final Path basePath;
     
     /**
-     * Stores the mapper.
-     */
-    private KeyValueStoreMapper mapper;
-
-    /**
      * Constructor.
      *
      * @param basePath the base path.
      */
     public PathKeyValueStore(Path basePath) {
         this.basePath = basePath;
-        this.mapper = new PathKeyValueStoreMapper(basePath);
     }
 
     @Override
     public void delete(K key) {
         try {
-            Path path = (Path) mapper.fromKey(key);
-            Files.deleteIfExists(path);
+            Path path = (Path) toUnderlyingKey(key);
+            Files.deleteIfExists(basePath.resolve(path));
         } catch (IOException ioe) {
             LOGGER.log(WARNING, "An I/O error occured deleting key: " + key, ioe);
         }
@@ -92,11 +79,11 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, PathKeyValue
     @Override
     public V get(K key) {
         V result = null;
-        Path path = (Path) mapper.fromKey(key);
-        if (Files.exists(path)) {
+        Path path = (Path) toUnderlyingKey(key);
+        if (Files.exists(basePath.resolve(path))) {
             try {
-                byte[] bytes = Files.readAllBytes(path);
-                result = (V) mapper.toValue(bytes);
+                byte[] bytes = Files.readAllBytes(basePath.resolve(path));
+                result = (V) toValue(bytes);
             } catch (IOException ioe) {
                 LOGGER.log(WARNING, "Unable to get content for key: " + key, ioe);
             }
@@ -106,17 +93,17 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, PathKeyValue
 
     @Override
     public void put(K key, V value) {
-        Path path = (Path) mapper.fromKey(key);
+        Path path = basePath.resolve((Path) toUnderlyingKey(key));
         if (!Files.exists(path.getParent())) {
             try {
-                Files.createDirectories(path.getParent());
+                Files.createDirectories(path);
             } catch (IOException ioe) {
                 LOGGER.log(WARNING, "Unable to create directories for key: " + key, ioe);
                 return;
             }
         }
         try (OutputStream output = Files.newOutputStream(path)) {
-            output.write((byte[]) mapper.fromValue(value));
+            output.write((byte[]) toUnderlyingValue(value));
             output.flush();
         } catch (IOException ioe) {
             LOGGER.log(WARNING, "Unable to put content for key: " + key, ioe);
