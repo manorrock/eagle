@@ -32,9 +32,8 @@ package com.manorrock.eagle.hazelcast;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueStore2;
 import java.util.Map;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
  * A Hazelcast based KeyValueStore.
@@ -42,10 +41,8 @@ import com.manorrock.eagle.api.KeyValueStoreMapper;
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
- * @deprecated 
  */
-@Deprecated(since = "23.4.0", forRemoval = true)
-public class HazelcastKeyValueStore<K, V> implements KeyValueStore<K, V, HazelcastKeyValueStoreMapper> {
+public class HazelcastKeyValueStore<K, V> implements KeyValueStore2<K, V, Object, Object> {
 
     /**
      * Stores the Hazelcast instance.
@@ -58,11 +55,6 @@ public class HazelcastKeyValueStore<K, V> implements KeyValueStore<K, V, Hazelca
     private Map hazelcastMap;
     
     /**
-     * Stores the mapper.
-     */
-    private KeyValueStoreMapper mapper;
-
-    /**
      * Constructor.
      *
      * @param name the name.
@@ -72,26 +64,25 @@ public class HazelcastKeyValueStore<K, V> implements KeyValueStore<K, V, Hazelca
         config.setInstanceName(name);
         hazelcast = Hazelcast.newHazelcastInstance(config);
         hazelcastMap = hazelcast.getMap(name);
-        mapper = new HazelcastKeyValueStoreMapper();
     }
 
     @Override
     public void delete(K key) {
-        hazelcastMap.remove(mapper.fromKey(key));
+        hazelcastMap.remove(toUnderlyingKey(key));
     }
 
     @Override
     public V get(K key) {
         V result = null;
-        Object value = hazelcastMap.get(mapper.fromKey(key));
-        if (value != null) {
-            result = (V) mapper.toValue(value);
+        Object underlyingValue = hazelcastMap.get(toUnderlyingKey(key));
+        if (underlyingValue != null) {
+            result = (V) toValue(underlyingValue);
         }
         return result;
     }
 
     @Override
     public void put(K key, V value) {
-        hazelcastMap.put(mapper.fromKey(key), mapper.fromValue(value));
+        hazelcastMap.put(toUnderlyingKey(key), toUnderlyingValue(value));
     }
 }
