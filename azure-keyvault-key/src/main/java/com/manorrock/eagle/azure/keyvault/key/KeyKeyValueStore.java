@@ -36,8 +36,7 @@ import com.azure.security.keyvault.keys.KeyClientBuilder;
 import com.azure.security.keyvault.keys.models.ImportKeyOptions;
 import com.azure.security.keyvault.keys.models.JsonWebKey;
 import com.azure.security.keyvault.keys.models.KeyVaultKey;
-import com.manorrock.eagle.api.KeyValueStore;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
+import com.manorrock.eagle.api.KeyValueStore2;
 
 /**
  * An Azure KeyVault Key based KeyValueStore.
@@ -45,21 +44,14 @@ import com.manorrock.eagle.api.KeyValueStoreMapper;
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
- * @deprecated 
  */
-@Deprecated(since = "23.4.0", forRemoval = true)
-public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V, KeyKeyValueStoreMapper> {
+public class KeyKeyValueStore<K, V> implements KeyValueStore2<K, V, String, JsonWebKey> {
 
     /**
      * Stores the client.
      */
     private KeyClient client;
     
-    /**
-     * Stores the mapper.
-     */
-    private KeyValueStoreMapper mapper;
-
     /**
      * Constructor.
      *
@@ -80,30 +72,29 @@ public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V, KeyKeyValueSt
                 .vaultUrl(endpoint)
                 .credential(credential)
                 .buildClient();
-        mapper = new KeyKeyValueStoreMapper();
     }
 
     @Override
     public void delete(K key) {
-        String name = (String) mapper.toKey(key);
+        String name = toUnderlyingKey(key);
         client.beginDeleteKey(name);
     }
 
     @Override
     public V get(K key) {
-        String name = (String) mapper.toKey(key);
+        String name = toUnderlyingKey(key);
         KeyVaultKey keyVaultKey = client.getKey(name);
         V result = null;
         if (keyVaultKey != null && keyVaultKey.getKey()!= null) {
-            result = (V) mapper.toValue(keyVaultKey.getKey());
+            result = toValue(keyVaultKey.getKey());
         }
         return result;
     }
 
     @Override
     public void put(K key, V value) {
-        String name = (String) mapper.toKey(key);
-        JsonWebKey webKey = (JsonWebKey) mapper.fromValue(value);
+        String name = toUnderlyingKey(key);
+        JsonWebKey webKey = toUnderlyingValue(value);
         ImportKeyOptions options = new ImportKeyOptions(name, webKey);
         client.importKey(options);
     }
