@@ -29,10 +29,9 @@
  */
 package com.manorrock.eagle.coherence;
 
-import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueStore2;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.Session;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
  * A Coherence based KeyValueStore.
@@ -40,20 +39,13 @@ import com.manorrock.eagle.api.KeyValueStoreMapper;
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
- * @deprecated
  */
-@Deprecated(since = "23.4.0", forRemoval = true)
-public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V, CoherenceKeyValueStoreMapper> {
+public class CoherenceKeyValueStore<K, V> implements KeyValueStore2<K, V, Object, Object> {
 
     /**
      * Stores the named cache.
      */
     private NamedCache namedCache;
-    
-    /**
-     * Stores the mapper.
-     */
-    private KeyValueStoreMapper mapper;
     
     /**
      * Constructor.
@@ -63,26 +55,25 @@ public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V, Coheren
     public CoherenceKeyValueStore(String name) {
         Session session = Session.create();
         session.getCache(name);
-        mapper = new CoherenceKeyValueStoreMapper();
     }
 
     @Override
     public void delete(K key) {
-        namedCache.remove(mapper.fromKey(key));
+        namedCache.remove(toUnderlyingKey(key));
     }
 
     @Override
     public V get(K key) {
         V result = null;
-        Object value = namedCache.get(mapper.fromKey(key));
-        if (value != null) {
-            result = (V) mapper.toValue(value);
+        Object underlyingValue = namedCache.get(toUnderlyingKey(key));
+        if (underlyingValue != null) {
+            result = (V) toValue(underlyingValue);
         }
         return result;
     }
 
     @Override
     public void put(K key, V value) {
-        namedCache.put(mapper.fromKey(key), mapper.fromValue(value));
+        namedCache.put(toUnderlyingKey(key), toUnderlyingValue(value));
     }
 }

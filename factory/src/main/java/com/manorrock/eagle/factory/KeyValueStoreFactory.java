@@ -81,7 +81,7 @@ public final class KeyValueStoreFactory {
      * @param properties the configuration properties.
      * @return the KeyValueStore or null if it could not be created.
      */
-    private static KeyValueStore getCoherenceMapKeyValueStore(Properties properties) {
+    private static KeyValueStore2 getCoherenceMapKeyValueStore(Properties properties) {
         return new CoherenceKeyValueStore(properties.getProperty("name"));
     }
 
@@ -106,7 +106,7 @@ public final class KeyValueStoreFactory {
      * @param properties the configuration properties.
      * @return the KeyValueStore or null if it could not be created.
      */
-    private static KeyValueStore getHazelcastKeyValueStore(Properties properties) {
+    private static KeyValueStore2 getHazelcastKeyValueStore(Properties properties) {
         return new HazelcastKeyValueStore(properties.getProperty("name"));
     }
 
