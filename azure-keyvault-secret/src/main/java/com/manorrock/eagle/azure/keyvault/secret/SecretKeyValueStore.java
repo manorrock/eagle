@@ -34,8 +34,7 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
-import com.manorrock.eagle.api.KeyValueStore;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
+import com.manorrock.eagle.api.KeyValueStore2;
 
 /**
  * An Azure KeyVayl Secret based KeyValueStore.
@@ -43,20 +42,13 @@ import com.manorrock.eagle.api.KeyValueStoreMapper;
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
- * @deprecated 
  */
-@Deprecated(since = "23.4.0", forRemoval = true)
-public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V, SecretKeyValueStoreMapper> {
+public class SecretKeyValueStore<K, V> implements KeyValueStore2<K, V, String, String> {
 
     /**
      * Stores the client.
      */
-    private SecretClient client;
-    
-    /**
-     * Stores the mapper.
-     */
-    private KeyValueStoreMapper mapper;
+    private final SecretClient client;
     
     /**
      * Constructor.
@@ -78,29 +70,28 @@ public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V, SecretKeyV
                 .vaultUrl(endpoint)
                 .credential(credential)
                 .buildClient();
-        mapper = new SecretKeyValueStoreMapper();
     }
 
     @Override
     public void delete(K key) {
-        String name = (String) mapper.fromKey(key);
+        String name = toUnderlyingKey(key);
         client.beginDeleteSecret(name);
     }
 
     @Override
     public V get(K key) {
-        String name = (String) mapper.fromKey(key);
+        String name = toUnderlyingKey(key);
         KeyVaultSecret secret = client.getSecret(name);
         V result = null;
         if (secret != null) {
-            result = (V) mapper.toValue(secret);
+            result = toValue(secret.getValue());
         }
         return result;
     }
 
     @Override
     public void put(K key, V value) {
-        String name = (String) mapper.fromKey(key);
-        client.setSecret(name, ((KeyVaultSecret) mapper.fromValue(value)).getValue());
+        String name = toUnderlyingKey(key);
+        client.setSecret(name, toUnderlyingValue(value));
     }
 }
