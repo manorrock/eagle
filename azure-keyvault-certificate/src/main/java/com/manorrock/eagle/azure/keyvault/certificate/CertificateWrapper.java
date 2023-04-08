@@ -35,9 +35,7 @@ import com.azure.security.keyvault.certificates.models.KeyVaultCertificateWithPo
  * A wrapper to deal with certificates.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
- * @deprecated 
  */
-@Deprecated(since = "23.4.0", forRemoval = true)
 class CertificateWrapper {
 
     /**
