@@ -32,8 +32,8 @@ package com.manorrock.eagle.hazelcast;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-import com.manorrock.eagle.api.KeyValueStore2;
 import java.util.Map;
+import com.manorrock.eagle.api.KeyValueStore;
 
 /**
  * A Hazelcast based KeyValueStore.
@@ -42,7 +42,7 @@ import java.util.Map;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class HazelcastKeyValueStore<K, V> implements KeyValueStore2<K, V, Object, Object> {
+public class HazelcastKeyValueStore<K, V> implements KeyValueStore<K, V, Object, Object> {
 
     /**
      * Stores the Hazelcast instance.

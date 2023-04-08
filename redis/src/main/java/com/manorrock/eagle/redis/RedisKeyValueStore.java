@@ -29,12 +29,12 @@
  */
 package com.manorrock.eagle.redis;
 
-import com.manorrock.eagle.api.KeyValueStore2;
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.codec.RedisCodec;
 import java.net.URI;
 import java.nio.ByteBuffer;
+import com.manorrock.eagle.api.KeyValueStore;
 
 /**
  * A Redis based KeyValueStore.
@@ -43,7 +43,7 @@ import java.nio.ByteBuffer;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class RedisKeyValueStore<K, V> implements KeyValueStore2<K, V, byte[], byte[]> {
+public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, byte[], byte[]> {
     
     /**
      * Stores the Redis connection.

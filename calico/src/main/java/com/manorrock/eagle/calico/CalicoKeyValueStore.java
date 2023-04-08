@@ -29,7 +29,6 @@
  */
 package com.manorrock.eagle.calico;
 
-import com.manorrock.eagle.api.KeyValueStore2;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -37,6 +36,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import com.manorrock.eagle.api.KeyValueStore;
 
 /**
  * A Manorrock Calico based KeyValueStore.
@@ -45,7 +45,7 @@ import java.net.http.HttpResponse.BodyHandlers;
  * @param <K> the key type.
  * @param <V> the value type.
  */
-public class CalicoKeyValueStore<K, V> implements KeyValueStore2<K, V, String, byte[]> {
+public class CalicoKeyValueStore<K, V> implements KeyValueStore<K, V, String, byte[]> {
 
     /**
      * Stores the base URI.

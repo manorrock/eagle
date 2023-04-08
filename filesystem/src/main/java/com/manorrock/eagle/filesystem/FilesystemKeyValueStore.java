@@ -29,7 +29,6 @@
  */
 package com.manorrock.eagle.filesystem;
 
-import com.manorrock.eagle.api.KeyValueStore;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -37,56 +36,39 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
+import com.manorrock.eagle.api.KeyValueStore;
 
 /**
  * A file-system based KeyValueStore.
  * 
- * <p>
-  This KeyValueStore uses the FilesystemKeyValueStoreMapper if no 
-  KeyValueStoreMapper is passed in. If you want different behavior you will have to
-  deliver your own implementation of the KeyValueStoreMapper.
- </p>
- *
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the key type.
  * @param <V> the value type.
  */
-public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V, FilesystemKeyValueStoreMapper> {
+public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V, String, byte[]> {
 
     /**
      * Stores the logger.
      */
     private static final Logger LOGGER = Logger.getLogger(FilesystemKeyValueStore.class.getName());
-    
-    /**
-     * Stores the mapper type.
-     */
-    private KeyValueStoreMapper mapper;
 
+    /**
+     * Stores the base directory.
+     */
+    private final File baseDirectory;
+    
     /**
      * Constructor.
      *
      * @param baseDirectory the base directory.
      */
     public FilesystemKeyValueStore(File baseDirectory) {
-        this.mapper = new FilesystemKeyValueStoreMapper(baseDirectory);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param mapper the KeyValueStoreMapper.
-     * @param baseDirectory the base directory.
-     */
-    public FilesystemKeyValueStore(KeyValueStoreMapper mapper, File baseDirectory) {
-        this(baseDirectory);
-        this.mapper = mapper;
+        this.baseDirectory = baseDirectory;
     }
 
     @Override
     public void delete(K key) {
-        File file = (File) mapper.fromKey(key);
+        File file = new File(baseDirectory, toUnderlyingKey(key));
         if (file.exists()) {
             file.delete();
         }
@@ -95,11 +77,11 @@ public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V, Filesy
     @Override
     public V get(K key) {
         V result = null;
-        File file = (File) mapper.fromKey(key);
+        File file = new File(baseDirectory, toUnderlyingKey(key));
         if (file.exists()) {
             try {
                 byte[] bytes = Files.readAllBytes(Paths.get(file.toURI()));
-                result = (V) mapper.toValue(bytes);
+                result = (V) toValue(bytes);
             } catch (IOException ioe) {
                 LOGGER.log(WARNING, "Unable to get content for key: " + key, ioe);
             }
@@ -109,11 +91,11 @@ public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V, Filesy
 
     @Override
     public void put(K key, V value) {
-        File file = (File) mapper.fromKey(key);
+        File file = new File(baseDirectory, toUnderlyingKey(key));
         File parentFile = file.getParentFile();
         parentFile.mkdirs();
         try ( FileOutputStream fileOutput = new FileOutputStream(file)) {
-            fileOutput.write((byte[]) mapper.fromValue(value));
+            fileOutput.write(toUnderlyingValue(value));
             fileOutput.flush();
         } catch (IOException ioe) {
             LOGGER.log(WARNING, "Unable to put content for key: " + key, ioe);

@@ -34,7 +34,7 @@ import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.CosmosContainer;
 import com.azure.cosmos.CosmosDatabase;
-import com.manorrock.eagle.api.KeyValueStore2;
+import com.manorrock.eagle.api.KeyValueStore;
 
 /**
  * A Cosmos DB based KeyValueStore.
@@ -43,7 +43,7 @@ import com.manorrock.eagle.api.KeyValueStore2;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class CosmosKeyValueStore<K, V> implements KeyValueStore2<K, V, CosmosKey, String> {
+public class CosmosKeyValueStore<K, V> implements KeyValueStore<K, V, CosmosKey, String> {
     
     /**
      * Stores the CosmosDB client.

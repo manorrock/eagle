@@ -36,7 +36,7 @@ import com.azure.security.keyvault.keys.KeyClientBuilder;
 import com.azure.security.keyvault.keys.models.ImportKeyOptions;
 import com.azure.security.keyvault.keys.models.JsonWebKey;
 import com.azure.security.keyvault.keys.models.KeyVaultKey;
-import com.manorrock.eagle.api.KeyValueStore2;
+import com.manorrock.eagle.api.KeyValueStore;
 
 /**
  * An Azure KeyVault Key based KeyValueStore.
@@ -45,7 +45,7 @@ import com.manorrock.eagle.api.KeyValueStore2;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class KeyKeyValueStore<K, V> implements KeyValueStore2<K, V, String, JsonWebKey> {
+public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V, String, JsonWebKey> {
 
     /**
      * Stores the client.

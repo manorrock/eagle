@@ -29,9 +29,9 @@
  */
 package com.manorrock.eagle.coherence;
 
-import com.manorrock.eagle.api.KeyValueStore2;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.Session;
+import com.manorrock.eagle.api.KeyValueStore;
 
 /**
  * A Coherence based KeyValueStore.
@@ -40,7 +40,7 @@ import com.tangosol.net.Session;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class CoherenceKeyValueStore<K, V> implements KeyValueStore2<K, V, Object, Object> {
+public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V, Object, Object> {
 
     /**
      * Stores the named cache.

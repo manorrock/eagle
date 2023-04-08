@@ -72,7 +72,8 @@ public class JdbcKeyValueStoreTest {
      */
     @Test
     public void testDelete() {
-        JdbcKeyValueStore store = new JdbcKeyValueStore<Long, Blob>(URI.create(JDBC_URI)) {
+        JdbcKeyValueStore store = new JdbcKeyValueStore<Long, Blob>(
+                URI.create(JDBC_URI), "kvs", "kvs_id", "kvs_value") {
         };
         store.delete(1234L);
     }
@@ -82,7 +83,8 @@ public class JdbcKeyValueStoreTest {
      */
     @Test
     public void testGet() {
-        JdbcKeyValueStore store = new JdbcKeyValueStore<Long, Blob>(URI.create(JDBC_URI)) {
+        JdbcKeyValueStore store = new JdbcKeyValueStore<Long, Blob>(
+                URI.create(JDBC_URI), "kvs", "kvs_id", "kvs_value") {
         };
         assertNull(store.get(2345L));
     }
@@ -92,7 +94,8 @@ public class JdbcKeyValueStoreTest {
      */
     @Test
     public void testPut() {
-        JdbcKeyValueStore store = new JdbcKeyValueStore<Long, Blob>(URI.create(JDBC_URI)) {
+        JdbcKeyValueStore store = new JdbcKeyValueStore<Long, Blob>(
+                URI.create(JDBC_URI), "kvs", "kvs_id", "kvs_value") {
         };
         store.put(3456L, "test".getBytes());
         assertNotNull(store.get(3456L));
