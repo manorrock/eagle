@@ -29,7 +29,6 @@
  */
 package com.manorrock.eagle.git;
 
-import com.manorrock.eagle.api.KeyValueStore2;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -40,6 +39,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import java.util.Comparator;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
+import com.manorrock.eagle.api.KeyValueStore;
 
 /**
  * The Git repository KeyValueStore.
@@ -48,7 +48,7 @@ import org.eclipse.jgit.lib.Repository;
  * @param <K> the jey type.
  * @param <V> the value type.
  */
-public class GitRepositoryKeyValueStore<K, V> implements KeyValueStore2<K, V, String, byte[]> {
+public class GitRepositoryKeyValueStore<K, V> implements KeyValueStore<K, V, String, byte[]> {
 
     /**
      * Stores the URI.

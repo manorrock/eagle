@@ -29,14 +29,13 @@
  */
 package com.manorrock.eagle.path;
 
-import com.manorrock.eagle.api.KeyValueStore2;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
+import com.manorrock.eagle.api.KeyValueStore;
 
 /**
  * A Path based KeyValueStore.
@@ -45,7 +44,7 @@ import com.manorrock.eagle.api.KeyValueStoreMapper;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class PathKeyValueStore<K, V> implements KeyValueStore2<K, V, Path, byte[]> {
+public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, Path, byte[]> {
 
     /**
      * Stores the logger.

@@ -34,7 +34,7 @@ import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
-import com.manorrock.eagle.api.KeyValueStore2;
+import com.manorrock.eagle.api.KeyValueStore;
 
 /**
  * An Azure KeyVayl Secret based KeyValueStore.
@@ -43,7 +43,7 @@ import com.manorrock.eagle.api.KeyValueStore2;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class SecretKeyValueStore<K, V> implements KeyValueStore2<K, V, String, String> {
+public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V, String, String> {
 
     /**
      * Stores the client.

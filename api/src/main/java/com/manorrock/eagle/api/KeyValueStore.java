@@ -33,11 +33,12 @@ package com.manorrock.eagle.api;
  * The KeyValueStore API.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
- * @param <K> the type of the key.
- * @param <V> the type of the value.
- * @param <M> the type of the mapper.
+ * @param <K> the key type.
+ * @param <V> the value type.
+ * @param <UK> the underlying key type.
+ * @param <UV> the underlying value type.
  */
-public interface KeyValueStore<K, V, M> {
+public interface KeyValueStore<K, V, UK, UV> {
     
     /**
      * Delete the value.
@@ -61,4 +62,44 @@ public interface KeyValueStore<K, V, M> {
      * @param value the value.
      */
     void put(K key, V value);
+    
+    /**
+     * To key.
+     * 
+     * @param underlyingKey the underlying key.
+     * @return the key.
+     */
+    default K toKey(UK underlyingKey) {
+        return (K) underlyingKey;
+    }
+    
+    /**
+     * To underlying key.
+     * 
+     * @param key the key.
+     * @return the underlying key.
+     */
+    default UK toUnderlyingKey(K key) {
+        return (UK) key;
+    }
+    
+    /**
+     * To underlying value.
+     * 
+     * @param value the value.
+     * @return the underlying value.
+     */
+    default UV toUnderlyingValue(V value) {
+        return (UV) value;
+    }
+    
+    /**
+     * To value.
+     * 
+     * @param underlyingValue the underlying value.
+     * @return the value.
+     */
+    default V toValue(UV underlyingValue) {
+        return (V) underlyingValue;
+    }
 }

@@ -34,13 +34,13 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
-import com.manorrock.eagle.api.KeyValueStore2;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
+import com.manorrock.eagle.api.KeyValueStore;
+
 
 /**
  * An Azure Blob Storage based KeyValueStore.
@@ -49,7 +49,7 @@ import com.manorrock.eagle.api.KeyValueStoreMapper;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class BlobKeyValueStore<K, V> implements KeyValueStore2<K, V, String, byte[]> {
+public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V, String, byte[]> {
     
     /**
      * Stores the logger.
@@ -66,11 +66,6 @@ public class BlobKeyValueStore<K, V> implements KeyValueStore2<K, V, String, byt
      */
     private final BlobContainerClient container;
     
-    /**
-     * Stores the mapper.
-     */
-    private KeyValueStoreMapper mapper;
-
     /**
      * Constructor.
      *

@@ -208,15 +208,6 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>test</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>test</module>
-            </modules>
-        </profile>
     </profiles>
     <scm>
         <connection>scm:git:git://github.com/manorrock/eagle.git</connection>

@@ -47,9 +47,9 @@ public class FilesystemKeyValueStoreTest {
      */
     @Test
     public void testDelete() {
-        FilesystemKeyValueStore<String, String> kvs
+        FilesystemKeyValueStore<String, byte[]> kvs
                 = new FilesystemKeyValueStore<>(new File("target"));
-        kvs.put("delete", "deleteme");
+        kvs.put("delete", "deleteme".getBytes());
         assertTrue(new File("target/delete").exists());
         kvs.delete("delete");
         assertFalse(new File("target/delete").exists());
@@ -60,11 +60,11 @@ public class FilesystemKeyValueStoreTest {
      */
     @Test
     public void testGet() {
-        FilesystemKeyValueStore<String, String> kvs
+        FilesystemKeyValueStore<String, byte[]> kvs
                 = new FilesystemKeyValueStore<>(new File("target"));
-        kvs.put("get", "getme");
+        kvs.put("get", "getme".getBytes());
         assertTrue(new File("target/get").exists());
-        assertEquals("getme", kvs.get("get"));
+        assertEquals("getme", new String(kvs.get("get")));
     }
 
     /**
@@ -72,10 +72,10 @@ public class FilesystemKeyValueStoreTest {
      */
     @Test
     public void testPut() {
-        FilesystemKeyValueStore<String, String> kvs
+        FilesystemKeyValueStore<String, byte[]> kvs
                 = new FilesystemKeyValueStore<>(new File("target"));
-        kvs.put("put", "putme");
+        kvs.put("put", "putme".getBytes());
         assertTrue(new File("target/put").exists());
-        assertEquals("putme", kvs.get("put"));
+        assertEquals("putme",  new String(kvs.get("put")));
     }
 }

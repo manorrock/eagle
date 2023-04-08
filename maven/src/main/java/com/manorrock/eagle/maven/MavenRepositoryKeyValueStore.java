@@ -29,7 +29,6 @@
  */
 package com.manorrock.eagle.maven;
 
-import com.manorrock.eagle.api.KeyValueStore2;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -38,6 +37,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import com.manorrock.eagle.api.KeyValueStore;
 
 /**
  * The Maven repository KeyValueStore.
@@ -46,7 +46,7 @@ import java.net.http.HttpResponse.BodyHandlers;
  * @param <K> the jey type.
  * @param <V> the value type.
  */
-public class MavenRepositoryKeyValueStore<K, V> implements KeyValueStore2<K, V, String, byte[]> {
+public class MavenRepositoryKeyValueStore<K, V> implements KeyValueStore<K, V, String, byte[]> {
 
     /**
      * Stores the HttpClient.

@@ -29,14 +29,13 @@
  */
 package com.manorrock.eagle.jdbc;
 
-import com.manorrock.eagle.api.KeyValueStoreException;
-import com.manorrock.eagle.api.KeyValueStore2;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import com.manorrock.eagle.api.KeyValueStore;
 
 /**
  * The JDBC KeyValueStore.
@@ -45,24 +44,45 @@ import java.sql.SQLException;
  * @param <K> the key type.
  * @param <V> the value type.
  */
-public abstract class JdbcKeyValueStore<K, V> implements KeyValueStore2<K, V, Long, byte[]> {
+public abstract class JdbcKeyValueStore<K, V> implements KeyValueStore<K, V, Long, byte[]> {
 
     /**
      * Stores the connection.
      */
     private Connection connection;
+    
+    /**
+     * Stores the table name.
+     */
+    private final String tableName;
+    
+    /**
+     * Stores the key column name.
+     */
+    private final String keyColumnName;
+    
+    /**
+     * Stores the value column name.
+     */
+    private final String valueColumnName;
 
     /**
      * Constructor.
      *
      * @param uri the URI.
+     * @param tableName the table name.
+     * @param keyColumnName the key column name.
+     * @param valueColumnName the value column name.
      */
-    public JdbcKeyValueStore(URI uri) {
+    public JdbcKeyValueStore(URI uri, String tableName, String keyColumnName, String valueColumnName) {
         try {
             connection = DriverManager.getConnection(uri.toString());
         } catch (SQLException se) {
-            throw new KeyValueStoreException(se);
+            // swallow up for now
         }
+        this.tableName = tableName;
+        this.keyColumnName = keyColumnName;
+        this.valueColumnName = valueColumnName;
     }
 
     @Override
@@ -71,18 +91,19 @@ public abstract class JdbcKeyValueStore<K, V> implements KeyValueStore2<K, V, Lo
             Long id = toUnderlyingKey(key);
             jdbcDelete(id);
         } catch(SQLException se) {
-            throw new KeyValueStoreException(se);
+            // swallow up for now
         }
     }
 
     @Override
     public V get(K key) {
+        V result = null;
         try {
             Long id = toUnderlyingKey(key);
-            return toValue(jdbcSelect(id));
+            result = toValue(jdbcSelect(id));
         } catch(SQLException se) {
-            throw new KeyValueStoreException(se);
         }
+        return result;
     }
 
     @Override
@@ -96,7 +117,7 @@ public abstract class JdbcKeyValueStore<K, V> implements KeyValueStore2<K, V, Lo
                 jdbcUpdate(id, toUnderlyingValue(value));
             }
         } catch(SQLException se) {
-            throw new KeyValueStoreException(se);
+            // swallow up for now
         }
     }
 
@@ -112,14 +133,14 @@ public abstract class JdbcKeyValueStore<K, V> implements KeyValueStore2<K, V, Lo
 
     private void jdbcDelete(Long id) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(
-                "DELETE FROM kvs AS o WHERE o.kvs_id = ?");
+                "DELETE FROM " + tableName + " AS o WHERE o." + keyColumnName + " = ?");
         statement.setLong(1, id);
         statement.execute();
     }
 
     private void jdbcInsert(Long id, byte[] bytes) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(
-                "INSERT INTO kvs(kvs_id, kvs_value) VALUES(?,?)");
+                "INSERT INTO " + tableName + "(" + keyColumnName + "," + valueColumnName + ") VALUES(?,?)");
         statement.setLong(1, id);
         statement.setBytes(2, bytes);
         statement.execute();
@@ -128,7 +149,7 @@ public abstract class JdbcKeyValueStore<K, V> implements KeyValueStore2<K, V, Lo
     private byte[] jdbcSelect(Long id) throws SQLException {
         byte[] result = null;
         PreparedStatement statement = connection.prepareStatement(
-                "SELECT kvs_value FROM kvs AS o WHERE o.kvs_id = ?");
+                "SELECT " + valueColumnName + " FROM " + tableName + " AS o WHERE o." + keyColumnName + " = ?");
         statement.setLong(1, id);
         ResultSet resultSet = statement.executeQuery();
         if (resultSet.next()) {
@@ -139,7 +160,7 @@ public abstract class JdbcKeyValueStore<K, V> implements KeyValueStore2<K, V, Lo
 
     private void jdbcUpdate(Long id, byte[] bytes) throws SQLException {
         PreparedStatement statement = connection.prepareStatement(
-                "UPDATE kvs SET kvs_value = ? WHERE kvs_id = ?");
+                "UPDATE " + tableName + " SET " + valueColumnName + " = ? WHERE " + keyColumnName + " = ?");
         statement.setBytes(1, bytes);
         statement.setLong(2, id);
         statement.execute();
