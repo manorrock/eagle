@@ -36,9 +36,7 @@ import com.azure.cosmos.models.PartitionKey;
  * The Cosmos DB key.
  * 
  * @author Manfred Riem (mriem@manorrock.com)
- * @deprecated 
  */
-@Deprecated(since = "23.4.0", forRemoval = true)
 public class CosmosKey {
     
     /**
