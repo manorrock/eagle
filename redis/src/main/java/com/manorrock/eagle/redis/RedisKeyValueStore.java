@@ -35,6 +35,7 @@ import io.lettuce.core.codec.RedisCodec;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import com.manorrock.eagle.api.KeyValueStore;
+import java.util.Map;
 
 /**
  * A Redis based KeyValueStore.
@@ -44,7 +45,17 @@ import com.manorrock.eagle.api.KeyValueStore;
  * @param <V> the type of the value.
  */
 public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, byte[], byte[]> {
-    
+
+    /**
+     * Stores the Redis client.
+     */
+    private final RedisClient client;
+
+    /**
+     * Stores the codec.
+     */
+    private final RedisCodec<K, V> codec;
+
     /**
      * Stores the Redis connection.
      */
@@ -56,8 +67,8 @@ public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, byte[], byt
      * @param uri the URI.
      */
     public RedisKeyValueStore(URI uri) {
-        RedisClient client = RedisClient.create(uri.toString());
-        connection = client.connect(new RedisCodec<K, V>() {
+        client = RedisClient.create(uri.toString());
+        codec = new RedisCodec<K, V>() {
             @Override
             public K decodeKey(ByteBuffer bb) {
                 byte[] bytes = new byte[bb.remaining()];
@@ -81,7 +92,8 @@ public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, byte[], byt
             public ByteBuffer encodeValue(V v) {
                 return ByteBuffer.wrap(toUnderlyingValue(v));
             }
-        });
+        };
+        connection = client.connect(codec);
     }
 
     @Override
@@ -92,6 +104,14 @@ public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, byte[], byt
     @Override
     public V get(K key) {
         return connection.sync().get(key);
+    }
+
+    @Override
+    public Map getDelegate() {
+        return Map.of(
+                "redisClient", client,
+                "statefulRedisConnection", connection,
+                "redisCodec", codec);
     }
 
     @Override

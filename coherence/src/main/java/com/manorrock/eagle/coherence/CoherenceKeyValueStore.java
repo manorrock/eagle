@@ -32,6 +32,7 @@ package com.manorrock.eagle.coherence;
 import com.tangosol.net.NamedCache;
 import com.tangosol.net.Session;
 import com.manorrock.eagle.api.KeyValueStore;
+import java.util.Map;
 
 /**
  * A Coherence based KeyValueStore.
@@ -45,7 +46,12 @@ public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V, Object,
     /**
      * Stores the named cache.
      */
-    private NamedCache namedCache;
+    private final NamedCache namedCache;
+    
+    /**
+     * Stores the session.
+     */
+    private final Session session;
     
     /**
      * Constructor.
@@ -53,8 +59,8 @@ public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V, Object,
      * @param name the name.
      */
     public CoherenceKeyValueStore(String name) {
-        Session session = Session.create();
-        session.getCache(name);
+        session = Session.create();
+        namedCache = session.getCache(name);
     }
 
     @Override
@@ -70,6 +76,11 @@ public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V, Object,
             result = (V) toValue(underlyingValue);
         }
         return result;
+    }
+
+    @Override
+    public Map getDelegate() {
+        return Map.of("session", session, "namedCache", namedCache);
     }
 
     @Override

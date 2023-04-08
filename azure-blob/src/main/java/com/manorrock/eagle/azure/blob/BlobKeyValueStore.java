@@ -34,13 +34,13 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
+import com.manorrock.eagle.api.KeyValueStore;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.manorrock.eagle.api.KeyValueStore;
-
 
 /**
  * An Azure Blob Storage based KeyValueStore.
@@ -102,6 +102,11 @@ public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V, String, byte
             }
         }
         return result;
+    }
+
+    @Override
+    public Map getDelegate() {
+        return Map.of("blobServiceCLient", client, "blobContainerClient", container);
     }
 
     @Override

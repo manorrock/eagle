@@ -35,6 +35,7 @@ import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.CosmosContainer;
 import com.azure.cosmos.CosmosDatabase;
 import com.manorrock.eagle.api.KeyValueStore;
+import java.util.Map;
 
 /**
  * A Cosmos DB based KeyValueStore.
@@ -97,6 +98,11 @@ public class CosmosKeyValueStore<K, V> implements KeyValueStore<K, V, CosmosKey,
                 cosmosKey.getPartitionKey(), 
                 String.class).getItem();
         return (V) toValue(cosmosValue);
+    }
+
+    @Override
+    public Map getDelegate() {
+        return Map.of("cosmosClient", client, "cosmosDatabase", database, "cosmosContainer", container);
     }
 
     @Override

@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import com.manorrock.eagle.api.KeyValueStore;
+import java.util.Map;
 
 /**
  * An Azure File Share based KeyValueStore.
@@ -90,6 +91,11 @@ public class FilesKeyValueStore<K, V> implements KeyValueStore<K, V, String, byt
             LOGGER.log(Level.WARNING, "Unable to download file: {0}", filename);
         }
         return result;
+    }
+
+    @Override
+    public Map getDelegate() {
+        return Map.of("shareClient", client);
     }
 
     @Override

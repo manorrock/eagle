@@ -37,6 +37,7 @@ import java.nio.file.Paths;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
 import com.manorrock.eagle.api.KeyValueStore;
+import java.util.Map;
 
 /**
  * A file-system based KeyValueStore.
@@ -87,6 +88,11 @@ public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V, String
             }
         }
         return result;
+    }
+
+    @Override
+    public Map getDelegate() {
+        return Map.of("baseDirectory", baseDirectory);
     }
 
     @Override

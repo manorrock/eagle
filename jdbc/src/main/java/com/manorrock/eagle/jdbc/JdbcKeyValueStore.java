@@ -36,6 +36,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import com.manorrock.eagle.api.KeyValueStore;
+import java.util.Map;
 
 /**
  * The JDBC KeyValueStore.
@@ -44,7 +45,7 @@ import com.manorrock.eagle.api.KeyValueStore;
  * @param <K> the key type.
  * @param <V> the value type.
  */
-public abstract class JdbcKeyValueStore<K, V> implements KeyValueStore<K, V, Long, byte[]> {
+public class JdbcKeyValueStore<K, V> implements KeyValueStore<K, V, Long, byte[]> {
 
     /**
      * Stores the connection.
@@ -65,6 +66,11 @@ public abstract class JdbcKeyValueStore<K, V> implements KeyValueStore<K, V, Lon
      * Stores the value column name.
      */
     private final String valueColumnName;
+    
+    /**
+     * Stores the URI.
+     */
+    private URI uri;
 
     /**
      * Constructor.
@@ -75,6 +81,7 @@ public abstract class JdbcKeyValueStore<K, V> implements KeyValueStore<K, V, Lon
      * @param valueColumnName the value column name.
      */
     public JdbcKeyValueStore(URI uri, String tableName, String keyColumnName, String valueColumnName) {
+        this.uri = uri;
         try {
             connection = DriverManager.getConnection(uri.toString());
         } catch (SQLException se) {
@@ -104,6 +111,12 @@ public abstract class JdbcKeyValueStore<K, V> implements KeyValueStore<K, V, Lon
         } catch(SQLException se) {
         }
         return result;
+    }
+
+    @Override
+    public Map getDelegate() {
+        return Map.of("uri", uri, "connection", connection, "tableName", tableName, 
+                "keyColumnName", keyColumnName, "valueColumnName", valueColumnName);
     }
 
     @Override

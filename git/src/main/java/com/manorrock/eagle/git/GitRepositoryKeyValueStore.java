@@ -40,6 +40,7 @@ import java.util.Comparator;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
 import com.manorrock.eagle.api.KeyValueStore;
+import java.util.Map;
 
 /**
  * The Git repository KeyValueStore.
@@ -74,6 +75,11 @@ public class GitRepositoryKeyValueStore<K, V> implements KeyValueStore<K, V, Str
     public V get(K key) {
         String path = toUnderlyingKey(key);
         return (V) toValue(gitRepoGet(path));
+    }
+
+    @Override
+    public Map getDelegate() {
+        return Map.of("uri", uri);
     }
 
     @Override

@@ -35,6 +35,7 @@ import com.azure.security.keyvault.secrets.SecretClient;
 import com.azure.security.keyvault.secrets.SecretClientBuilder;
 import com.azure.security.keyvault.secrets.models.KeyVaultSecret;
 import com.manorrock.eagle.api.KeyValueStore;
+import java.util.Map;
 
 /**
  * An Azure KeyVayl Secret based KeyValueStore.
@@ -87,6 +88,11 @@ public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V, String, St
             result = toValue(secret.getValue());
         }
         return result;
+    }
+
+    @Override
+    public Map getDelegate() {
+        return Map.of("secretClient", client);
     }
 
     @Override
