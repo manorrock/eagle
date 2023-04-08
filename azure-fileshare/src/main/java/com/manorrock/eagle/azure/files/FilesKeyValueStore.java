@@ -32,7 +32,7 @@ package com.manorrock.eagle.azure.files;
 import com.azure.storage.file.share.ShareClient;
 import com.azure.storage.file.share.ShareClientBuilder;
 import com.azure.storage.file.share.ShareFileClient;
-import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueStore2;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -46,10 +46,8 @@ import com.manorrock.eagle.api.KeyValueStoreMapper;
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
- * @deprecated 
  */
-@Deprecated(since = "23.4.0", forRemoval = true)
-public class FilesKeyValueStore<K, V> implements KeyValueStore<K, V, FilesKeyValueStoreMapper> {
+public class FilesKeyValueStore<K, V> implements KeyValueStore2<K, V, String, byte[]> {
 
     /**
      * Stores the logger.
@@ -61,11 +59,6 @@ public class FilesKeyValueStore<K, V> implements KeyValueStore<K, V, FilesKeyVal
      */
     private final ShareClient client;
     
-    /**
-     * Stores the mapper.
-     */
-    private KeyValueStoreMapper mapper;
-
     /**
      * Constructor.
      *
@@ -79,7 +72,6 @@ public class FilesKeyValueStore<K, V> implements KeyValueStore<K, V, FilesKeyVal
                 .shareName(shareName)
                 .sasToken(sasToken)
                 .buildClient();
-        this.mapper = new FilesKeyValueStoreMapper();
     }
 
     /**
@@ -92,22 +84,21 @@ public class FilesKeyValueStore<K, V> implements KeyValueStore<K, V, FilesKeyVal
      */
     public FilesKeyValueStore(KeyValueStoreMapper mapper, String endpoint, String shareName, String sasToken) {
         this(endpoint, shareName, sasToken);
-        this.mapper = mapper;
     }
 
     @Override
     public void delete(K key) {
-        String name = (String) mapper.fromKey(key);
-        client.deleteFile(name);
+        String filename = toUnderlyingKey(key);
+        client.deleteFile(filename);
     }
 
     @Override
     public V get(K key) {
-        String filename = (String) mapper.fromKey(key);
+        String filename = toUnderlyingKey(key);
         V result = null;
         try ( ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             client.getFileClient(filename).download(outputStream);
-            result = (V) mapper.toValue(outputStream.toByteArray());
+            result = toValue(outputStream.toByteArray());
         } catch (IOException ioe) {
             LOGGER.log(Level.WARNING, "Unable to download file: {0}", filename);
         }
@@ -116,8 +107,8 @@ public class FilesKeyValueStore<K, V> implements KeyValueStore<K, V, FilesKeyVal
 
     @Override
     public void put(K key, V value) {
-        String filename = (String) mapper.fromKey(key);
-        byte[] bytes = (byte[]) mapper.fromValue(value);
+        String filename = toUnderlyingKey(key);
+        byte[] bytes = toUnderlyingValue(value);
         try ( ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes)) {
             ShareFileClient fileClient = client.createFile(filename, bytes.length);
             fileClient.upload(inputStream, bytes.length);
