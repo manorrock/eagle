@@ -91,7 +91,7 @@ public final class KeyValueStoreFactory {
      * @param properties the configuration properties
      * @return the KeyValueStore or null if it could not be created.
      */
-    private static KeyValueStore getCosmosDBKeyValueStore(Properties properties) {
+    private static Object getCosmosDBKeyValueStore(Properties properties) {
         return new CosmosKeyValueStore(
                 properties.getProperty("endpoint"),
                 properties.getProperty("masterKey"),

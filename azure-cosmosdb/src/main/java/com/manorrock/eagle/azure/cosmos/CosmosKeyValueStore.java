@@ -34,8 +34,7 @@ import com.azure.cosmos.CosmosClient;
 import com.azure.cosmos.CosmosClientBuilder;
 import com.azure.cosmos.CosmosContainer;
 import com.azure.cosmos.CosmosDatabase;
-import com.manorrock.eagle.api.KeyValueStore;
-import com.manorrock.eagle.api.KeyValueStoreMapper;
+import com.manorrock.eagle.api.KeyValueStore2;
 
 /**
  * A Cosmos DB based KeyValueStore.
@@ -43,10 +42,8 @@ import com.manorrock.eagle.api.KeyValueStoreMapper;
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
- * @deprecated 
  */
-@Deprecated(since = "23.4.0", forRemoval = true)
-public class CosmosKeyValueStore<K, V> implements KeyValueStore<K, V, CosmosKeyValueStoreMapper> {
+public class CosmosKeyValueStore<K, V> implements KeyValueStore2<K, V, CosmosKey, String> {
     
     /**
      * Stores the CosmosDB client.
@@ -62,11 +59,6 @@ public class CosmosKeyValueStore<K, V> implements KeyValueStore<K, V, CosmosKeyV
      * Stores the CosmosDB database.
      */
     private final CosmosDatabase database;
-    
-    /**
-     * Stores the mapper.
-     */
-    private KeyValueStoreMapper mapper;
 
     /**
      * Constructor.
@@ -86,12 +78,11 @@ public class CosmosKeyValueStore<K, V> implements KeyValueStore<K, V, CosmosKeyV
                 .buildClient();
         database = client.getDatabase(databaseName);
         container = database.getContainer(containerName);
-        mapper = new CosmosKeyValueStoreMapper();
     }
 
     @Override
     public void delete(K key) {
-        CosmosKey cosmosKey = (CosmosKey) mapper.toKey(key);
+        CosmosKey cosmosKey = toUnderlyingKey(key);
         container.deleteItem(
                 cosmosKey.getItemId(), 
                 cosmosKey.getPartitionKey(),
@@ -100,18 +91,18 @@ public class CosmosKeyValueStore<K, V> implements KeyValueStore<K, V, CosmosKeyV
 
     @Override
     public V get(K key) {
-        CosmosKey cosmosKey = (CosmosKey) mapper.toKey(key);
-        Object cosmosValue = container.readItem(
+        CosmosKey cosmosKey = toUnderlyingKey(key);
+        String cosmosValue = container.readItem(
                 cosmosKey.getItemId(), 
                 cosmosKey.getPartitionKey(), 
-                String.class);
-        return (V) mapper.toValue(cosmosValue);
+                String.class).getItem();
+        return (V) toValue(cosmosValue);
     }
 
     @Override
     public void put(K key, V value) {
-        CosmosKey cosmosKey = (CosmosKey) mapper.toKey(key);
-        Object cosmosValue = mapper.toValue(value);
+        CosmosKey cosmosKey = toUnderlyingKey(key);
+        String cosmosValue = toUnderlyingValue(value);
         container.upsertItem(
                 cosmosValue,
                 cosmosKey.getPartitionKey(),
