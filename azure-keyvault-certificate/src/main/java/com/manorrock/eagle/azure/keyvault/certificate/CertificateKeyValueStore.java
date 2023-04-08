@@ -35,7 +35,7 @@ import com.azure.security.keyvault.certificates.CertificateClient;
 import com.azure.security.keyvault.certificates.CertificateClientBuilder;
 import com.azure.security.keyvault.certificates.models.ImportCertificateOptions;
 import com.azure.security.keyvault.certificates.models.KeyVaultCertificateWithPolicy;
-import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueStore2;
 import com.manorrock.eagle.api.KeyValueStoreMapper;
 
 /**
@@ -44,21 +44,14 @@ import com.manorrock.eagle.api.KeyValueStoreMapper;
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
- * @deprecated 
  */
-@Deprecated(since = "23.4.0", forRemoval = true)
-public class CertificateKeyValueStore<K, V> implements KeyValueStore<K, V, CertificateKeyValueStoreMapper> {
+public class CertificateKeyValueStore<K, V> implements KeyValueStore2<K, V, String, byte[]> {
 
     /**
      * Stores the client.
      */
-    private CertificateClient client;
+    private final CertificateClient client;
     
-    /**
-     * Stores the mapper.
-     */
-    private KeyValueStoreMapper mapper;
-
     /**
      * Constructor.
      *
@@ -79,32 +72,31 @@ public class CertificateKeyValueStore<K, V> implements KeyValueStore<K, V, Certi
                 .vaultUrl(endpoint)
                 .credential(credential)
                 .buildClient();
-        mapper = new CertificateKeyValueStoreMapper();
     }
 
     @Override
     public void delete(K key) {
-        String name = (String) mapper.toKey(key);
+        String name = toUnderlyingKey(key);
         client.beginDeleteCertificate(name);
     }
 
     @Override
     public V get(K key) {
-        String name = (String) mapper.toKey(key);
+        String name = toUnderlyingKey(key);
         KeyVaultCertificateWithPolicy certificate = client.getCertificate(name);
         V result = null;
         if (certificate != null) {
             CertificateWrapper wrapper = new CertificateWrapper();
             wrapper.setWrapped(certificate);
-            result = (V) mapper.toValue(wrapper);
+            result = toValue(wrapper.getBytes());
         }
         return result;
     }
 
     @Override
     public void put(K key, V value) {
-        String name = (String) mapper.toKey(key);
-        CertificateWrapper wrapper = (CertificateWrapper) mapper.toValue(value);
+        String name = toUnderlyingKey(key);
+        CertificateWrapper wrapper = new CertificateWrapper(toUnderlyingValue(value));
         ImportCertificateOptions options = new ImportCertificateOptions(name, wrapper.getBytes());
         client.importCertificate(options);
     }
