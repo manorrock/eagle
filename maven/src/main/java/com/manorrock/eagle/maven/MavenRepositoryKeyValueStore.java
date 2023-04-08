@@ -38,6 +38,7 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import com.manorrock.eagle.api.KeyValueStore;
+import java.util.Map;
 
 /**
  * The Maven repository KeyValueStore.
@@ -78,6 +79,11 @@ public class MavenRepositoryKeyValueStore<K, V> implements KeyValueStore<K, V, S
     public V get(K key) {
         String path = toUnderlyingKey(key);
         return (V) toValue(mavenRepoGet(path));
+    }
+
+    @Override
+    public Map getDelegate() {
+        return Map.of("uri", uri, "httpClient", client);
     }
 
     @Override

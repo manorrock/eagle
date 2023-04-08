@@ -37,6 +37,7 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import com.manorrock.eagle.api.KeyValueStore;
+import java.util.Map;
 
 /**
  * A Manorrock Calico based KeyValueStore.
@@ -48,9 +49,9 @@ import com.manorrock.eagle.api.KeyValueStore;
 public class CalicoKeyValueStore<K, V> implements KeyValueStore<K, V, String, byte[]> {
 
     /**
-     * Stores the base URI.
+     * Stores the URI.
      */
-    private final URI baseUri;
+    private final URI uri;
 
     /**
      * Stores the HttpClient.
@@ -60,11 +61,11 @@ public class CalicoKeyValueStore<K, V> implements KeyValueStore<K, V, String, by
     /**
      * Constructor.
      *
-     * @param baseUri the URI.
+     * @param uri the URI.
      */
-    public CalicoKeyValueStore(URI baseUri) {
-        this.baseUri = baseUri;
-        client = HttpClient.newHttpClient();
+    public CalicoKeyValueStore(URI uri) {
+        this.uri = uri;
+        this.client = HttpClient.newHttpClient();
     }
 
     @Override
@@ -80,7 +81,7 @@ public class CalicoKeyValueStore<K, V> implements KeyValueStore<K, V, String, by
     private void deleteFile(String path) {
         try {
             HttpRequest request = HttpRequest
-                    .newBuilder(baseUri.resolve(URI.create(path)))
+                    .newBuilder(uri.resolve(URI.create(path)))
                     .DELETE()
                     .build();
             client.send(request, BodyHandlers.discarding());
@@ -99,6 +100,11 @@ public class CalicoKeyValueStore<K, V> implements KeyValueStore<K, V, String, by
         return result;
     }
 
+    @Override
+    public Map getDelegate() {
+        return Map.of("uri", uri, "httpClient", client);
+    }
+
     /**
      * Get the file.
      *
@@ -109,7 +115,7 @@ public class CalicoKeyValueStore<K, V> implements KeyValueStore<K, V, String, by
         byte[] result = null;
         try {
             HttpRequest request = HttpRequest
-                    .newBuilder(baseUri.resolve(URI.create(path)))
+                    .newBuilder(uri.resolve(URI.create(path)))
                     .build();
             HttpResponse<byte[]> response = client.send(request, BodyHandlers.ofByteArray());
             if (response.statusCode() < 400) {
@@ -139,7 +145,7 @@ public class CalicoKeyValueStore<K, V> implements KeyValueStore<K, V, String, by
     private void createFile(String path, byte[] content) {
         try {
             HttpRequest request = HttpRequest
-                    .newBuilder(baseUri.resolve(URI.create(path)))
+                    .newBuilder(uri.resolve(URI.create(path)))
                     .POST(BodyPublishers.ofByteArray(content))
                     .build();
             client.send(request, BodyHandlers.discarding());
@@ -157,7 +163,7 @@ public class CalicoKeyValueStore<K, V> implements KeyValueStore<K, V, String, by
     private void updateFile(String path, byte[] content) {
         try {
             HttpRequest request = HttpRequest
-                    .newBuilder(baseUri.resolve(URI.create(path)))
+                    .newBuilder(uri.resolve(URI.create(path)))
                     .PUT(BodyPublishers.ofByteArray(content))
                     .build();
             client.send(request, BodyHandlers.discarding());

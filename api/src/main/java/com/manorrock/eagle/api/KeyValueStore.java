@@ -29,6 +29,8 @@
  */
 package com.manorrock.eagle.api;
 
+import java.util.Map;
+
 /**
  * The KeyValueStore API.
  * 
@@ -54,6 +56,13 @@ public interface KeyValueStore<K, V, UK, UV> {
      * @return the value.
      */
     V get(K key);
+    
+    /**
+     * Get the delegate map.
+     * 
+     * @return the delegate map.
+     */
+    Map getDelegate();
 
     /**
      * Put the value.

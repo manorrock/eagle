@@ -36,6 +36,7 @@ import com.azure.security.keyvault.certificates.CertificateClientBuilder;
 import com.azure.security.keyvault.certificates.models.ImportCertificateOptions;
 import com.azure.security.keyvault.certificates.models.KeyVaultCertificateWithPolicy;
 import com.manorrock.eagle.api.KeyValueStore;
+import java.util.Map;
 
 /**
  * An Azure Key Vault Certificates based KeyValueStore.
@@ -90,6 +91,11 @@ public class CertificateKeyValueStore<K, V> implements KeyValueStore<K, V, Strin
             result = toValue(wrapper.getBytes());
         }
         return result;
+    }
+
+    @Override
+    public Map getDelegate() {
+        return Map.of("certificateClient", client);
     }
 
     @Override

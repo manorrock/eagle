@@ -36,6 +36,7 @@ import java.nio.file.Path;
 import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
 import com.manorrock.eagle.api.KeyValueStore;
+import java.util.Map;
 
 /**
  * A Path based KeyValueStore.
@@ -52,17 +53,17 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, Path, byte[]
     private static final Logger LOGGER = Logger.getLogger(PathKeyValueStore.class.getName());
     
     /**
-     * Stores the base path.
+     * Stores the path.
      */
     private final Path basePath;
     
     /**
      * Constructor.
      *
-     * @param basePath the base path.
+     * @param path the path.
      */
-    public PathKeyValueStore(Path basePath) {
-        this.basePath = basePath;
+    public PathKeyValueStore(Path path) {
+        this.basePath = path;
     }
 
     @Override
@@ -88,6 +89,11 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, Path, byte[]
             }
         }
         return result;
+    }
+
+    @Override
+    public Map getDelegate() {
+        return Map.of("basePath", basePath);
     }
 
     @Override

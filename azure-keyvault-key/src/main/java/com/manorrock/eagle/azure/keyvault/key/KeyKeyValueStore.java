@@ -37,6 +37,7 @@ import com.azure.security.keyvault.keys.models.ImportKeyOptions;
 import com.azure.security.keyvault.keys.models.JsonWebKey;
 import com.azure.security.keyvault.keys.models.KeyVaultKey;
 import com.manorrock.eagle.api.KeyValueStore;
+import java.util.Map;
 
 /**
  * An Azure KeyVault Key based KeyValueStore.
@@ -89,6 +90,11 @@ public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V, String, JsonW
             result = toValue(keyVaultKey.getKey());
         }
         return result;
+    }
+
+    @Override
+    public Map getDelegate() {
+        return Map.of("keyClient", client);
     }
 
     @Override
