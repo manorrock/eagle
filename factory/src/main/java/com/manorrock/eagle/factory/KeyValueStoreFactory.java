@@ -30,7 +30,6 @@
 package com.manorrock.eagle.factory;
 
 import com.azure.storage.common.StorageSharedKeyCredential;
-import com.manorrock.eagle.api.KeyValueStore;
 import com.manorrock.eagle.api.KeyValueStore2;
 import com.manorrock.eagle.azure.blob.BlobKeyValueStore;
 import com.manorrock.eagle.azure.cosmos.CosmosKeyValueStore;
@@ -65,7 +64,7 @@ public final class KeyValueStoreFactory {
      * @param properties the configuration properties.
      * @return the KeyValueStore or null if it could not be created.
      */
-    private static Object getBlobKeyValueStore(Properties properties) {
+    private static KeyValueStore2 getBlobKeyValueStore(Properties properties) {
         return new BlobKeyValueStore(
                 properties.getProperty("endpoint"),
                 properties.getProperty("containerName"),
@@ -91,7 +90,7 @@ public final class KeyValueStoreFactory {
      * @param properties the configuration properties
      * @return the KeyValueStore or null if it could not be created.
      */
-    private static Object getCosmosDBKeyValueStore(Properties properties) {
+    private static KeyValueStore2 getCosmosDBKeyValueStore(Properties properties) {
         return new CosmosKeyValueStore(
                 properties.getProperty("endpoint"),
                 properties.getProperty("masterKey"),
@@ -116,8 +115,8 @@ public final class KeyValueStoreFactory {
      * @param properties the configuration properties.
      * @return the KeyValueStore, or null if unable to create one.
      */
-    public static Object getKeyValueStore(Properties properties) {
-        Object result = null;
+    public static KeyValueStore2 getKeyValueStore(Properties properties) {
+        KeyValueStore2 result = null;
         String className = (String) properties.getProperty("className");
         if (className != null) {
             switch (className) {
