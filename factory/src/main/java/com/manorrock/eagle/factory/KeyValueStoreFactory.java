@@ -65,7 +65,7 @@ public final class KeyValueStoreFactory {
      * @param properties the configuration properties.
      * @return the KeyValueStore or null if it could not be created.
      */
-    private static KeyValueStore getBlobKeyValueStore(Properties properties) {
+    private static Object getBlobKeyValueStore(Properties properties) {
         return new BlobKeyValueStore(
                 properties.getProperty("endpoint"),
                 properties.getProperty("containerName"),
