@@ -34,7 +34,7 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
-import com.manorrock.eagle.api.KeyValueStore;
+import com.manorrock.eagle.api.KeyValueStore2;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,10 +48,8 @@ import com.manorrock.eagle.api.KeyValueStoreMapper;
  * @author Manfred Riem (mriem@manorrock.com)
  * @param <K> the type of the key.
  * @param <V> the type of the value.
- * @deprecated 
  */
-@Deprecated(since = "23.4.0", forRemoval = true)
-public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V, BlobKeyValueStoreMapper> {
+public class BlobKeyValueStore<K, V> implements KeyValueStore2<K, V, String, byte[]> {
     
     /**
      * Stores the logger.
@@ -61,12 +59,12 @@ public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V, BlobKeyValue
     /**
      * Stores the client.
      */
-    private BlobServiceClient client;
+    private final BlobServiceClient client;
 
     /**
      * Stores the container.
      */
-    private BlobContainerClient container;
+    private final BlobContainerClient container;
     
     /**
      * Stores the mapper.
@@ -75,55 +73,35 @@ public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V, BlobKeyValue
 
     /**
      * Constructor.
-     * 
-     * <p>
-     *  If you are using this constructor be aware that the key type is assumed
-     *  to be a String and the value type is assumed to be a byte-array. So make
-     *  sure to use AzureBlobKeyValueStore&lt;String, byte[]&gt; when using
-     *  this constructor.
-     * </p>
      *
-     * @param endpoint the endpoint.
-     * @param containerName the container name.
-     * @param credential the shared storage key credential.
-     */
-    public BlobKeyValueStore(String endpoint, String containerName, StorageSharedKeyCredential credential) {
-        this(new BlobKeyValueStoreMapper(), endpoint, containerName, credential);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param mapper the KeyValueStoreMapper.
      * @param endpoint the endpoint.
      * @param containerName the container name.
      * @param credential the storage shared key credential.
      */
-    public BlobKeyValueStore(KeyValueStoreMapper mapper, String endpoint, String containerName, StorageSharedKeyCredential credential) {
+    public BlobKeyValueStore(String endpoint, String containerName, StorageSharedKeyCredential credential) {
         client = new BlobServiceClientBuilder()
                 .endpoint(endpoint)
                 .credential(credential)
                 .buildClient();
         container = client.getBlobContainerClient(containerName);
-        this.mapper = mapper;
     }
 
     @Override
     public void delete(K key) {
-        String blobName = (String) mapper.toKey(key);
+        String blobName = toUnderlyingKey(key);
         BlobClient blob = container.getBlobClient(blobName);
         blob.delete();
     }
 
     @Override
     public V get(K key) {
-        String blobName = (String) mapper.toKey(key);
+        String blobName = toUnderlyingKey(key);
         BlobClient blob = container.getBlobClient(blobName);
         V result = null;
         if (blob.exists()) {
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                 blob.downloadStream(outputStream);
-                result = (V) mapper.toValue(outputStream.toByteArray());
+                result = toValue(outputStream.toByteArray());
             } catch (IOException ioe) {
                 LOGGER.log(Level.WARNING, "Unable to download blob: {0}", blobName);
             }
@@ -133,9 +111,9 @@ public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V, BlobKeyValue
 
     @Override
     public void put(K key, V value) {
-        String blobName = (String) mapper.toKey(key);
+        String blobName = toUnderlyingKey(key);
         BlobClient blob = container.getBlobClient(blobName);
-        byte[] bytes = (byte[]) mapper.toValue(value);
+        byte[] bytes = toUnderlyingValue(value);
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes)) {
             blob.upload(inputStream, bytes.length);
         } catch (IOException ioe) {
