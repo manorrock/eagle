@@ -14,7 +14,7 @@
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-file-share</artifactId>
-            <version>12.16.1</version>
+            <version>${azure-storage-file-share.version}</version>
         </dependency>
         <dependency>
             <groupId>com.manorrock.eagle</groupId>

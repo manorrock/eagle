@@ -14,12 +14,12 @@
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-identity</artifactId>
-            <version>1.4.4</version>
+            <version>${azure-identity.version}</version>
         </dependency>
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-security-keyvault-secrets</artifactId>
-            <version>4.3.7</version>
+            <version>${azure-security-keyvault-secrets.version}</version>
         </dependency>
         <dependency>
             <groupId>com.manorrock.eagle</groupId>

@@ -14,13 +14,13 @@
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-identity</artifactId>
-            <version>1.4.4</version>
+            <version>${azure-identity.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-security-keyvault-certificates</artifactId>
-            <version>4.2.7</version>
+            <version>${azure-security-keyvault-certificates.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
