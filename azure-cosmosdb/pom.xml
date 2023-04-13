@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.manorrock.eagle</groupId>
         <artifactId>project</artifactId>
-        <version>23.4.0-SNAPSHOT</version>
+        <version>23.4.0</version>
     </parent>
     <artifactId>eagle-azure-cosmosdb</artifactId>
     <packaging>jar</packaging>
