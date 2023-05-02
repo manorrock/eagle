@@ -1,12 +1,12 @@
 # Manorrock Eagle
 
-## Hazelcast implementation
+## Manorrock Calico implementation
 
-If you want to use Hazelcast as a Key-Value store you will need to do the
+If you want to use Manorrock Calico as a Key-Value store you will need to do the
 following.
 
 1. Add the dependency.
-2. Create the HazelcastKeyValueStore.
+2. Create the CalicoKeyValueStore.
 
 ### Add the dependency
 
@@ -15,30 +15,31 @@ To start add the following dependency.
 ```xml
     <dependency>
         <groupId>com.manorrock.eagle</groupId>
-        <artifactId>eagle-hazelcast</artifactId>
+        <artifactId>eagle-calico</artifactId>
         <version>MY_VERSION</version>
     </dependency>
 ```
 
 Where MY_VERSION should be replaced wit the version you want to use.
 
-### Create the HazelcastKeyValueStore
+### Create the CalicoKeyValueStore
 
-The following snippet shows you how to create the HazelcastKeyValueStore
+The following snippet shows you how to create the CalicoKeyValueStore
 
 ```java
 
-    HazelcastKeyValueStore store = new HazelcastKeyValueStore("name");
+    CalicoKeyValueStore<String, byte[]> store = new CalicoKeyValueStore<>(
+                URI.create("http://localhost:8080"));
 ```
 
 Then the rest is using the KeyValueStore APIs.
 
 ## Factory properties
 
-If you want to create the HazelcastKeyValueStore using the KeyValueStoreFactory
+If you want to create the CalicoKeyValueStore using the KeyValueStoreFactory
 use the following properties.
 
 | Key | Value 
 | --- | -----
-| className | com.manorrock.eagle.hazelcast.HazelcastKeyValueStore
-| name | the name of the KeyValueStore
+| className | com.manorrock.eagle.calico.CalicoKeyValueStore
+| uri | the location of Manorrock Calico

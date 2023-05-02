@@ -94,7 +94,7 @@ public class FilesKeyValueStore<K, V> implements KeyValueStore<K, V, String, byt
     }
 
     @Override
-    public Map getDelegate() {
+    public Map<String, Object> getDelegate() {
         return Map.of("shareClient", client);
     }
 
@@ -104,7 +104,7 @@ public class FilesKeyValueStore<K, V> implements KeyValueStore<K, V, String, byt
         byte[] bytes = toUnderlyingValue(value);
         try ( ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes)) {
             ShareFileClient fileClient = client.createFile(filename, bytes.length);
-            fileClient.upload(inputStream, bytes.length);
+            fileClient.upload(inputStream, bytes.length, null);
         } catch (IOException ioe) {
             LOGGER.log(Level.WARNING, "Unable to upload file: {0}", filename);
         }

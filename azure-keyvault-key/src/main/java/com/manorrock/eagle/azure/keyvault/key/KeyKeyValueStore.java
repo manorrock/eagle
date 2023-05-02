@@ -93,7 +93,7 @@ public class KeyKeyValueStore<K, V> implements KeyValueStore<K, V, String, JsonW
     }
 
     @Override
-    public Map getDelegate() {
+    public Map<String, Object> getDelegate() {
         return Map.of("keyClient", client);
     }
 

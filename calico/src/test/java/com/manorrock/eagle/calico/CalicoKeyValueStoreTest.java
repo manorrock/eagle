@@ -50,7 +50,7 @@ public class CalicoKeyValueStoreTest {
      */
     @Test
     public void testDelete() {
-        CalicoKeyValueStore<String, byte[]> store = new CalicoKeyValueStore(
+        CalicoKeyValueStore<String, byte[]> store = new CalicoKeyValueStore<>(
                 URI.create(BASE_UR));
         store.put("delete", "delete".getBytes());
         assertNotNull(store.get("delete"));
@@ -63,7 +63,7 @@ public class CalicoKeyValueStoreTest {
      */
     @Test
     public void testGet() {
-        CalicoKeyValueStore<String, byte[]> store = new CalicoKeyValueStore(
+        CalicoKeyValueStore<String, byte[]> store = new CalicoKeyValueStore<>(
                 URI.create(BASE_UR));
         store.delete("get");
         assertNull(store.get("get"));
@@ -77,7 +77,7 @@ public class CalicoKeyValueStoreTest {
      */
     @Test
     public void testPut() {
-        CalicoKeyValueStore<String, byte[]> store = new CalicoKeyValueStore(
+        CalicoKeyValueStore<String, byte[]> store = new CalicoKeyValueStore<>(
                 URI.create(BASE_UR));
         store.put("put", "put".getBytes());
         assertNotNull(store.get("put"));

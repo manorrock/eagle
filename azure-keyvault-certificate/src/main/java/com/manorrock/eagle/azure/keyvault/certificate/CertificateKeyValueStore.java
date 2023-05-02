@@ -94,7 +94,7 @@ public class CertificateKeyValueStore<K, V> implements KeyValueStore<K, V, Strin
     }
 
     @Override
-    public Map getDelegate() {
+    public Map<String, Object> getDelegate() {
         return Map.of("certificateClient", client);
     }
 

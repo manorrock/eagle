@@ -51,7 +51,7 @@ class GitRepositoryKeyValueStoreTest {
      */
     @Test
     void testDelete() {
-        GitRepositoryKeyValueStore store = new GitRepositoryKeyValueStore(
+        GitRepositoryKeyValueStore<String, byte[]> store = new GitRepositoryKeyValueStore<>(
                 URI.create(BASE_URI)) {};
         store.delete("delete.txt");
     }
@@ -61,7 +61,7 @@ class GitRepositoryKeyValueStoreTest {
      */
     @Test
     void testGet() {
-        GitRepositoryKeyValueStore store = new GitRepositoryKeyValueStore(
+        GitRepositoryKeyValueStore<String, byte[]> store = new GitRepositoryKeyValueStore<>(
                 URI.create(BASE_URI)) {};
         assertNull(store.get("get.txt"));
     }
@@ -71,7 +71,7 @@ class GitRepositoryKeyValueStoreTest {
      */
     @Test
     void testPut() {
-        GitRepositoryKeyValueStore store = new GitRepositoryKeyValueStore(
+        GitRepositoryKeyValueStore<String, byte[]> store = new GitRepositoryKeyValueStore<>(
                 URI.create(BASE_URI)) {};
         store.put("put.txt", "test".getBytes());
         assertNotNull(store.get("put.txt"));

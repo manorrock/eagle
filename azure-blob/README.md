@@ -27,7 +27,7 @@ Where MY_VERSION should be replaced wit the version you want to use.
 The following code snippet will get your started.
 
 ```java
-    BlobKeyValueStore store = new BlobKeyValueStore(
+    BlobKeyValueStore store = new BlobKeyValueStore<>(
         "endpoint",
         "containerName"
     );
@@ -53,3 +53,5 @@ use the following properties.
 | className | com.manorrock.eagle.azure.blob.BlobKeyValueStore
 | endpoint | the endpoint
 | containerName | the container name
+| accountName | the account name
+| accountKey | the account key

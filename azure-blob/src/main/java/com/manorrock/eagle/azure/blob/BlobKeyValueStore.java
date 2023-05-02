@@ -105,7 +105,7 @@ public class BlobKeyValueStore<K, V> implements KeyValueStore<K, V, String, byte
     }
 
     @Override
-    public Map getDelegate() {
+    public Map<String, Object> getDelegate() {
         return Map.of("blobServiceCLient", client, "blobContainerClient", container);
     }
 

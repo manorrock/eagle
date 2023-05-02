@@ -82,7 +82,7 @@ public class MavenRepositoryKeyValueStore<K, V> implements KeyValueStore<K, V, S
     }
 
     @Override
-    public Map getDelegate() {
+    public Map<String, Object> getDelegate() {
         return Map.of("uri", uri, "httpClient", client);
     }
 

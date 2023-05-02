@@ -78,7 +78,7 @@ public class GitRepositoryKeyValueStore<K, V> implements KeyValueStore<K, V, Str
     }
 
     @Override
-    public Map getDelegate() {
+    public Map<String, Object> getDelegate() {
         return Map.of("uri", uri);
     }
 

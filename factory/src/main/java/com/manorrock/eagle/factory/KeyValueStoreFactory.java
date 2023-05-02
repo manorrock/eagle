@@ -64,8 +64,8 @@ public final class KeyValueStoreFactory {
      * @param properties the configuration properties.
      * @return the KeyValueStore or null if it could not be created.
      */
-    private static KeyValueStore getBlobKeyValueStore(Properties properties) {
-        return new BlobKeyValueStore(
+    private static KeyValueStore<?,?, ?, ?> getBlobKeyValueStore(Properties properties) {
+        return new BlobKeyValueStore<>(
                 properties.getProperty("endpoint"),
                 properties.getProperty("containerName"),
                 new StorageSharedKeyCredential(
@@ -80,8 +80,8 @@ public final class KeyValueStoreFactory {
      * @param properties the configuration properties.
      * @return the KeyValueStore or null if it could not be created.
      */
-    private static KeyValueStore getCoherenceMapKeyValueStore(Properties properties) {
-        return new CoherenceKeyValueStore(properties.getProperty("name"));
+    private static KeyValueStore<?,?,?,?> getCoherenceMapKeyValueStore(Properties properties) {
+        return new CoherenceKeyValueStore<>(properties.getProperty("name"));
     }
 
     /**
@@ -90,8 +90,8 @@ public final class KeyValueStoreFactory {
      * @param properties the configuration properties
      * @return the KeyValueStore or null if it could not be created.
      */
-    private static KeyValueStore getCosmosDBKeyValueStore(Properties properties) {
-        return new CosmosKeyValueStore(
+    private static KeyValueStore<?,?,?,?> getCosmosDBKeyValueStore(Properties properties) {
+        return new CosmosKeyValueStore<>(
                 properties.getProperty("endpoint"),
                 properties.getProperty("masterKey"),
                 properties.getProperty("consistencyLevel"),
@@ -105,8 +105,8 @@ public final class KeyValueStoreFactory {
      * @param properties the configuration properties.
      * @return the KeyValueStore or null if it could not be created.
      */
-    private static KeyValueStore getHazelcastKeyValueStore(Properties properties) {
-        return new HazelcastKeyValueStore(properties.getProperty("name"));
+    private static KeyValueStore<?,?,?,?> getHazelcastKeyValueStore(Properties properties) {
+        return new HazelcastKeyValueStore<>(properties.getProperty("name"));
     }
 
     /**
@@ -115,8 +115,8 @@ public final class KeyValueStoreFactory {
      * @param properties the configuration properties.
      * @return the KeyValueStore, or null if unable to create one.
      */
-    public static KeyValueStore getKeyValueStore(Properties properties) {
-        KeyValueStore result = null;
+    public static KeyValueStore<?,?,?,?> getKeyValueStore(Properties properties) {
+        KeyValueStore<?,?,?,?> result = null;
         String className = (String) properties.getProperty("className");
         if (className != null) {
             switch (className) {
@@ -146,12 +146,12 @@ public final class KeyValueStoreFactory {
      * @param properties the configuration properties.
      * @return the KeyValueStore or null if it could not be created.
      */
-    private static KeyValueStore getRedisKeyValueStore(Properties properties) {
+    private static KeyValueStore<?,?,?,?> getRedisKeyValueStore(Properties properties) {
         URI uri = RedisURI.Builder
                 .redis(properties.getProperty("hostname"))
                 .withPort(Integer.valueOf(properties.getProperty("portNumber", "6379")))
                 .withSsl(Boolean.valueOf(properties.getProperty("ssl", "false")))
-                .withPassword(properties.getProperty("password"))
+                .withPassword(properties.getProperty("password").toCharArray())
                 .build()
                 .toURI();
         return new RedisKeyValueStore<byte[], byte[]>(uri);

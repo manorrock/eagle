@@ -114,7 +114,7 @@ public class JdbcKeyValueStore<K, V> implements KeyValueStore<K, V, Long, byte[]
     }
 
     @Override
-    public Map getDelegate() {
+    public Map<String, Object> getDelegate() {
         return Map.of("uri", uri, "connection", connection, "tableName", tableName, 
                 "keyColumnName", keyColumnName, "valueColumnName", valueColumnName);
     }

@@ -51,7 +51,7 @@ class MavenRepositoryKeyValueStoreTest {
      */
     @Test
     void testDelete() {
-        MavenRepositoryKeyValueStore store = new MavenRepositoryKeyValueStore(
+        MavenRepositoryKeyValueStore<String, byte[]> store = new MavenRepositoryKeyValueStore<>(
                 URI.create(BASE_URI)) {};
         store.delete("com.test/test-delete/1.0.0/test-delete-1.0.0.jar");
     }
@@ -61,7 +61,7 @@ class MavenRepositoryKeyValueStoreTest {
      */
     @Test
     void testGet() {
-        MavenRepositoryKeyValueStore store = new MavenRepositoryKeyValueStore(
+        MavenRepositoryKeyValueStore<String, byte[]> store = new MavenRepositoryKeyValueStore<>(
                 URI.create(BASE_URI)) {};
         assertNull(store.get("com.test/test-get/1.0.0/test-get-1.0.0.jar"));
     }
@@ -71,7 +71,7 @@ class MavenRepositoryKeyValueStoreTest {
      */
     @Test
     void testPut() {
-        MavenRepositoryKeyValueStore store = new MavenRepositoryKeyValueStore(
+        MavenRepositoryKeyValueStore<String, byte[]> store = new MavenRepositoryKeyValueStore<>(
                 URI.create(BASE_URI)) {};
         store.put("com.test/test-put/1.0.0/test-put-1.0.0.jar", "test".getBytes());
         assertNotNull(store.get("com.test/test-put/1.0.0/test-put-1.0.0.jar"));

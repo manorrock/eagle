@@ -107,7 +107,7 @@ public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, byte[], byt
     }
 
     @Override
-    public Map getDelegate() {
+    public Map<String, Object> getDelegate() {
         return Map.of(
                 "redisClient", client,
                 "statefulRedisConnection", connection,

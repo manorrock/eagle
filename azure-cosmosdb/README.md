@@ -14,7 +14,7 @@ To start add the following dependency.
 
 ```xml
     <dependency>
-        <groupId>com.manorrock.eagle.azure</groupId>
+        <groupId>com.manorrock.eagle</groupId>
         <artifactId>eagle-azure-cosmosdb</artifactId>
         <version>MY_VERSION</version>
     </dependency>
@@ -27,7 +27,7 @@ Where MY_VERSION should be replaced wit the version you want to use.
 The following code snippet will get your started.
 
 ```java
-    CosmosDBKeyValueStore store = new CosmosDBKeyValueStore(
+    CosmosDBKeyValueStore store = new CosmosDBKeyValueStore<>(
         "endpoint",
         "masterKey",
         "consistencyLevel",
@@ -42,8 +42,7 @@ Then the rest is using the KeyValueStore APIs.
 
 Beneath the covers the CosmosDB implementation uses Azure Cosmos library. If
 your own project uses the Azure Cosmos library, or any of its dependencies you
-should be aware of this. Note the version of the Azure Cosmos library dependency 
-that this implementation uses can be found in the pom.xml file of this module.
+should be aware of this. Note the version of the Azure Cosmos library dependency that this implementation uses can be found in the pom.xml file of this module.
 
 ## Factory properties
 

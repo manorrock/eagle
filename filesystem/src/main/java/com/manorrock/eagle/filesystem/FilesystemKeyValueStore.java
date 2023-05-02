@@ -91,7 +91,7 @@ public class FilesystemKeyValueStore<K, V> implements KeyValueStore<K, V, String
     }
 
     @Override
-    public Map getDelegate() {
+    public Map<String, Object> getDelegate() {
         return Map.of("baseDirectory", baseDirectory);
     }
 

@@ -46,7 +46,7 @@ public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V, Object,
     /**
      * Stores the named cache.
      */
-    private final NamedCache namedCache;
+    private final NamedCache<Object, Object> namedCache;
     
     /**
      * Stores the session.
@@ -79,7 +79,7 @@ public class CoherenceKeyValueStore<K, V> implements KeyValueStore<K, V, Object,
     }
 
     @Override
-    public Map getDelegate() {
+    public Map<String, Object> getDelegate() {
         return Map.of("session", session, "namedCache", namedCache);
     }
 

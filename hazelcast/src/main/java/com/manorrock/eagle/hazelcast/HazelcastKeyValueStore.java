@@ -42,7 +42,7 @@ import com.manorrock.eagle.api.KeyValueStore;
  * @param <K> the type of the key.
  * @param <V> the type of the value.
  */
-public class HazelcastKeyValueStore<K, V> implements KeyValueStore<K, V, Object, Object> {
+public class HazelcastKeyValueStore<K, V> implements KeyValueStore<K, V, String, Object> {
 
     /**
      * Stores the config.
@@ -57,7 +57,7 @@ public class HazelcastKeyValueStore<K, V> implements KeyValueStore<K, V, Object,
     /**
      * Stores the Hazelcast map.
      */
-    private Map hazelcastMap;
+    private Map<String, Object> hazelcastMap;
     
     /**
      * Constructor.
@@ -87,7 +87,7 @@ public class HazelcastKeyValueStore<K, V> implements KeyValueStore<K, V, Object,
     }
 
     @Override
-    public Map getDelegate() {
+    public Map<String, Object> getDelegate() {
         return Map.of("config", config, "hazelcastInstance", hazelcast, "map", hazelcastMap);
     }
 

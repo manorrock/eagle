@@ -60,9 +60,16 @@ public interface KeyValueStore<K, V, UK, UV> {
     /**
      * Get the delegate map.
      * 
+     * <p>
+     *  Note that each implementation exposes their own map so please read the
+     *  JavaDoc or source code to see what delegate objects it exposes. We do
+     *  not recommend tying your code to this, but we realize sometimes you need
+     *  to have a way to access the underlying functionality.
+     * </p>
+     * 
      * @return the delegate map.
      */
-    Map getDelegate();
+    Map<String, Object> getDelegate();
 
     /**
      * Put the value.

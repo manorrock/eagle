@@ -101,7 +101,7 @@ public class CosmosKeyValueStore<K, V> implements KeyValueStore<K, V, CosmosKey,
     }
 
     @Override
-    public Map getDelegate() {
+    public Map<String, Object> getDelegate() {
         return Map.of("cosmosClient", client, "cosmosDatabase", database, "cosmosContainer", container);
     }
 

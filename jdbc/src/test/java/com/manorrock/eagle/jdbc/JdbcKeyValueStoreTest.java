@@ -30,7 +30,6 @@
 package com.manorrock.eagle.jdbc;
 
 import java.net.URI;
-import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -72,7 +71,7 @@ public class JdbcKeyValueStoreTest {
      */
     @Test
     public void testDelete() {
-        JdbcKeyValueStore store = new JdbcKeyValueStore<Long, Blob>(
+        JdbcKeyValueStore<Long, byte[]> store = new JdbcKeyValueStore<>(
                 URI.create(JDBC_URI), "kvs", "kvs_id", "kvs_value") {
         };
         store.delete(1234L);
@@ -83,7 +82,7 @@ public class JdbcKeyValueStoreTest {
      */
     @Test
     public void testGet() {
-        JdbcKeyValueStore store = new JdbcKeyValueStore<Long, Blob>(
+        JdbcKeyValueStore<Long, byte[]> store = new JdbcKeyValueStore<>(
                 URI.create(JDBC_URI), "kvs", "kvs_id", "kvs_value") {
         };
         assertNull(store.get(2345L));
@@ -94,7 +93,7 @@ public class JdbcKeyValueStoreTest {
      */
     @Test
     public void testPut() {
-        JdbcKeyValueStore store = new JdbcKeyValueStore<Long, Blob>(
+        JdbcKeyValueStore<Long, byte[]> store = new JdbcKeyValueStore<>(
                 URI.create(JDBC_URI), "kvs", "kvs_id", "kvs_value") {
         };
         store.put(3456L, "test".getBytes());

@@ -70,7 +70,7 @@ public class RedisKeyValueStoreTest {
             uri = RedisURI.Builder.redis(properties.getProperty("host"))
                     .withPort(Integer.parseInt(properties.getProperty("port")))
                     .withSsl(false)
-                    .withPassword(properties.getProperty("password")).build().toURI();
+                    .withPassword(properties.getProperty("password").toCharArray()).build().toURI();
         } catch (IOException ioe) {
             LOGGER.log(WARNING, "An exception occurred", ioe);
         }

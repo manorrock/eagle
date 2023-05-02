@@ -92,7 +92,7 @@ public class PathKeyValueStore<K, V> implements KeyValueStore<K, V, Path, byte[]
     }
 
     @Override
-    public Map getDelegate() {
+    public Map<String, Object> getDelegate() {
         return Map.of("basePath", basePath);
     }
 

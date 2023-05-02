@@ -27,7 +27,7 @@ Where MY_VERSION should be replaced wit the version you want to use.
 The following code snippet will get your started.
 
 ```java
-    FilesKeyValueStore store = new FilesKeyValueStore(
+    FilesKeyValueStore store = new FilesKeyValueStore<>(
         "endpoint",
         "shareName",
         "sasToken"

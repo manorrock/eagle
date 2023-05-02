@@ -91,7 +91,7 @@ public class SecretKeyValueStore<K, V> implements KeyValueStore<K, V, String, St
     }
 
     @Override
-    public Map getDelegate() {
+    public Map<String, Object> getDelegate() {
         return Map.of("secretClient", client);
     }
 
