@@ -1,0 +1,18 @@
+on:
+  push:
+    paths:
+      - '/azure-blob/**'
+  workflow_dispatch: 
+name: azure-blob
+jobs: 
+  azure-blob: 
+    runs-on: 'ubuntu-latest'
+    steps: 
+      - uses: 'azure/login@v1'
+        with: 
+          allow-no-subscriptions: 'true'
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+      - uses: 'actions/checkout@v2'
+      - run: |
+        cd azure-blob
+        mvn -P azure -amd -clean install
