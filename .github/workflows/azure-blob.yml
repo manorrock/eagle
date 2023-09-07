@@ -13,6 +13,7 @@ jobs:
           allow-no-subscriptions: 'true'
           creds: '${{ secrets.AZURE_CREDENTIALS }}'
       - uses: 'actions/checkout@v2'
-      - run: |
-        cd azure-blob
-        mvn -P azure -amd -clean install
+      - name: Build with Maven
+        run: |
+          cd azure-blob
+          mvn -P azure -amd clean install
