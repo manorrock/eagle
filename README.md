@@ -1,5 +1,7 @@
 # Manorrock Eagle
 
+[![build](https://github.com/manorrock/eagle/actions/workflows/build.yml/badge.svg)](https://github.com/manorrock/eagle/actions/workflows/build.yml)
+
 This project delivers you with a Key-Value Store abstraction.
 
 Our current list of features/implementations available:
