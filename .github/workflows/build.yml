@@ -16,3 +16,16 @@ jobs:
         java-version: '17'
     - name: Build with Maven
       run: mvn -B --ntp package
+  azure-blob: 
+    runs-on: 'ubuntu-latest'
+    steps: 
+      - uses: 'azure/login@v1'
+        with: 
+          allow-no-subscriptions: 'true'
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'
+      - uses: 'actions/checkout@v2'
+      - name: Build with Maven
+        run: |
+          mvn clean install
+          cd azure-blob
+          mvn -P azure -amd clean install
