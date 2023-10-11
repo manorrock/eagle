@@ -62,3 +62,7 @@ The example below illustrates how to delete a value.
 ```java
   store.delete("mykey");
 ```
+
+## How do I contribute?
+
+See [Contributing](CONTRIBUTING.md)
