@@ -66,3 +66,7 @@ The example below illustrates how to delete a value.
 ## How do I contribute?
 
 See [Contributing](CONTRIBUTING.md)
+
+## Our code of Conduct
+
+See [Code of Conduct](CODE_OF_CONDUCT.md)
