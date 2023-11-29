@@ -118,4 +118,9 @@ public class RedisKeyValueStore<K, V> implements KeyValueStore<K, V, byte[], byt
     public void put(K key, V value) {
         connection.sync().set(key, value);
     }
+
+    @Override
+    public byte[] toUnderlyingKey(K key) {
+        return key.toString().getBytes();
+    }
 }

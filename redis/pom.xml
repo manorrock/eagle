@@ -23,5 +23,17 @@
             <version>${lettuce-core.version}</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>1.19.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.redis</groupId>
+            <artifactId>testcontainers-redis</artifactId>
+            <version>1.7.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

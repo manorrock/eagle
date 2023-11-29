@@ -29,13 +29,12 @@
  */
 package com.manorrock.eagle.redis;
 
+import com.redis.testcontainers.RedisContainer;
 import io.lettuce.core.RedisURI;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.URI;
-import java.util.Properties;
-import static java.util.logging.Level.WARNING;
 import java.util.logging.Logger;
+import org.junit.ClassRule;
+import org.junit.jupiter.api.AfterAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import org.junit.jupiter.api.BeforeAll;
@@ -49,10 +48,11 @@ import org.junit.jupiter.api.Test;
 public class RedisKeyValueStoreTest {
 
     /**
-     * Stores the logger.
+     * Stores the Redis container.
      */
-    private static final Logger LOGGER
-            = Logger.getLogger(RedisKeyValueStoreTest.class.getPackage().getName());
+    @ClassRule
+    public static RedisContainer redis = new RedisContainer(
+        RedisContainer.DEFAULT_IMAGE_NAME.withTag(RedisContainer.DEFAULT_TAG));
 
     /**
      * Stores the URI.
@@ -60,20 +60,22 @@ public class RedisKeyValueStoreTest {
     private static URI uri;
 
     /**
-     * Verify if we can test Redis.
+     * Cleanup after running.
+     */
+    @AfterAll
+    public static void afterAll() {
+        redis.stop();
+    }
+
+    /**
+     * Setup before running.
+     *
+     * @throws Exception when a serious error occurs.
      */
     @BeforeAll
-    public static void setUpClass() {
-        try {
-            Properties properties = new Properties();
-            properties.load(new FileInputStream("redis.properties"));
-            uri = RedisURI.Builder.redis(properties.getProperty("host"))
-                    .withPort(Integer.parseInt(properties.getProperty("port")))
-                    .withSsl(false)
-                    .withPassword(properties.getProperty("password").toCharArray()).build().toURI();
-        } catch (IOException ioe) {
-            LOGGER.log(WARNING, "An exception occurred", ioe);
-        }
+    public static void beforeAll() throws Exception {
+        redis.start();
+        uri = new URI(redis.getRedisURI());
     }
 
     /**
