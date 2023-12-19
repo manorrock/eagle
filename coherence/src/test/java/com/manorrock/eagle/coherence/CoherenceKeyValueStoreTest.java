@@ -27,66 +27,38 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  */
-package com.manorrock.eagle.redis;
+package com.manorrock.eagle.coherence;
 
-import com.redis.testcontainers.RedisContainer;
-import java.net.URI;
-import org.junit.ClassRule;
-import org.junit.jupiter.api.AfterAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
- * The JUnit tests for the RedisKeyValueStore class.
- *
+ * The JUnit tests for the CoherenceKeyValueStore class.
+ * 
  * @author Manfred Riem (mriem@manorrock.com)
  */
-public class RedisKeyValueStoreTest {
-
-    /**
-     * Stores the Redis container.
-     */
-    @ClassRule
-    public static RedisContainer redis = new RedisContainer(
-        RedisContainer.DEFAULT_IMAGE_NAME.withTag(RedisContainer.DEFAULT_TAG));
-
-    /**
-     * Stores the URI.
-     */
-    private static URI uri;
-
-    /**
-     * Cleanup after running.
-     */
-    @AfterAll
-    public static void afterAll() {
-        redis.stop();
-    }
-
-    /**
-     * Setup before running.
-     *
-     * @throws Exception when a serious error occurs.
-     */
-    @BeforeAll
-    public static void beforeAll() throws Exception {
-        redis.start();
-        uri = new URI(redis.getRedisURI());
-    }
-
+class CoherenceKeyValueStoreTest {
+    
     /**
      * Test delete method.
      */
     @Test
-    public void testDelete() {
-        if (uri != null) {
-            RedisKeyValueStore<String, byte[]> kvs = new RedisKeyValueStore<>(uri);
-            kvs.put("delete", "deleteme".getBytes());
-            assertEquals("deleteme", new String(kvs.get("delete")));
-            kvs.delete("delete");
-            assertNull(kvs.get("delete"));
-        }
+    void testDelete() {
+        CoherenceKeyValueStore store = new CoherenceKeyValueStore("store");
+        store.put("key".getBytes(), "value".getBytes());
+        assertEquals("value", new String((byte[]) store.get("key".getBytes())));
+        store.delete("key".getBytes());
+        assertNull(store.get("key".getBytes()));
+    }
+
+    /**
+     * Test getDelegate method.
+     */
+    @Test
+    void testGetDelegate() {
+        CoherenceKeyValueStore store = new CoherenceKeyValueStore("store");
+        assertNotNull(store.getDelegate());
     }
 }
