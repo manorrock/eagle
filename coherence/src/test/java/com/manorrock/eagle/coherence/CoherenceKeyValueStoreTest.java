@@ -48,8 +48,8 @@ class CoherenceKeyValueStoreTest {
     void testDelete() {
         CoherenceKeyValueStore store = new CoherenceKeyValueStore("store");
         store.put("key".getBytes(), "value".getBytes());
-        assertEquals("value".getBytes(), store.get("key".getBytes()));
-        store.delete("ley".getBytes());
+        assertEquals("value", new String((byte[]) store.get("key".getBytes())));
+        store.delete("key".getBytes());
         assertNull(store.get("key".getBytes()));
     }
 

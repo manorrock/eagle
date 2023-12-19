@@ -31,7 +31,8 @@
                 <configuration>
                     <reuseForks>false</reuseForks>
                     <systemPropertyVariables>
-                        <java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
+                        <tangosol.coherence.distributed.localstorage>true</tangosol.coherence.distributed.localstorage>
+                        <tangosol.coherence.wka>127.0.0.1</tangosol.coherence.wka>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
