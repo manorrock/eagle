@@ -44,15 +44,15 @@ Key-Value Store would look like the code below.
 The example below illustrates how to store a value.
 
 ```java
-  store.put("mykey", "myvalue");
+  store.put("mykey", "myvalue".getBytes());
 ```
 
 ### Getting a value
 
-The example below illustrates how to store a value.
+The example below illustrates how to get a value.
 
 ```java
-  String value = store.get("mykey");
+  String value = new String(store.get("mykey"));
 ```
 
 ### Deleting a value
