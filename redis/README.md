@@ -46,6 +46,11 @@ uses Lettuce you should be aware of this. Note the version of the Lettuce
 dependency that this implementation use can be found in the pom.xml file of
 this module.
 
+## What are the underlying types used?
+
+The Redis implementation uses String for the underlying key and byte[] for the
+underlying value type.
+
 ## Factory properties
 
 If you want to create the RedisKeyValueStore using the KeyValueStoreFactory use the following
