@@ -33,3 +33,8 @@ The following snippet shows you how to create the PathKeyValueStore
 ```
 
 Then the rest is using the KeyValueStore APIs.
+
+## What are the underlying types used?
+
+The Path implementation uses Path for the underlying key and byte[] for the
+underlying value type.
