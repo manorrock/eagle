@@ -30,6 +30,7 @@
 package com.manorrock.eagle.api;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * The KeyValueStore API.
@@ -70,6 +71,15 @@ public interface KeyValueStore<K, V, UK, UV> {
      * @return the delegate map.
      */
     Map<String, Object> getDelegate();
+    
+    /**
+     * Get the key set (if supported).
+     * 
+     * @return the key set.
+     */
+    default Set<K> keySet() {
+        throw new UnsupportedOperationException("Not supported");
+    }
 
     /**
      * Put the value.
